@@ -13,12 +13,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/cors": "^2.8.13",
     "@types/jsonwebtoken": "^9.0.2",
     "tsc-watch": "^6.0.4",
     "typescript": "^5.0.4"
-  },
-  "dependencies": {
-    "cors": "^2.8.5"
   }
 }
