@@ -1,0 +1,25 @@
+# Carpeta de dependencias
+/node_modules
+
+# Archivo de configuración de entorno local
+/.env
+
+# Archivos generados al ejecutar la aplicación
+/dist
+/build
+# Archivos de registro
+/logs
+*.log
+
+# Archivos de respaldo de IDE
+**/*.bak
+**/*.swp
+**/*.swo
+# Archivos de caché generados por diferentes herramientas
+/.cache
+/.vscode
+/.idea
+/.DS_Store
+/.nyc_output
+
+package-lock.json
