@@ -51,13 +51,12 @@ Easy to use web application that allows you to navigate quickly so you can monit
 
 ### Built With
 
-|             |               |               | 
-| :---------: | :-----------: | :-----------: |  
-|   NodeJS    |      AWS      |   MongoDB     |
-|  TypeScript |      JWT      |   Mongoose    |
-|     Jest    |      Cors     |   MongoAtlas  |
-|   Express   |      Axios    |     Docker    |
-
+|            |       |            |
+| :--------: | :---: | :--------: |
+|   NodeJS   |  AWS  |  MongoDB   |
+| TypeScript |  JWT  |  Mongoose  |
+|    Jest    | Cors  | MongoAtlas |
+|  Express   | Axios |   Docker   |
 
 <p align="right"><a href="#home">⬆ Back to top</a></p>
 
@@ -145,7 +144,6 @@ Detailed documentation for all API methods can be found below: <a href="#" targe
   - [] Responsive
   - [] Location the delivery person and show him where he is going on the map.
   - [] Points system for parcels delivered and penalties for do not complete of deliveries
-
 
 <p align="right"><a href="#home">⬆ Back to top/a></p>
 
