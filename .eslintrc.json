@@ -1,52 +1,35 @@
 {
-	"parser": "@babel/eslint-parser",
-	"env": {
-		"browser": true,
-		"es2021": true,
-		"node": true,
-		"commonjs": true
-	},
-	"extends": ["eslint:recommended"],
-	"parserOptions": {
-		"ecmaVersion": "latest",
-		"sourceType": "module",
-		"requireConfigFile": false
-	},
-	"plugins": [],
-	"rules": {
-		"indent": ["error", "tab"],
-		"linebreak-style": ["error", "unix"],
-		"quotes": ["error", "double"],
-		"semi": ["error", "always"]
-	},
-	"overrides": [
-		{
-			"files": ["**/*.ts"],
-			"parser": "@typescript-eslint/parser",
-			"plugins": ["@typescript-eslint"],
-			"extends": [
-				"eslint:recommended",
-				"plugin:@typescript-eslint/recommended",
-				"plugin:prettier/recommended"
-			],
-			"rules": {
-				"react/react-in-jsx-scope": "off",
-				"no-unused-vars": [
-					"error",
-					{
-						"varsIgnorePattern": "^_",
-						"argsIgnorePattern": "^_"
-					}
-				],
-				"@typescript-eslint/no-unused-vars": [
-					"error",
-					{
-						"varsIgnorePattern": "^_",
-						"argsIgnorePattern": "^_",
-						"ignoreRestSiblings": true
-					}
-				]
-			}
-		}
-	]
+  "parser": "@typescript-eslint/parser",
+  "env": {
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:import/typescript"
+  ],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "requireConfigFile": false
+  },
+  "rules": {
+    "no-tabs": ["error", { "allowIndentationTabs": true }],
+    "indent": ["error", 2],
+    "linebreak-style": ["error", "unix"],
+    "quotes": ["error", "double"],
+    "eqeqeq": ["error", "always"],
+    "semi": ["error", "always"],
+    "no-empty-function": "error",
+    "no-implicit-coercion": "error",
+    "no-unused-vars": [
+      "error",
+      {
+        "varsIgnorePattern": "^_",
+        "argsIgnorePattern": "^_"
+      }
+    ]
+  }
 }
