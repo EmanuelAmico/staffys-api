@@ -1,6 +1,7 @@
 # Git Workflow with Semantic Versioning (Semver) Documentation
 
 ## Table of Contents
+
 1. **Introduction**
 2. **Branching Model**
 3. **Workflow**
@@ -9,7 +10,8 @@
 6. **Glossary**
 
 ## 1. Introduction
-This document describes the guidelines that this project follows. These guidelines includes Git Workflow and Semver rules. 
+
+This document describes the guidelines that this project follows. These guidelines includes Git Workflow and Semver rules.
 
 The aim is to provide consistency in our development work and progression.
 
@@ -27,31 +29,37 @@ We use five types of branches in our project:
 ### 2.1 Branching Naming Model
 
 #### Main
+
 ```sh
 main
 ```
 
 ### Develop
+
 ```sh
 develop
 ```
 
 ### Feature
+
 ```sh
 feature/feature-name-goes-here
 ```
 
 ### Bugfix
+
 ```sh
 bugfix/bug-name-goes-here
 ```
 
 ### Release
+
 ```sh
 release/x.y.z -> (x.y.z is the version number)
 ```
 
 ### Hotfix
+
 ```sh
 hotfix/x.y.z -> (x.y.z is the version number)
 ```
@@ -145,17 +153,21 @@ Remember that for any versions prior to 1.0.0, the software should be considered
 That is why we start our versioning at `0.1.0` and will increment the `MAJOR` number to `1.0.0` when we are ready to release our first stable version.
 
 ## 4.1 Semver flow
+
 ### MAJOR Changes
+
 - When we make incompatible changes to the software that will break backward compatibility (breaking changes).
 - Only increment the `MAJOR` version when we are ready to release a new stable version.
 - Reset the `MINOR` and `PATCH` versions to `0`.
 
 ### MINOR Changes
+
 - When we add new functionality in a backward-compatible manner.
 - Increment the `MINOR` version when we are ready to release a new stable version.
 - Reset the `PATCH` version to `0`.
 
 ### PATCH Changes
+
 - When we make backward-compatible bug fixes.
 - Increment the `PATCH` version when we are ready to release a new stable version.
 
@@ -175,4 +187,3 @@ This Git workflow model provides us with a robust structure for managing our pro
 - **`bugfix` branch**: These branches are used for fixing bugs. They are created from `develop`, and are merged back into `develop` when the fix is complete.
 - **`release` branch**: These branches are branched off from the `develop` branch for the purpose of preparing for a new production release.
 - **`hotfix` branch**: These branches are used to quickly patch production releases. They are branched off from the `main` branch and are merged back into both `main` and `develop` when the fix is complete.
-
