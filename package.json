@@ -1,8 +1,39 @@
 {
   "name": "staffys-api",
   "version": "0.1.0",
-  "description": "",
+  "description": "This project is the api of fast delivery, which deals with providing data and services to the client.",
   "main": "index.js",
+  "keywords": [
+    "backend",
+    "fast delivery",
+    "node.js",
+    "api"
+  ],
+  "contributors": [
+    {
+      "email": "emanuelamicoo@gmail.com",
+      "name": "EmanuelAmico",
+      "url": "https://www.amico.com.ar/"
+    },
+    {
+      "email": "roescal347@gmail.com",
+      "name": "Rodriix99",
+      "url": "https://my-portfolio-rodriix99.vercel.app/"
+    },
+    {
+      "email": "santi.estevez.multedo@gmail.com",
+      "name": "elbolaestevez",
+      "url": "https://whimsical-lily-074ee6.netlify.app/"
+    },
+    {
+      "email": "rafael.mojica27@gmail.com",
+      "name": "RafaMojica",
+      "url": "https://rafaelmojica.vercel.app/"
+    }
+  ],
+  "license": "ISC",
+  "repository": "https://github.com/EmanuelAmico/staffys-api",
+  "bugs": "https://github.com/EmanuelAmico/staffys-api/issues",
   "scripts": {
     "start": "node dist/index.js",
     "dev": "tsc-watch --onSuccess \"node dist/index.js\"",
@@ -13,9 +44,6 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky install"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.2",
