@@ -123,7 +123,7 @@ git checkout -b hotfix/1.1.1 main
 After the fix, create a tag with the corresponding version update and push the tag and the hotfix branch to the remote repository:
 
 ```sh
-git tag -a 1.1.0 -m "version 1.1.1"
+git tag -a 1.1.1 -m "version 1.1.1"
 git push origin hotfix/1.1.1
 git push origin hotfix/1.1.1 --tags
 ```
@@ -136,13 +136,13 @@ Semantic Versioning (Semver) is a versioning scheme for software that help us to
 
 The version format is `MAJOR.MINOR.PATCH`. We increment these values following these rules:
 
-- MAJOR version when we make incompatible API changes,
-- MINOR version when we add functionality in a backward-compatible manner, and
+- MAJOR version when we make incompatible or breaking changes.
+- MINOR version when we add functionality in a backward-compatible manner.
 - PATCH version when we make backward-compatible bug fixes.
 
 Remember that for any versions prior to 1.0.0, the software should be considered unstable and changes may still be introduced that break backward compatibility.
 
-That is why we start our versioning at `0.1.0` and will increment the `MAJOR` number to `1.0.0` when we are ready to release our first stable version. In the meantime we will increment the `MINOR` and `PATCH` numbers as we add new features and bug fixes.
+That is why we start our versioning at `0.1.0` and will increment the `MAJOR` number to `1.0.0` when we are ready to release our first stable version.
 
 ## 4.1 Semver flow
 ### MAJOR Changes
