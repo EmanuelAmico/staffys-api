@@ -115,33 +115,33 @@ Detailed documentation for all API methods can be found below: <a href="#" targe
 
 🔹 MANAGER
 
-  - [x] Login
-  - [x] See schedule line history by date
-  - [x] See delivery history
-  - [x] See the activity of the deliverymen
-  - [x] See the number of packages for each delivery person
-  - [x] Create packages
-  - [x] See packages
-  - [x] Edit packages
-  - [x] Delete packages
+- [x] Login
+- [x] See schedule line history by date
+- [x] See delivery history
+- [x] See the activity of the deliverymen
+- [x] See the number of packages for each delivery person
+- [x] Create packages
+- [x] See packages
+- [x] Edit packages
+- [x] Delete packages
 
 🔹 DELIVERY
 
-  - [x] Register
-  - [x] Login
-  - [x] Password recovery
-  - [x] Select packages (maximum 10)
-  - [x] See pending deliveries
-  - [x] See delivery history
-  - [x] Delete delivery history
-  - [x] Accept delivery declaration
+- [x] Register
+- [x] Login
+- [x] Password recovery
+- [x] Select packages (maximum 10)
+- [x] See pending deliveries
+- [x] See delivery history
+- [x] Delete delivery history
+- [x] Accept delivery declaration
 
 🔹 OTHER
 
-  - [x] Session persistence
-  - [x] Responsive
-  - [x] Location the delivery person and show him where he is going on the map.
-  - [x] Points system for parcels delivered and penalties for do not complete of deliveries
+- [x] Session persistence
+- [x] Responsive
+- [x] Location the delivery person and show him where he is going on the map.
+- [x] Points system for parcels delivered and penalties for do not complete of deliveries
 
 <p align="right"><a href="#home">⬆ Back to top/a></p>
 
