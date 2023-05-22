@@ -37,6 +37,7 @@
       <li><a href="#installation">Installation</a></li>
     </ul>
   </li>
+  <li><a href="#api-Documentation">API Documentation</a></li>
   <li><a href="#functionalities">Functionalities</a></li>
   <li><a href="#contributing">Contributing</a></li>
   <li><a href="#contact">Contact</a></li>
