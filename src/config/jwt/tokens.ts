@@ -1,10 +1,9 @@
 import { sign, verify } from "jsonwebtoken";
-import dotenv from "dotenv";
-dotenv.config();
 
 interface Payload {
   name: string;
 }
+
 const generateToken = (payload: Payload): string => {
   const secret = process.env.JWT_SECRET as string;
   const token = sign({ user: payload.name }, secret, {
