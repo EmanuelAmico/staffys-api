@@ -3,7 +3,7 @@ import cors from "cors";
 import morgan from "morgan";
 import { generateToken, validateToken } from "./config/jwt/tokens";
 
-const port = 3001;
+const port = process.env.PORT;
 const app = express();
 app.use(morgan("dev"));
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
