@@ -6,7 +6,9 @@ services:
       dockerfile: Dockerfile
     image: staffys_api
     volumes:
-      - .:/app
+      - ./src:/app
+    env:
+      - ./.env
     container_name: staffys_api_local
     ports:
       - 4000:4000
