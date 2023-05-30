@@ -7,9 +7,6 @@
     },
     "import/parsers": {
       "@typescript-eslint/parser": [".ts"]
-    },
-    "react": {
-      "version": "detect"
     }
   },
   "parser": "@typescript-eslint/parser",
