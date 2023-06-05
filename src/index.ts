@@ -1,14 +1,14 @@
-import express, { Request, Response } from "express";
+import express, { Request, Response, json, urlencoded } from "express";
 import cors from "cors";
 import morgan from "morgan";
 import { generateToken, validateToken } from "./config/jwt/tokens";
 
-const port = process.env.PORT;
+const PORT = process.env.PORT;
 const app = express();
 app.use(morgan("dev"));
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(json());
+app.use(urlencoded({ extended: false }));
 
 app.get("/", (req: Request, res: Response) => {
   const authorizationHeader = req.headers.authorization;
@@ -37,8 +37,9 @@ app.post(
   }
 );
 
-const server = app.listen(port, () => {
-  console.log(`Listening on port ${port} 🚀`);
+const server = app.listen(PORT, () => {
+  // eslint-disable-next-line no-console
+  console.log(`Listening on PORT ${PORT} 🚀`);
 });
 
 export default server;
