@@ -6,7 +6,13 @@ import { generateToken, validateToken } from "./config/jwt/tokens";
 const PORT = process.env.PORT;
 const app = express();
 app.use(morgan("dev"));
-app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+
+const allowedOrigins = ["http://localhost:3000", "http://localhost:3001"];
+const options: cors.CorsOptions = {
+  origin: allowedOrigins,
+};
+app.use(cors(options));
+
 app.use(json());
 app.use(urlencoded({ extended: false }));
 
