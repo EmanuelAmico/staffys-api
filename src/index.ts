@@ -2,11 +2,13 @@ import express, { Request, Response, json, urlencoded } from "express";
 import cors from "cors";
 import morgan from "morgan";
 import { generateToken, validateToken } from "./config/jwt/tokens";
-
-const PORT = process.env.PORT;
+import { config } from "dotenv";
+import { envsValidation } from "./config/env/env.config";
+config();
+envsValidation();
 const app = express();
+const PORT = process.env.PORT;
 app.use(morgan("dev"));
-
 const allowedOrigins = ["http://localhost:3000", "http://localhost:3001"];
 const options: cors.CorsOptions = {
   origin: allowedOrigins,
@@ -45,7 +47,7 @@ app.post(
 
 const server = app.listen(PORT, () => {
   // eslint-disable-next-line no-console
-  console.log(`Listening on PORT ${PORT} 🚀`);
+  console.log(`Jejox Listening on PORT ${PORT} 🚀`);
 });
 
 export default server;
