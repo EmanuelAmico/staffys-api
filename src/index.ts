@@ -3,17 +3,15 @@ import cors from "cors";
 import morgan from "morgan";
 import { generateToken, validateToken } from "./config/jwt/tokens";
 import connectToDB from "./config/db";
+import { envsValidation } from "./config/env/env.config";
 
+envsValidation();
+const app = express();
 const PORT = process.env.PORT;
-
 const allowedOrigins = ["http://localhost:3000", "http://localhost:3001"];
-
 const options: cors.CorsOptions = {
   origin: allowedOrigins,
 };
-
-const app = express();
-
 app.use(morgan("dev"));
 app.use(cors(options));
 app.use(json());
