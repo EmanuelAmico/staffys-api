@@ -47,7 +47,7 @@ app.post(
 
 const server = app.listen(PORT, () => {
   // eslint-disable-next-line no-console
-  console.log(`Jejox Listening on PORT ${PORT} 🚀`);
+  console.log(`Listening on PORT ${PORT} 🚀`);
 });
 
 export default server;
