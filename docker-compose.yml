@@ -1,0 +1,33 @@
+version: "1.0.0"
+services:
+  local:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: staffys_api
+    volumes:
+      - ./src:/app/src
+      - /app/dist
+    env_file:
+      - ./.env
+    container_name: staffys_api_local
+    ports:
+      - 4000:4000
+    tty: true
+    entrypoint: ["npm", "run", "dev"]
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: staffys_api
+    volumes:
+      - ./src:/app/src
+      - /app/dist
+      - /app/coverage
+    env_file:
+      - ./.env
+    container_name: staffys_api_local_tests
+    ports:
+      - 4000:4000
+    tty: true
+    entrypoint: ["npm", "run", "test:watch"]
