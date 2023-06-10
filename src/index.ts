@@ -2,8 +2,8 @@ import express, { Request, Response, json, urlencoded } from "express";
 import cors from "cors";
 import morgan from "morgan";
 import { generateToken, validateToken } from "./config/jwt/tokens";
-import { config } from "dotenv";
 import { envsValidation } from "./config/env/env.config";
+import connectToDB from "./config/db";
 
 envsValidation();
 const app = express();
