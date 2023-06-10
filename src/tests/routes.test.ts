@@ -1,8 +1,14 @@
 import request from "supertest";
-import server from "../";
+import app from "../";
 import { generateToken } from "../config/jwt/tokens";
 
 describe("Route testing", () => {
+  let server: ReturnType<typeof app.listen>;
+
+  beforeAll(() => {
+    server = app.listen(process.env.TESTING_PORT);
+  });
+
   afterAll(() => {
     server.close();
   });
