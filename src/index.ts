@@ -2,17 +2,20 @@ import express, { Request, Response, json, urlencoded } from "express";
 import cors from "cors";
 import morgan from "morgan";
 import { generateToken, validateToken } from "./config/jwt/tokens";
+import connectToDB from "./config/db";
 
 const PORT = process.env.PORT;
-const app = express();
-app.use(morgan("dev"));
 
 const allowedOrigins = ["http://localhost:3000", "http://localhost:3001"];
+
 const options: cors.CorsOptions = {
   origin: allowedOrigins,
 };
-app.use(cors(options));
 
+const app = express();
+
+app.use(morgan("dev"));
+app.use(cors(options));
 app.use(json());
 app.use(urlencoded({ extended: false }));
 
@@ -43,9 +46,17 @@ app.post(
   }
 );
 
-const server = app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Listening on PORT ${PORT} 🚀`);
-});
+if (
+  process.env.NODE_ENV === "production" ||
+  process.env.NODE_ENV === "development"
+) {
+  (async () => {
+    await connectToDB();
+    app.listen(PORT, () => {
+      // eslint-disable-next-line no-console
+      console.log(`Listening on PORT ${PORT} 🚀`);
+    });
+  })();
+}
 
-export default server;
+export default app;
