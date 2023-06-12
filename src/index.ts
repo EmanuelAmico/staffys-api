@@ -4,8 +4,10 @@ import morgan from "morgan";
 import { generateToken, validateToken } from "./config/jwt/tokens";
 import { envsValidation } from "./config/env/env.config";
 import connectToDB from "./config/db";
+import { envs } from "./config/env/env.config";
 
-const { port } = envsValidation();
+envsValidation();
+const { port } = envs;
 const app = express();
 const allowedOrigins = ["http://localhost:3000", "http://localhost:3001"];
 const options: cors.CorsOptions = {
