@@ -1,40 +1,33 @@
-import express, { Request, Response, json, urlencoded } from "express";
+import express, {
+  NextFunction,
+  Request,
+  Response,
+  json,
+  urlencoded,
+} from "express";
 import cors from "cors";
 import morgan from "morgan";
-import { generateToken, validateToken } from "./config/jwt/tokens";
+import envsValidation, { envs } from "./config/env/env.config";
 import connectToDB from "./config/db";
 import History from "./models/History";
+import { allRoutes } from "./routes";
 
-const PORT = process.env.PORT;
-
-const allowedOrigins = ["http://localhost:3000", "http://localhost:3001"];
-
-const options: cors.CorsOptions = {
-  origin: allowedOrigins,
-};
-
+envsValidation();
+const { PORT, BACKOFFICE_CLIENT_HOST, DELIVERY_CLIENT_HOST } = envs;
 const app = express();
 
+const options: cors.CorsOptions = {
+  origin: [BACKOFFICE_CLIENT_HOST, DELIVERY_CLIENT_HOST],
+};
 app.use(morgan("dev"));
 app.use(cors(options));
 app.use(json());
 app.use(urlencoded({ extended: false }));
 
-app.get("/", (req: Request, res: Response) => {
-  const authorizationHeader = req.headers.authorization;
-  if (!authorizationHeader)
-    return res.status(401).send("Authorization token not found");
+app.use("/", allRoutes);
 
-  const [bearer, token] = authorizationHeader.split(" ");
-
-  if (bearer !== "Bearer" || !token)
-    return res.status(401).send("Invalid authorization header");
-
-  const payload = validateToken(token);
-
-  if (!payload) return res.status(401).send("Invalid authorization token");
-
-  res.send(payload);
+app.use((error: Error, _req: Request, res: Response, _next: NextFunction) => {
+  res.status(500).send(error.message);
 });
 
 app.post("/testHistory", async (req: Request, res: Response) => {
@@ -49,16 +42,6 @@ app.post("/testHistory", async (req: Request, res: Response) => {
   }
 });
 
-app.post(
-  "/token",
-  (req: Request<void, void, { name: string }, void>, res: Response) => {
-    const user = req.body;
-    const token = generateToken(user);
-
-    res.send(token);
-  }
-);
-
 if (
   process.env.NODE_ENV === "production" ||
   process.env.NODE_ENV === "development"
@@ -67,7 +50,7 @@ if (
     await connectToDB();
     app.listen(PORT, () => {
       // eslint-disable-next-line no-console
-      console.log(`Listening on PORT ${PORT} 🚀`);
+      console.log(`Listening on port ${PORT} 🚀`);
     });
   })();
 }

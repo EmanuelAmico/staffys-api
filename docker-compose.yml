@@ -28,6 +28,6 @@ services:
       - ./.env
     container_name: staffys_api_local_tests
     ports:
-      - 4000:4000
+      - 9000:9000
     tty: true
     entrypoint: ["npm", "run", "test:watch"]

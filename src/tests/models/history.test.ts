@@ -1,9 +1,12 @@
 import mongoose from "mongoose";
-import History from "../models/History";
+import History from "../../models/History";
+import { envs } from "../../config/env/env.config";
+
+const { MONGO_URI } = envs;
 
 describe("History Tests", () => {
   beforeAll(async () => {
-    await mongoose.connect(process.env.MONGO_URI as string);
+    await mongoose.connect(MONGO_URI);
   });
 
   afterAll(async () => {
@@ -27,9 +30,3 @@ describe("History Tests", () => {
     });
   });
 });
-
-//import { MongoMemoryServer } from "mongodb-memory-server";
-//let mongoServer: MongoMemoryServer;
-//mongoServer = await MongoMemoryServer.create();
-//const uri = mongoServer.getUri();
-//await mongoose.connect(uri);

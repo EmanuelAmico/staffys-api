@@ -2,8 +2,8 @@ import { Document, model, Schema } from "mongoose";
 
 export interface HistoryProps extends Document {
   date: string;
-  // activeUsers: string[];
-  // targetPackages: string[];
+  activeUsers: Schema.Types.ObjectId[];
+  targetPackages: Schema.Types.ObjectId[];
 }
 
 const historySchema = new Schema({
@@ -12,20 +12,20 @@ const historySchema = new Schema({
     required: true,
     unique: true,
   },
-  // activeUsers: [
-  //   {
-  //     type: Schema.Types.ObjectId,
-  //     ref: "Users",
-  //     required: true,
-  //   },
-  // ],
-  // targetPackages: [
-  //   {
-  //     type: Schema.Types.ObjectId,
-  //     ref: "Packages",
-  //     required: true,
-  //   },
-  // ],
+  activeUsers: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Users",
+      required: true,
+    },
+  ],
+  targetPackages: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Packages",
+      required: true,
+    },
+  ],
 });
 
 export default model<HistoryProps>("History", historySchema);
