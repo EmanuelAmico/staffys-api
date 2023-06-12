@@ -12,12 +12,7 @@ const generateToken = (payload: Payload): string => {
   return token;
 };
 
-const validateToken = (token: string) => {
-  try {
-    return verify(token, process.env.JWT_SECRET as string);
-  } catch (error) {
-    console.error(error);
-  }
-};
+const validateToken = (token: string) =>
+  verify(token, process.env.JWT_SECRET as string);
 
 export { generateToken, validateToken };
