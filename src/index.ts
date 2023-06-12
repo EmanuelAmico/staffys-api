@@ -5,9 +5,8 @@ import { generateToken, validateToken } from "./config/jwt/tokens";
 import { envsValidation } from "./config/env/env.config";
 import connectToDB from "./config/db";
 
-envsValidation();
+const { port } = envsValidation();
 const app = express();
-const PORT = process.env.PORT;
 const allowedOrigins = ["http://localhost:3000", "http://localhost:3001"];
 const options: cors.CorsOptions = {
   origin: allowedOrigins,
@@ -23,7 +22,7 @@ app.get("/", (req: Request, res: Response) => {
     return res.status(401).send("Authorization token not found");
 
   const [bearer, token] = authorizationHeader.split(" ");
-
+  //
   if (bearer !== "Bearer" || !token)
     return res.status(401).send("Invalid authorization header");
 
@@ -50,9 +49,9 @@ if (
 ) {
   (async () => {
     await connectToDB();
-    app.listen(PORT, () => {
+    app.listen(port, () => {
       // eslint-disable-next-line no-console
-      console.log(`Listening on PORT ${PORT} 🚀`);
+      console.log(`Listening on port ${port} 🚀`);
     });
   })();
 }
