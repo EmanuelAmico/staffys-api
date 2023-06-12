@@ -1,8 +1,14 @@
-import express, { Request, Response, json, urlencoded } from "express";
+import express, {
+  NextFunction,
+  Request,
+  Response,
+  json,
+  urlencoded,
+} from "express";
 import cors from "cors";
 import morgan from "morgan";
-import { generateToken, validateToken } from "./config/jwt/tokens";
 import connectToDB from "./config/db";
+import { allRoutes } from "./routes";
 
 const PORT = process.env.PORT;
 
@@ -19,32 +25,11 @@ app.use(cors(options));
 app.use(json());
 app.use(urlencoded({ extended: false }));
 
-app.get("/", (req: Request, res: Response) => {
-  const authorizationHeader = req.headers.authorization;
-  if (!authorizationHeader)
-    return res.status(401).send("Authorization token not found");
+app.use("/", allRoutes);
 
-  const [bearer, token] = authorizationHeader.split(" ");
-
-  if (bearer !== "Bearer" || !token)
-    return res.status(401).send("Invalid authorization header");
-
-  const payload = validateToken(token);
-
-  if (!payload) return res.status(401).send("Invalid authorization token");
-
-  res.send(payload);
+app.use((error: Error, _req: Request, res: Response, _next: NextFunction) => {
+  res.status(500).send(error.message);
 });
-
-app.post(
-  "/token",
-  (req: Request<void, void, { name: string }, void>, res: Response) => {
-    const user = req.body;
-    const token = generateToken(user);
-
-    res.send(token);
-  }
-);
 
 if (
   process.env.NODE_ENV === "production" ||
