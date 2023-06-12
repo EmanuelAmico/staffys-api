@@ -7,19 +7,17 @@ import express, {
 } from "express";
 import cors from "cors";
 import morgan from "morgan";
+import envsValidation, { envs } from "./config/env/env.config";
 import connectToDB from "./config/db";
 import { allRoutes } from "./routes";
 
-const PORT = process.env.PORT;
-
-const allowedOrigins = ["http://localhost:3000", "http://localhost:3001"];
-
-const options: cors.CorsOptions = {
-  origin: allowedOrigins,
-};
-
+envsValidation();
+const { PORT, BACKOFFICE_CLIENT_HOST, DELIVERY_CLIENT_HOST } = envs;
 const app = express();
 
+const options: cors.CorsOptions = {
+  origin: [BACKOFFICE_CLIENT_HOST, DELIVERY_CLIENT_HOST],
+};
 app.use(morgan("dev"));
 app.use(cors(options));
 app.use(json());
@@ -39,7 +37,7 @@ if (
     await connectToDB();
     app.listen(PORT, () => {
       // eslint-disable-next-line no-console
-      console.log(`Listening on PORT ${PORT} 🚀`);
+      console.log(`Listening on port ${PORT} 🚀`);
     });
   })();
 }
