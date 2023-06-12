@@ -13,11 +13,11 @@ export const envsValidation = () => {
 };
 
 export const envs = {
-  nodeEnv: process.env.NODE_ENV,
-  port: process.env.PORT,
-  testingPort: process.env.TESTING_PORT,
-  jwtSecret: process.env.JWT_SECRET,
-  mongoUri: process.env.MONGO_URI,
-  backofficeClientPort: process.env.BACKOFFICE_CLIENT_HOST,
-  deliveryClientPort: process.env.DELIVERY_CLIENT_HOST,
+  NODE_ENV: process.env.NODE_ENV,
+  PORT: process.env.PORT,
+  TESTING_PORT: process.env.TESTING_PORT,
+  JWT_SECRET: process.env.JWT_SECRET,
+  MONGO_URI: process.env.MONGO_URI,
+  BACKOFFICE_CLIENT_HOST: process.env.BACKOFFICE_CLIENT_HOST,
+  DELIVERY_CLIENT_HOST: process.env.DELIVERY_CLIENT_HOST,
 };
