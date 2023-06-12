@@ -1,11 +1,3 @@
-//import { MongoMemoryServer } from "mongodb-memory-server";
-//let mongoServer: MongoMemoryServer;
-//mongoServer = await MongoMemoryServer.create();
-//const uri = mongoServer.getUri();
-//await mongoose.connect(uri);
-
-/////////////////
-
 import mongoose from "mongoose";
 import History from "../models/History";
 
@@ -29,9 +21,15 @@ describe("History Tests", () => {
       });
 
       const savedDay = await newDay.save();
-      console.log(savedDay);
+      //console.log(savedDay);
       expect(savedDay._id).toBeDefined();
       expect(savedDay.date).toBe("16/02/23");
     });
   });
 });
+
+//import { MongoMemoryServer } from "mongodb-memory-server";
+//let mongoServer: MongoMemoryServer;
+//mongoServer = await MongoMemoryServer.create();
+//const uri = mongoServer.getUri();
+//await mongoose.connect(uri);
