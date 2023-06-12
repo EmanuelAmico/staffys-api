@@ -1,4 +1,4 @@
-export const envsValidation = () => {
+const envsValidation = () => {
   if (
     !process.env.NODE_ENV ||
     !process.env.PORT ||
@@ -11,6 +11,8 @@ export const envsValidation = () => {
     throw new Error("The proyect must contains the envs!");
   }
 };
+
+export default envsValidation;
 
 export const envs = {
   NODE_ENV: process.env.NODE_ENV,

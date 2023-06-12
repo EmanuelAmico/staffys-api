@@ -2,12 +2,11 @@ import express, { Request, Response, json, urlencoded } from "express";
 import cors from "cors";
 import morgan from "morgan";
 import { generateToken, validateToken } from "./config/jwt/tokens";
-import { envsValidation } from "./config/env/env.config";
+import envsValidation, { envs } from "./config/env/env.config";
 import connectToDB from "./config/db";
-import { envs } from "./config/env/env.config";
 
 envsValidation();
-const { port } = envs;
+const { PORT } = envs;
 const app = express();
 const allowedOrigins = ["http://localhost:3000", "http://localhost:3001"];
 const options: cors.CorsOptions = {
@@ -51,9 +50,9 @@ if (
 ) {
   (async () => {
     await connectToDB();
-    app.listen(port, () => {
+    app.listen(PORT, () => {
       // eslint-disable-next-line no-console
-      console.log(`Listening on port ${port} 🚀`);
+      console.log(`Listening on port ${PORT} 🚀`);
     });
   })();
 }
