@@ -15,16 +15,16 @@ describe("Route testing", () => {
 
   const token = generateToken({ name: "Rafael" });
 
-  describe("GET /", () => {
+  describe("POST /auth/login", () => {
     it("should respond with status 401 when no authorization token provided in headers", async () => {
-      const res = await request(server).get("/");
+      const res = await request(server).post("/auth/login");
       expect(res.statusCode).toBe(401);
       expect(res.text).toBe("Authorization token not found");
     });
 
     it("should respond with status 401 when invalid authorization header", async () => {
       const res = await request(server)
-        .get("/")
+        .post("/auth/login")
         .set("Authorization", `${token}`);
       expect(res.statusCode).toBe(401);
       expect(res.text).toBe("Invalid authorization header");
@@ -32,7 +32,7 @@ describe("Route testing", () => {
 
     it("should respond with status 401 when the token is invalid", async () => {
       const res = await request(server)
-        .get("/")
+        .post("/auth/login")
         .set("Authorization", "Bearer abcdefghijqlmnñoprstuvxyz");
       expect(res.statusCode).toBe(401);
       expect(res.text).toBe("Invalid authorization token");
@@ -40,16 +40,18 @@ describe("Route testing", () => {
 
     it("should respond with status 200 when the token is valid", async () => {
       const res = await request(server)
-        .get("/")
+        .post("/auth/login")
         .set("Authorization", `Bearer ${token}`);
       expect(res.statusCode).toBe(200);
       expect(res.body.user).toBe("Rafael");
     });
   });
 
-  describe("POST /token", () => {
+  describe("POST /auth/register", () => {
     it("should respond with status 200 and the token in response body", async () => {
-      const res = await request(server).post("/token").send({ name: "Rafael" });
+      const res = await request(server)
+        .post("/auth/register")
+        .send({ name: "Rafael" });
       expect(res.statusCode).toBe(200);
       expect(res.text).toBeDefined();
     });
