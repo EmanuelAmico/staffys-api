@@ -1,15 +1,12 @@
 import mongoose from "mongoose";
-
 import User from "../../models/User";
-import dotenv from "dotenv";
-const variable = dotenv;
-variable.config();
+import { envs } from "../../config/env/env.config";
 
-// TODO: Replace this with env config
-const uri = process.env.MONGO_URI || "";
+const { MONGO_URI } = envs;
+
 describe("User Model", () => {
   beforeAll(async () => {
-    mongoose.connect(uri);
+    mongoose.connect(MONGO_URI);
   });
 
   afterAll(async () => {
