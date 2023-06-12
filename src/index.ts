@@ -6,11 +6,11 @@ import envsValidation, { envs } from "./config/env/env.config";
 import connectToDB from "./config/db";
 
 envsValidation();
-const { PORT } = envs;
+const { PORT, BACKOFFICE_CLIENT_HOST, DELIVERY_CLIENT_HOST } = envs;
 const app = express();
-const allowedOrigins = ["http://localhost:3000", "http://localhost:3001"];
+
 const options: cors.CorsOptions = {
-  origin: allowedOrigins,
+  origin: [BACKOFFICE_CLIENT_HOST, DELIVERY_CLIENT_HOST],
 };
 app.use(morgan("dev"));
 app.use(cors(options));

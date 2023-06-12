@@ -8,7 +8,7 @@ const envsValidation = () => {
     !process.env.BACKOFFICE_CLIENT_HOST ||
     !process.env.DELIVERY_CLIENT_HOST
   ) {
-    throw new Error("The proyect must contains the envs!");
+    throw new Error("The project must contains the envs!");
   }
 };
 
@@ -22,4 +22,4 @@ export const envs = {
   MONGO_URI: process.env.MONGO_URI,
   BACKOFFICE_CLIENT_HOST: process.env.BACKOFFICE_CLIENT_HOST,
   DELIVERY_CLIENT_HOST: process.env.DELIVERY_CLIENT_HOST,
-};
+} as Record<string, string>;
