@@ -3,6 +3,7 @@ import cors from "cors";
 import morgan from "morgan";
 import { generateToken, validateToken } from "./config/jwt/tokens";
 import connectToDB from "./config/db";
+import History from "./models/History";
 
 const PORT = process.env.PORT;
 
@@ -34,6 +35,18 @@ app.get("/", (req: Request, res: Response) => {
   if (!payload) return res.status(401).send("Invalid authorization token");
 
   res.send(payload);
+});
+
+app.post("/testHistory", async (req: Request, res: Response) => {
+  try {
+    const newDay = await History.create(req.body);
+    newDay.save();
+    res.send(newDay);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.log(err);
+    res.sendStatus(500);
+  }
 });
 
 app.post(
