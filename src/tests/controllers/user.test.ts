@@ -1,81 +1,96 @@
 import { UserController } from "../../controllers/user.controller";
 import User from "../../models/User";
+import { UserService } from "../../services/user.service";
 import { mockControllerParams } from "../../utils/testing.utils";
+import mongoose from "mongoose";
+const {
+  Types: { ObjectId },
+} = mongoose;
 
 describe("User Controller", () => {
   describe("Method -> getUserById", () => {
-    it("should throw an error if req.params.id is not a posible number and respond with status: 400, error: 'id must be a number' and data: null", async () => {
+    const mockedObjectIdConstructor = jest.fn();
+    const isValidObjectIdSpy = jest.spyOn(ObjectId, "isValid");
+
+    beforeAll(() => {
+      jest.mock("../../services/user.service");
+      ObjectId.prototype.constructor = mockedObjectIdConstructor;
+    });
+
+    afterAll(() => {
+      jest.clearAllMocks();
+    });
+
+    it("if req.params.id is not a posible ObjectId it should respond with status: 400, message: 'id must be a valid ObjectId' and data: null", async () => {
       const [mockedReq, mockedRes, mockedNext] = mockControllerParams({
-        params: { id: "not a number, even when parsed" },
+        params: { id: "not a valid ObjectId, even when parsed" },
       });
 
-      const parseIntSpy = jest.spyOn(Number, "parseInt");
-
       expect.assertions(7);
-      expect(parseIntSpy).not.toHaveBeenCalled();
+      expect(isValidObjectIdSpy).not.toHaveBeenCalled();
       await expect(
         UserController.getUserById(mockedReq, mockedRes, mockedNext)
-      ).rejects.toThrow("id must be a number");
-      expect(parseIntSpy).toHaveBeenCalledWith(
-        "not a number, even when parsed"
+      ).resolves.not.toBeDefined();
+      expect(isValidObjectIdSpy).toHaveBeenCalledWith(
+        "not a valid ObjectId, even when parsed"
       );
       expect(mockedRes.status).toHaveBeenCalledWith(400);
       expect(mockedRes.status).toHaveBeenCalledTimes(1);
       expect(mockedRes.send).toHaveBeenCalledWith({
         status: 400,
-        error: "id must be a number",
+        message: "id must be a valid ObjectId",
         data: null,
       });
       expect(mockedRes.send).toHaveBeenCalledTimes(1);
     });
 
-    it("should throw an error if req.params.id is undefined and respond with status: 400, error: 'id must be a number' and data: null", async () => {
+    it("if req.params.id is undefined it should respond with status: 400, message: 'id is required in req.params' and data: null", async () => {
       const [mockedReq, mockedRes, mockedNext] = mockControllerParams({
         params: {},
       });
 
-      const parseIntSpy = jest.spyOn(Number, "parseInt");
-
       expect.assertions(7);
-      expect(parseIntSpy).not.toHaveBeenCalled();
+      expect(isValidObjectIdSpy).not.toHaveBeenCalled();
       await expect(
         UserController.getUserById(mockedReq, mockedRes, mockedNext)
-      ).rejects.toThrow("id must be a number");
-      expect(parseIntSpy).toHaveBeenCalledWith(undefined);
+      ).resolves.not.toBeDefined();
+      expect(isValidObjectIdSpy).not.toHaveBeenCalled();
       expect(mockedRes.status).toHaveBeenCalledWith(400);
       expect(mockedRes.status).toHaveBeenCalledTimes(1);
       expect(mockedRes.send).toHaveBeenCalledWith({
-        error: "id must be a number",
+        message: "id is required in req.params",
         data: null,
         status: 400,
       });
       expect(mockedRes.send).toHaveBeenCalledTimes(1);
     });
 
-    it("should throw an error if additional req.params are passed and respond with status: 400, a descriptive error of which was received and what was expected and data: null", async () => {
+    it("if additional not required req.body and req.query are passed it should respond with status: 400, a descriptive error message of which was received and what was expected and data: null", async () => {
       const [mockedReq, mockedRes, mockedNext] = mockControllerParams({
-        params: { id: "1", other: "not expected" },
+        params: { id: "507f1f77bcf86cd799439011" },
+        body: { other: "not expected" },
+        query: { thisToo: "not expected" },
       });
 
-      const parseIntSpy = jest.spyOn(Number, "parseInt");
-
       expect.assertions(7);
-      expect(parseIntSpy).not.toHaveBeenCalled();
+      expect(isValidObjectIdSpy).not.toHaveBeenCalled();
       await expect(
         UserController.getUserById(mockedReq, mockedRes, mockedNext)
-      ).rejects.toThrow("id must be a number");
-      expect(parseIntSpy).toHaveBeenCalledWith(1);
+      ).resolves.not.toBeDefined();
+      expect(isValidObjectIdSpy).not.toHaveBeenCalled();
+      expect(mockedObjectIdConstructor).not.toHaveBeenCalled();
       expect(mockedRes.status).toHaveBeenCalledWith(400);
       expect(mockedRes.status).toHaveBeenCalledTimes(1);
       expect(mockedRes.send).toHaveBeenCalledWith({
-        error: "id must be a number",
+        message:
+          "There are unexpected fields in the request. Received -> params: { id }, body: { other }, query: { thisToo }. Expected -> params: { id }, body: {}, query: {}",
         data: null,
         status: 400,
       });
       expect(mockedRes.send).toHaveBeenCalledTimes(1);
     });
 
-    it("should return a user if req.params.id is a number to a valid user", async () => {
+    it("should respond with a user if req.params.id is a valid ObjectId to an existing user", async () => {
       const user = await User.create({
         name: "test",
         lastname: "test",
@@ -90,14 +105,18 @@ describe("User Controller", () => {
         params: { id: user._id.toString() },
       });
 
-      const parseIntSpy = jest.spyOn(Number, "parseInt");
+      const getUserByIdServiceSpy = jest.spyOn(UserService, "getUserById");
 
-      expect.assertions(7);
-      expect(parseIntSpy).not.toHaveBeenCalled();
+      expect.assertions(8);
+      expect(isValidObjectIdSpy).not.toHaveBeenCalled();
       await expect(
         UserController.getUserById(mockedReq, mockedRes, mockedNext)
       ).resolves.not.toBeDefined();
-      expect(parseIntSpy).toHaveBeenCalledWith(user._id.toString());
+      expect(isValidObjectIdSpy).toHaveBeenCalledWith(user._id.toString());
+      expect(mockedObjectIdConstructor).toHaveBeenCalledWith(
+        user._id.toString()
+      );
+      expect(getUserByIdServiceSpy).toHaveBeenCalledWith(user._id.toString());
       expect(mockedRes.status).toHaveBeenCalledWith(200);
       expect(mockedRes.status).toHaveBeenCalledTimes(1);
       expect(mockedRes.send).toHaveBeenCalledWith({

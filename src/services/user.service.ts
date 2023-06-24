@@ -2,12 +2,13 @@
 /* eslint-disable no-empty-function */
 
 import { NextFunction, Request, Response } from "express";
+import { Types } from "mongoose";
 
 // TODO Remove "_" from unused parameters
 class UserService {
   static createUser() {}
 
-  static getUserById(_id: string) {}
+  static getUserById(_id: Types.ObjectId) {}
 
   static getDeliveryPeople(
     _req: Request,
