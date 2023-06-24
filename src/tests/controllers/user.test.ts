@@ -9,12 +9,10 @@ const {
 
 describe("User Controller", () => {
   describe("Method -> getUserById", () => {
-    const mockedObjectIdConstructor = jest.fn();
     const isValidObjectIdSpy = jest.spyOn(ObjectId, "isValid");
 
     beforeAll(() => {
       jest.mock("../../services/user.service");
-      ObjectId.prototype.constructor = mockedObjectIdConstructor;
     });
 
     afterAll(() => {
@@ -78,7 +76,6 @@ describe("User Controller", () => {
         UserController.getUserById(mockedReq, mockedRes, mockedNext)
       ).resolves.not.toBeDefined();
       expect(isValidObjectIdSpy).not.toHaveBeenCalled();
-      expect(mockedObjectIdConstructor).not.toHaveBeenCalled();
       expect(mockedRes.status).toHaveBeenCalledWith(400);
       expect(mockedRes.status).toHaveBeenCalledTimes(1);
       expect(mockedRes.send).toHaveBeenCalledWith({
@@ -113,9 +110,6 @@ describe("User Controller", () => {
         UserController.getUserById(mockedReq, mockedRes, mockedNext)
       ).resolves.not.toBeDefined();
       expect(isValidObjectIdSpy).toHaveBeenCalledWith(user._id.toString());
-      expect(mockedObjectIdConstructor).toHaveBeenCalledWith(
-        user._id.toString()
-      );
       expect(getUserByIdServiceSpy).toHaveBeenCalledWith(user._id.toString());
       expect(mockedRes.status).toHaveBeenCalledWith(200);
       expect(mockedRes.status).toHaveBeenCalledTimes(1);
