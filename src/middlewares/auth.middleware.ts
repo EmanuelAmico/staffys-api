@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { AuthService } from "../services/auth.service";
 import { JsonWebTokenError, JwtPayload } from "jsonwebtoken";
+import { validateToken } from "../config/jwt/tokens";
 
 export interface CustomRequest extends Request {
   user?: string | JwtPayload;
@@ -23,7 +23,7 @@ class AuthMiddleware {
       if (bearer !== "Bearer" || !token)
         return res.status(401).send("Invalid authorization header");
 
-      const payload = AuthService.login(token);
+      const payload = validateToken(token);
 
       if (!payload) return res.status(401).send("Invalid authorization token");
       req.user = payload;

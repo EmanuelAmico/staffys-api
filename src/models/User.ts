@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import { hash, genSaltSync } from "bcrypt";
 
-interface UserProps extends Document {
+export interface UserProps extends Document {
   name: string;
   lastname: string;
   password: string;
@@ -14,6 +14,7 @@ interface UserProps extends Document {
   currentPackage?: Schema.Types.ObjectId;
   historyPackages?: Schema.Types.ObjectId[];
   hashPassword: (password: string, salt: string) => Promise<string>;
+  validatePassword: (password: string) => Promise<boolean>;
 }
 
 const userSchema = new mongoose.Schema<UserProps>(
@@ -40,6 +41,10 @@ userSchema.methods.hashPassword = async function (
 ) {
   const hashpass = await hash(password, salt);
   return hashpass;
+};
+userSchema.methods.validatePassword = async function (password: string) {
+  const hashpass = await this.hashPassword(password, this.salt);
+  return hashpass === this.password;
 };
 userSchema.pre<UserProps>("save", async function () {
   const salt = genSaltSync();
