@@ -6,7 +6,6 @@ const envList = [
   "MONGO_URI",
   "BACKOFFICE_CLIENT_HOST",
   "DELIVERY_CLIENT_HOST",
-  "MONGO_URI_TESTING",
 ];
 export const envs = (() => {
   if (
@@ -15,7 +14,6 @@ export const envs = (() => {
     !process.env.TESTING_PORT ||
     !process.env.JWT_SECRET ||
     !process.env.MONGO_URI ||
-    !process.env.MONGO_URI_TESTING ||
     !process.env.BACKOFFICE_CLIENT_HOST ||
     !process.env.DELIVERY_CLIENT_HOST
   ) {
@@ -37,8 +35,7 @@ export const envs = (() => {
     TESTING_PORT: process.env.TESTING_PORT,
     JWT_SECRET: process.env.JWT_SECRET,
     MONGO_URI: process.env.MONGO_URI,
-    MONGO_URI_TESTING: process.env.MONGO_URI_TESTING,
     BACKOFFICE_CLIENT_HOST: process.env.BACKOFFICE_CLIENT_HOST,
     DELIVERY_CLIENT_HOST: process.env.DELIVERY_CLIENT_HOST,
-  };
-})() as Record<string, string>;
+  } as const;
+})();
