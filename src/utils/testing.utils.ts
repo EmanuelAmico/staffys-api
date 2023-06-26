@@ -30,7 +30,7 @@ export const mockControllerParams = <
       })),
       send,
       json,
-    } as unknown as Response<void>,
+    } as unknown as Response<unknown>,
     jest.fn() as unknown as NextFunction,
   ];
 };

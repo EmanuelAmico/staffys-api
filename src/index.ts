@@ -7,12 +7,11 @@ import express, {
 } from "express";
 import cors from "cors";
 import morgan from "morgan";
-import envsValidation, { envs } from "./config/env/env.config";
+import { envs } from "./config/env/env.config";
 import connectToDB from "./config/db";
 import History from "./models/History";
 import { allRoutes } from "./routes";
 
-envsValidation();
 const { PORT, BACKOFFICE_CLIENT_HOST, DELIVERY_CLIENT_HOST } = envs;
 const app = express();
 
