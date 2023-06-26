@@ -5,9 +5,14 @@ import { ExtendedUserRequestBody } from "../controllers/user.controller";
 class UserService {
   static async update(userBody: ExtendedUserRequestBody) {
     try {
-      const findUser = await User.findByIdAndUpdate(userBody._id, userBody, {
-        new: true,
-      }).select("-salt -password");
+      const findUser = await User.findByIdAndUpdate(
+        { _id: userBody._id },
+        userBody,
+        {
+          new: true,
+        }
+      ).select("-salt -password");
+
       if (!findUser) {
         throw new Error("Usuario no existe");
       }

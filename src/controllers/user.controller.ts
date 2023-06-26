@@ -1,6 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import { AuthService } from "../services/auth.service";
-
 import { Types } from "mongoose";
 import { UserRequestBody, RegisterResponse } from "./auth.controller";
 import { UserService } from "../services/user.service";
@@ -10,24 +8,31 @@ export interface ExtendedUserRequestBody extends UserRequestBody {
 }
 class UserController {
   static async update(
-    req: Request<void, RegisterResponse, ExtendedUserRequestBody, void>,
+    req: Request<
+      Record<string, never>,
+      RegisterResponse,
+      ExtendedUserRequestBody,
+      Record<string, never>
+    >,
     res: Response<RegisterResponse>,
     next: NextFunction
   ) {
     try {
       const userBody = req.body;
+      if (userBody?.password) {
+        const passwordRegex = /^(?=.*[A-Z]).{6,}$/;
 
-      const passwordRegex = /^(?=.*[A-Z]).{6,}$/;
-
-      if (!passwordRegex.test(userBody.password)) {
-        return res.status(400).send({
-          status: 400,
-          message:
-            "Password must have at least one uppercase letter and a minimum length of 6 characters",
-          data: null,
-        });
+        if (!passwordRegex.test(userBody.password)) {
+          return res.status(400).send({
+            status: 400,
+            message:
+              "Password must have at least one uppercase letter and a minimum length of 6 characters",
+            data: null,
+          });
+        }
       }
-      const loginResult = await AuthService.login(userBody);
+
+      const loginResult = await UserService.update(userBody);
       if (loginResult) {
         const { findUser, token } = loginResult;
 
@@ -48,7 +53,12 @@ class UserController {
     }
   }
   static async delete(
-    req: Request<{ _id: string }, RegisterResponse, void, void>,
+    req: Request<
+      { _id: string },
+      RegisterResponse,
+      Record<string, never>,
+      Record<string, never>
+    >,
     res: Response<RegisterResponse>,
     next: NextFunction
   ) {
