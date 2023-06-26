@@ -5,15 +5,13 @@ import { ExtendedUserRequestBody } from "../controllers/user.controller";
 class UserService {
   static async update(userBody: ExtendedUserRequestBody) {
     try {
-      const findUser = await User.findByIdAndUpdate(
-        userBody._id,
-        { userBody },
-        { new: true }
-      );
+      const findUser = await User.findByIdAndUpdate(userBody._id, userBody, {
+        new: true,
+      }).select("-salt -password");
       if (!findUser) {
         throw new Error("Usuario no existe");
       }
-      const token = generateToken(findUser);
+      const token = generateToken(findUser._id);
       if (!token) {
         throw new Error("Failed to generate token");
       }
