@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-empty-function */
-
 import { Types } from "mongoose";
 import { generateToken } from "../config/jwt/tokens";
 import User from "../models/User";
@@ -15,7 +14,7 @@ class UserService {
   static getDeliveryPeople() {}
 
   static async updateUserById(userBody: ExtendedUserRequestBody) {
-    const findUser = await User.findByIdAndUpdate(
+    const foundUser = await User.findByIdAndUpdate(
       { _id: userBody._id },
       userBody,
       {
@@ -23,25 +22,30 @@ class UserService {
       }
     ).select("-salt -password");
 
-    if (!findUser) {
-      throw new Error("Usuario no existe");
+    if (!foundUser) {
+      throw new Error("User not found");
     }
-    const token = generateToken(findUser._id);
+
+    const token = generateToken(foundUser._id);
+
     if (!token) {
       throw new Error("Failed to generate token");
     }
-    return { token, findUser };
+
+    return { token, foundUser };
   }
 
   static async deleteUserById(id: string) {
-    const findUser = await User.findByIdAndUpdate(
+    const foundUser = await User.findByIdAndUpdate(
       { _id: id },
       { is_deleted: true },
       { new: true }
     );
-    if (!findUser) {
-      throw new Error("Usuario no existe");
+
+    if (!foundUser) {
+      throw new Error("User not found");
     }
+
     return "";
   }
 

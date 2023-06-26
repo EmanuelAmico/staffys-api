@@ -18,7 +18,7 @@ export interface RegisterResponse {
   message: string;
   status: number;
   data: {
-    newUser?: UserResponse | null | string;
+    user?: UserResponse | null | string;
     token: string | null;
     findUser?: UserResponse | null;
   } | null;
@@ -77,17 +77,18 @@ class AuthController {
         });
       }
 
-      const { userfiltered, token } = await AuthService.register(userBody);
+      const { user, token } = await AuthService.register(userBody);
 
       res.status(200).json({
-        data: { newUser: userfiltered, token },
+        data: { user, token },
         status: 200,
-        message: "User was registered succesfully",
+        message: "User was registered successfully",
       });
     } catch (error) {
       next(error);
     }
   }
+
   static async login(
     req: Request<void, RegisterResponse, LoginRequestBody, void>,
     res: Response<RegisterResponse>,
@@ -111,22 +112,23 @@ class AuthController {
           data: null,
         });
       }
+
       const loginResult = await AuthService.login(userBody);
 
       if (loginResult) {
-        const { foundUser, token } = loginResult;
+        const { user, token } = loginResult;
 
         res.status(200).json({
-          data: { newUser: foundUser, token },
+          data: { user, token },
           status: 200,
-          message: "User succesfully login",
+          message: "User logged in successfully",
         });
       } else {
         return res.status(400).send({
           status: 400,
-          message: "User is have problems to login",
+          message: "There was an error while logging in",
           data: null,
-        }); // Manejo de caso donde loginResult es undefined
+        });
       }
     } catch (error) {
       next(error);

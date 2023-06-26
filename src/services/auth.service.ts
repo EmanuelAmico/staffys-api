@@ -10,11 +10,12 @@ import {
 class AuthService {
   static async register(userBody: UserRequestBody) {
     const newUser = await new User(userBody).save();
+
     if (!newUser) {
       throw new Error("Registration failed");
     }
 
-    const userfiltered = {
+    const user = {
       name: newUser.name,
       lastname: newUser.lastname,
       email: newUser.email,
@@ -25,42 +26,48 @@ class AuthService {
       currentPackage: newUser?.currentPackage,
       historyPackages: newUser?.historyPackages,
     };
+
     const token = generateToken(newUser._id);
+
     if (!token) {
-      throw new Error("token failed");
+      throw new Error("Failed to generate token");
     }
 
-    return { token, userfiltered };
+    return { token, user };
   }
 
   static async login(userBody: LoginRequestBody) {
-    const findUser = await User.findOne({ email: userBody.email });
+    const foundUser = await User.findOne({ email: userBody.email });
 
-    if (!findUser) {
-      throw new Error("User dont exitst");
+    if (!foundUser) {
+      throw new Error("User does not exist");
     }
-    const isValid = await findUser.validatePassword(userBody.password);
+
+    const isValid = await foundUser.validatePassword(userBody.password);
+
     if (!isValid) {
-      throw new Error("Password dont match");
+      throw new Error("Password does not match");
     }
-    const foundUser = {
-      name: findUser.name,
-      lastname: findUser.lastname,
-      email: findUser.email,
-      is_admin: findUser.is_admin,
-      is_active: findUser.is_active,
-      urlphoto: findUser.urlphoto,
-      pendingPackages: findUser?.pendingPackages,
-      currentPackage: findUser?.currentPackage,
-      historyPackages: findUser?.historyPackages,
+
+    const user = {
+      name: foundUser.name,
+      lastname: foundUser.lastname,
+      email: foundUser.email,
+      is_admin: foundUser.is_admin,
+      is_active: foundUser.is_active,
+      urlphoto: foundUser.urlphoto,
+      pendingPackages: foundUser?.pendingPackages,
+      currentPackage: foundUser?.currentPackage,
+      historyPackages: foundUser?.historyPackages,
     };
 
-    const token = generateToken(findUser._id);
+    const token = generateToken(foundUser._id);
+
     if (!token) {
-      throw new Error("token failed");
+      throw new Error("Failed to generate token");
     }
 
-    return { foundUser, token };
+    return { user, token };
   }
 
   static async resetPassword(
