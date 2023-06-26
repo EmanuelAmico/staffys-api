@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import { hash, genSaltSync } from "bcrypt";
 
-interface UserProps extends Document {
+export interface UserProps extends Document {
   name: string;
   lastname: string;
   password: string;
@@ -10,10 +10,12 @@ interface UserProps extends Document {
   is_admin: boolean;
   is_active: boolean;
   urlphoto: string;
+  is_deleted: boolean;
   pendingPackages?: Schema.Types.ObjectId[];
   currentPackage?: Schema.Types.ObjectId;
   historyPackages?: Schema.Types.ObjectId[];
   hashPassword: (password: string, salt: string) => Promise<string>;
+  validatePassword: (password: string) => Promise<boolean>;
 }
 
 const userSchema = new mongoose.Schema<UserProps>(
@@ -26,6 +28,7 @@ const userSchema = new mongoose.Schema<UserProps>(
     is_admin: { type: Boolean, default: false },
     is_active: { type: Boolean, default: false },
     urlphoto: { type: String, required: true },
+    is_deleted: { type: Boolean, default: false },
     pendingPackages: [{ type: mongoose.Schema.Types.ObjectId, ref: "Package" }],
     currentPackage: { type: mongoose.Schema.Types.ObjectId, ref: "Package" },
     historyPackages: [{ type: mongoose.Schema.Types.ObjectId, ref: "Package" }],
@@ -40,6 +43,10 @@ userSchema.methods.hashPassword = async function (
 ) {
   const hashpass = await hash(password, salt);
   return hashpass;
+};
+userSchema.methods.validatePassword = async function (password: string) {
+  const hashpass = await this.hashPassword(password, this.salt);
+  return hashpass === this.password;
 };
 userSchema.pre<UserProps>("save", async function () {
   const salt = genSaltSync();

@@ -1,13 +1,14 @@
 import { sign, verify } from "jsonwebtoken";
+import { Types } from "mongoose";
 
 interface Payload {
-  name: string;
+  _id: Types.ObjectId;
 }
 
 const generateToken = (payload: Payload): string => {
   const secret = process.env.JWT_SECRET as string;
-  const token = sign({ user: payload.name }, secret, {
-    expiresIn: "1d",
+  const token = sign({ user: payload._id }, secret, {
+    expiresIn: "20d",
   });
   return token;
 };
