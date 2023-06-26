@@ -1,15 +1,26 @@
 import { NextFunction, Request, Response } from "express";
 import { AuthService } from "../services/auth.service";
-import { UserProps } from "../models/User";
-// import { JsonWebTokenError, JwtPayload } from "jsonwebtoken";
-// import { CustomRequest } from "../middlewares/auth.middleware";
+import { Schema } from "mongoose";
+
+export interface UserResponse {
+  name: string;
+  lastname: string;
+  email: string;
+  is_admin: boolean;
+  is_active: boolean;
+  urlphoto: string;
+  pendingPackages?: Schema.Types.ObjectId[];
+  currentPackage?: Schema.Types.ObjectId;
+  historyPackages?: Schema.Types.ObjectId[];
+}
+
 export interface RegisterResponse {
   message: string;
   status: number;
   data: {
-    newUser?: UserProps | null | string;
+    newUser?: UserResponse | null | string;
     token: string | null;
-    findUser?: UserProps | null;
+    findUser?: UserResponse | null;
   } | null;
 }
 export interface UserRequestBody {
@@ -39,7 +50,8 @@ class AuthController {
       ];
 
       const missingFields: Array<keyof UserRequestBody> = [];
-      const userBody = req.body as UserRequestBody;
+      const userBody = req.body;
+
       for (const field of requiredFields) {
         if (!userBody[field]) {
           missingFields.push(field);
@@ -65,11 +77,13 @@ class AuthController {
         });
       }
 
-      const { newUser, token } = await AuthService.register(userBody);
+      const { userfiltered, token } = await AuthService.register(userBody);
 
-      res
-        .status(200)
-        .json({ data: { newUser, token }, status: 200, message: "Perfecto" });
+      res.status(200).json({
+        data: { newUser: userfiltered, token },
+        status: 200,
+        message: "User was registered succesfully",
+      });
     } catch (error) {
       next(error);
     }
@@ -80,7 +94,8 @@ class AuthController {
     next: NextFunction
   ) {
     try {
-      const userBody = req.body as LoginRequestBody;
+      const userBody = req.body;
+
       if (!userBody.email) {
         return res
           .status(400)
@@ -97,18 +112,19 @@ class AuthController {
         });
       }
       const loginResult = await AuthService.login(userBody);
+
       if (loginResult) {
-        const { findUser, token } = loginResult;
+        const { foundUser, token } = loginResult;
 
         res.status(200).json({
-          data: { findUser, token },
+          data: { newUser: foundUser, token },
           status: 200,
-          message: "Perfecto",
+          message: "User succesfully login",
         });
       } else {
         return res.status(400).send({
           status: 400,
-          message: "Usuario no se ha loguiado",
+          message: "User is have problems to login",
           data: null,
         }); // Manejo de caso donde loginResult es undefined
       }
