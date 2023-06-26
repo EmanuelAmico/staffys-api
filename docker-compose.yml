@@ -27,7 +27,7 @@ services:
       - /app/dist
       - /app/coverage
     env_file:
-      - ./.env
+      - ./.env.testing
     container_name: staffys_api_local_tests
     ports:
       - 9000:9000
