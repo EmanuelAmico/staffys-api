@@ -8,7 +8,7 @@ interface Payload {
 const generateToken = (payload: Payload): string => {
   const secret = process.env.JWT_SECRET as string;
   const token = sign({ user: payload._id }, secret, {
-    expiresIn: "1d",
+    expiresIn: "20d",
   });
   return token;
 };
