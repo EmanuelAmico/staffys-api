@@ -28,7 +28,7 @@ describe("User Controller", () => {
       expect(isValidObjectIdSpy).not.toHaveBeenCalled();
       await expect(
         UserController.getUserById(mockedReq, mockedRes, mockedNext)
-      ).resolves.not.toBeDefined();
+      ).resolves.toBeUndefined();
       expect(isValidObjectIdSpy).toHaveBeenCalledWith(
         "not a valid ObjectId, even when parsed"
       );
@@ -51,7 +51,7 @@ describe("User Controller", () => {
       expect(isValidObjectIdSpy).not.toHaveBeenCalled();
       await expect(
         UserController.getUserById(mockedReq, mockedRes, mockedNext)
-      ).resolves.not.toBeDefined();
+      ).resolves.toBeUndefined();
       expect(isValidObjectIdSpy).not.toHaveBeenCalled();
       expect(mockedRes.status).toHaveBeenCalledWith(400);
       expect(mockedRes.status).toHaveBeenCalledTimes(1);
@@ -74,7 +74,7 @@ describe("User Controller", () => {
       expect(isValidObjectIdSpy).not.toHaveBeenCalled();
       await expect(
         UserController.getUserById(mockedReq, mockedRes, mockedNext)
-      ).resolves.not.toBeDefined();
+      ).resolves.toBeUndefined();
       expect(isValidObjectIdSpy).not.toHaveBeenCalled();
       expect(mockedRes.status).toHaveBeenCalledWith(400);
       expect(mockedRes.status).toHaveBeenCalledTimes(1);
@@ -108,7 +108,7 @@ describe("User Controller", () => {
       expect(isValidObjectIdSpy).not.toHaveBeenCalled();
       await expect(
         UserController.getUserById(mockedReq, mockedRes, mockedNext)
-      ).resolves.not.toBeDefined();
+      ).resolves.toBeUndefined();
       expect(isValidObjectIdSpy).toHaveBeenCalledWith(user._id.toString());
       expect(getUserByIdServiceSpy).toHaveBeenCalledWith(user._id.toString());
       expect(mockedRes.status).toHaveBeenCalledWith(200);
