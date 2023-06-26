@@ -10,11 +10,7 @@ class UserService {
 
   static getUserById(_id: Types.ObjectId) {}
 
-  static getDeliveryPeople(
-    _req: Request,
-    _res: Response,
-    _next: NextFunction
-  ) {}
+  static getDeliveryPeople() {}
 
   static updateUserById() {}
 
