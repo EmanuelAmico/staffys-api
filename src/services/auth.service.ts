@@ -7,7 +7,7 @@ import {
 class AuthService {
   static async register(userBody: UserRequestBody) {
     try {
-      const token = generateToken(userBody);
+      const token = generateToken(userBody._id);
       if (!token) {
         throw new Error("Failed to generate token");
       }

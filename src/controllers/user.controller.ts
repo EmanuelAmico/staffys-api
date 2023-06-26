@@ -6,8 +6,23 @@ import { UserService } from "../services/user.service";
 export interface ExtendedUserRequestBody extends UserRequestBody {
   _id: Types.ObjectId;
 }
+
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable no-empty-function */
+
+// TODO Remove "_" from unused parameters
 class UserController {
-  static async update(
+  static createUser(_req: Request, _res: Response, _next: NextFunction) {}
+
+  static getUserById(_req: Request, _res: Response, _next: NextFunction) {}
+
+  static getDeliveryPeople(
+    _req: Request,
+    _res: Response,
+    _next: NextFunction
+  ) {}
+
+  static async updateUserById(
     req: Request<
       Record<string, never>,
       RegisterResponse,
@@ -32,7 +47,7 @@ class UserController {
         }
       }
 
-      const loginResult = await UserService.update(userBody);
+      const loginResult = await UserService.updateUserById(userBody);
       if (loginResult) {
         const { findUser, token } = loginResult;
 
@@ -52,7 +67,8 @@ class UserController {
       next(error);
     }
   }
-  static async delete(
+
+  static async deleteUserById(
     req: Request<
       { _id: string },
       RegisterResponse,
@@ -71,7 +87,7 @@ class UserController {
           data: null,
         });
       }
-      await UserService.delete(id);
+      await UserService.deleteUserById(id);
 
       return res.status(200).send({
         status: 200,
@@ -82,6 +98,14 @@ class UserController {
       next(error);
     }
   }
+
+  static takePackage(_req: Request, _res: Response, _next: NextFunction) {}
+
+  static startDelivery(_req: Request, _res: Response, _next: NextFunction) {}
+
+  static finishDelivery(_req: Request, _res: Response, _next: NextFunction) {}
+
+  static cancelDelivery(_req: Request, _res: Response, _next: NextFunction) {}
 }
 
 export { UserController };

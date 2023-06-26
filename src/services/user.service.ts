@@ -1,9 +1,20 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable no-empty-function */
+
+import { Types } from "mongoose";
 import { generateToken } from "../config/jwt/tokens";
 import User from "../models/User";
 import { ExtendedUserRequestBody } from "../controllers/user.controller";
 
+// TODO Remove "_" from unused parameters
 class UserService {
-  static async update(userBody: ExtendedUserRequestBody) {
+  static createUser() {}
+
+  static getUserById(_id: Types.ObjectId) {}
+
+  static getDeliveryPeople() {}
+
+  static async updateUserById(userBody: ExtendedUserRequestBody) {
     try {
       const findUser = await User.findByIdAndUpdate(
         { _id: userBody._id },
@@ -25,7 +36,8 @@ class UserService {
       throw new Error("Update User failed");
     }
   }
-  static async delete(id: string) {
+
+  static async deleteUserById(id: string) {
     try {
       const findUser = await User.findByIdAndUpdate(
         { _id: id },
@@ -40,5 +52,14 @@ class UserService {
       throw new Error("deleted User failed");
     }
   }
+
+  static takePackage() {}
+
+  static startDelivery() {}
+
+  static finishDelivery() {}
+
+  static cancelDelivery() {}
 }
+
 export { UserService };

@@ -42,7 +42,7 @@
     "prettier-staged": "pretty-quick --staged",
     "lint": "eslint . --ext .ts,.js --ignore-path .gitignore --max-warnings=0",
     "lint-staged": "lint-staged",
-    "test": "jest --setupFiles dotenv/config",
+    "test": "DOTENV_CONFIG_PATH=.env.testing jest --setupFiles dotenv/config",
     "test:watch": "jest --watchAll",
     "prepare": "husky install"
   },

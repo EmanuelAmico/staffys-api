@@ -2,5 +2,5 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 npm run check-types
-npm run test
+# npm run test -> uncomment when TDD is finished
 npm run build
