@@ -9,9 +9,6 @@ class AuthService {
     try {
       const newUser = await new User(userBody).save();
 
-      if (!newUser) {
-        throw new Error("Failed to create new user");
-      }
       const userfiltered = {
         name: newUser.name,
         lastname: newUser.lastname,
@@ -24,9 +21,6 @@ class AuthService {
         historyPackages: newUser?.historyPackages,
       };
       const token = generateToken(newUser._id);
-      if (!token) {
-        throw new Error("Failed to generate token");
-      }
 
       return { token, userfiltered };
     } catch (error) {
