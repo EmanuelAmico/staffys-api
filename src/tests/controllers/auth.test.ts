@@ -30,7 +30,7 @@ describe("Auth Controller", () => {
 
       await expect(
         AuthController.resetPassword(mockedReq, mockedRes, mockedNext)
-      ).resolves.not.toBeDefined();
+      ).resolves.toBeUndefined();
       expect(AuthService.resetPassword).not.toHaveBeenCalled();
       expect(mockedRes.status).toHaveBeenCalledWith(400);
       expect(mockedRes.send).toHaveBeenCalledWith({
@@ -58,7 +58,7 @@ describe("Auth Controller", () => {
 
       await expect(
         AuthController.resetPassword(mockedReq, mockedRes, mockedNext)
-      ).resolves.not.toBeDefined();
+      ).resolves.toBeUndefined();
       expect(AuthService.resetPassword).toHaveBeenCalledWith(
         mockedReq.body.email,
         mockedReq.body.code,
@@ -93,7 +93,7 @@ describe("Auth Controller", () => {
 
       await expect(
         AuthController.resetPassword(mockedReq, mockedRes, mockedNext)
-      ).resolves.not.toBeDefined();
+      ).resolves.toBeUndefined();
       expect(AuthService.resetPassword).not.toHaveBeenCalled();
       expect(mockedRes.status).toHaveBeenCalledWith(400);
       expect(mockedRes.send).toHaveBeenCalledWith({
@@ -118,7 +118,7 @@ describe("Auth Controller", () => {
 
       await expect(
         AuthController.resetPassword(mockedReq, mockedRes, mockedNext)
-      ).resolves.not.toBeDefined();
+      ).resolves.toBeUndefined();
       expect(mockedRes.status).toHaveBeenCalledWith(400);
       expect(mockedRes.send).toHaveBeenCalledWith({
         message: "passwords do not match",
@@ -143,7 +143,7 @@ describe("Auth Controller", () => {
 
       await expect(
         AuthController.resetPassword(mockedReq, mockedRes, mockedNext)
-      ).resolves.not.toBeDefined();
+      ).resolves.toBeUndefined();
       expect(AuthService.resetPassword).toHaveBeenCalledWith(
         mockedReq.body.email,
         mockedReq.body.code,
@@ -155,7 +155,7 @@ describe("Auth Controller", () => {
           mockedReq.body.code,
           mockedReq.body.password
         )
-      ).resolves.not.toBeDefined();
+      ).resolves.toBeUndefined();
       expect(mockedRes.status).toHaveBeenCalledWith(200);
       expect(mockedRes.send).toHaveBeenCalledWith({
         message: "password reset successfully",

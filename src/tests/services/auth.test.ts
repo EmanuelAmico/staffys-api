@@ -69,7 +69,7 @@ describe("Auth Service", () => {
           123456,
           "validPassword1234"
         )
-      ).resolves.not.toBeDefined();
+      ).resolves.toBeUndefined();
       expect(resetPasswordServiceSpy).toHaveBeenCalledWith(
         "validEmail",
         123456,
