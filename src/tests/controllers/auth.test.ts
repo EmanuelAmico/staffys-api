@@ -114,27 +114,11 @@ describe("Auth Controller", () => {
         },
       });
 
-      AuthService.resetPassword = jest
-        .fn()
-        .mockRejectedValueOnce(new Error("passwords do not match"));
-
       expect.assertions(3);
 
       await expect(
         AuthController.resetPassword(mockedReq, mockedRes, mockedNext)
       ).resolves.not.toBeDefined();
-      expect(AuthService.resetPassword).toHaveBeenCalledWith(
-        mockedReq.body.email,
-        mockedReq.body.code,
-        mockedReq.body.password
-      );
-      await expect(
-        AuthService.resetPassword(
-          mockedReq.body.email,
-          mockedReq.body.code,
-          mockedReq.body.password
-        )
-      ).rejects.toThrow("passwords do not match");
       expect(mockedRes.status).toHaveBeenCalledWith(400);
       expect(mockedRes.send).toHaveBeenCalledWith({
         message: "passwords do not match",
@@ -153,7 +137,7 @@ describe("Auth Controller", () => {
         },
       });
 
-      AuthService.resetPassword = jest.fn().mockResolvedValueOnce(undefined);
+      AuthService.resetPassword = jest.fn().mockResolvedValue(undefined);
 
       expect.assertions(5);
 

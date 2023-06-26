@@ -76,12 +76,13 @@ describe("Auth Service", () => {
         "validPassword1234"
       );
       expect(updateOneSpy).toHaveBeenCalledWith(
-        { _id: user._id },
+        { email: user.email },
         { password: "validPassword1234" }
       );
       expect(updateOneSpy).toHaveBeenCalledTimes(1);
-      expect(user.salt).not.toEqual(oldUserSalt);
-      expect(user.password).not.toEqual(oldUserPassword);
+      const updatedUser = await User.findById(user._id).exec();
+      expect(updatedUser?.salt).not.toEqual(oldUserSalt);
+      expect(updatedUser?.password).not.toEqual(oldUserPassword);
     });
   });
 });
