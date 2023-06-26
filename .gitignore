@@ -3,6 +3,7 @@
 
 # Archivo de configuración de entorno local
 /.env
+/.env.testing
 
 # Archivos generados al ejecutar la aplicación
 /dist
