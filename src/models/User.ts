@@ -6,7 +6,7 @@ export interface UserProps extends Document {
   lastname: string;
   password: string;
   email: string;
-  salt?: string;
+  salt: string;
   is_admin: boolean;
   is_active: boolean;
   urlphoto: string;
