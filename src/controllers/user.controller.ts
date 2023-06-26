@@ -47,19 +47,19 @@ class UserController {
         }
       }
 
-      const loginResult = await UserService.updateUserById(userBody);
-      if (loginResult) {
-        const { findUser, token } = loginResult;
+      const updateuser = await UserService.updateUserById(userBody);
+      if (updateuser) {
+        const { findUser, token } = updateuser;
 
         res.status(200).json({
           data: { findUser, token },
           status: 200,
-          message: "Perfecto",
+          message: "User updated",
         });
       } else {
         return res.status(400).send({
           status: 400,
-          message: "Usuario no se ha loguiado",
+          message: "User not updated",
           data: null,
         }); // Manejo de caso donde loginResult es undefined
       }
