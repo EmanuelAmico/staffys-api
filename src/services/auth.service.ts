@@ -33,11 +33,11 @@ class AuthService {
       const findUser = await User.findOne({ email: userBody.email });
 
       if (!findUser) {
-        throw new Error("Usuario no existe");
+        throw new Error("User dont exitst");
       }
       const isValid = await findUser.validatePassword(userBody.password);
       if (!isValid) {
-        throw new Error("No coincide la contaseña");
+        throw new Error("Password dont match");
       }
       const foundUser = {
         name: findUser.name,
