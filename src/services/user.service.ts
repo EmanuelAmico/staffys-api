@@ -15,42 +15,34 @@ class UserService {
   static getDeliveryPeople() {}
 
   static async updateUserById(userBody: ExtendedUserRequestBody) {
-    try {
-      const findUser = await User.findByIdAndUpdate(
-        { _id: userBody._id },
-        userBody,
-        {
-          new: true,
-        }
-      ).select("-salt -password");
+    const findUser = await User.findByIdAndUpdate(
+      { _id: userBody._id },
+      userBody,
+      {
+        new: true,
+      }
+    ).select("-salt -password");
 
-      if (!findUser) {
-        throw new Error("Usuario no existe");
-      }
-      const token = generateToken(findUser._id);
-      if (!token) {
-        throw new Error("Failed to generate token");
-      }
-      return { token, findUser };
-    } catch (error) {
-      throw new Error("Update User failed");
+    if (!findUser) {
+      throw new Error("Usuario no existe");
     }
+    const token = generateToken(findUser._id);
+    if (!token) {
+      throw new Error("Failed to generate token");
+    }
+    return { token, findUser };
   }
 
   static async deleteUserById(id: string) {
-    try {
-      const findUser = await User.findByIdAndUpdate(
-        { _id: id },
-        { is_deleted: true },
-        { new: true }
-      );
-      if (!findUser) {
-        throw new Error("Usuario no existe");
-      }
-      return "";
-    } catch (error) {
-      throw new Error("deleted User failed");
+    const findUser = await User.findByIdAndUpdate(
+      { _id: id },
+      { is_deleted: true },
+      { new: true }
+    );
+    if (!findUser) {
+      throw new Error("Usuario no existe");
     }
+    return "";
   }
 
   static takePackage() {}
