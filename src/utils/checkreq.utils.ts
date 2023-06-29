@@ -1,27 +1,57 @@
 import { Types } from "mongoose";
+
 interface IParameter {
   field: string;
-  type: string | null | undefined | unknown | Types.ObjectId;
+  type:
+    | "string"
+    | "boolean"
+    | "number"
+    | "password"
+    | null
+    | undefined
+    | typeof Types.ObjectId;
 }
+
+const checkPassword = (password: string) => {
+  const passwordRegex = /^(?=.*[A-Z]).{6,}$/;
+
+  if (!passwordRegex.test(password)) {
+    throw new Error(
+      "Password must have at least one uppercase letter and a minimum length of 6 characters"
+    );
+  }
+};
+
 const checkNotAllowedParameters = (
-  object: Record<
-    string,
-    object | string | number | boolean | null | undefined | unknown
-  >,
+  object: Record<string, object | string | number | boolean | null | undefined>,
   allowedParameters: string[],
-  allowedTypes: (string | null | undefined | unknown)[]
+  allowedTypes: (
+    | "string"
+    | "boolean"
+    | "number"
+    | "password"
+    | null
+    | undefined
+    | typeof Types.ObjectId
+  )[]
 ) => {
   const incorrectProperties = allowedParameters.filter((key, index) => {
     const type = allowedTypes[index];
     const value = object[key];
+
     if (type === null && value === null) {
       return false;
     }
-    if (type === Types.ObjectId) {
-      if (!Types.ObjectId.isValid(value as string)) {
+
+    if (type === Types.ObjectId && typeof value === "string") {
+      if (!Types.ObjectId.isValid(value)) {
         throw new Error("the id is not an ObjectId");
       }
       return false;
+    }
+
+    if (type === "password" && typeof value === "string") {
+      return checkPassword(value);
     }
 
     return typeof value !== type;
@@ -34,6 +64,7 @@ const checkNotAllowedParameters = (
   }
   return;
 };
+
 const checkRequiredParameters = (
   object: Record<
     string,
@@ -59,29 +90,13 @@ const checkRequiredParameters = (
 
   return;
 };
-const checkPassword = (password: string) => {
-  const passwordRegex = /^(?=.*[A-Z]).{6,}$/;
-
-  if (!passwordRegex.test(password)) {
-    throw new Error(
-      "Password must have at least one uppercase letter and a minimum length of 6 characters"
-    );
-  }
-};
 
 export const checkProperties = (
-  object: Record<
-    string,
-    object | string | number | boolean | null | undefined | unknown
-  >,
-
+  object: Record<string, object | string | number | boolean | null | undefined>,
   params: IParameter[]
 ) => {
   const allowedParameters = params.map(({ field }) => field);
   const allowedTypes = params.map(({ type }) => type);
   checkRequiredParameters(object, allowedParameters);
   checkNotAllowedParameters(object, allowedParameters, allowedTypes);
-  if (object.password && typeof object.password === "string") {
-    checkPassword(object.password);
-  }
 };
