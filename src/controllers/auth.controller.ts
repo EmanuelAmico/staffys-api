@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { AuthService } from "../services/auth.service";
 import { Schema } from "mongoose";
-// import { checkProperties } from "../utils/checkreq.utils";
+import { checkProperties } from "../utils/checkreq.utils";
 
 export interface UserResponse {
   name: string;
@@ -43,13 +43,13 @@ class AuthController {
   ) {
     try {
       const userBody: UserRequestBody = req.body;
-      // checkProperties(userBody, [
-      //   { field: "name", type: "string" },
-      //   { field: "lastname", type: "string" },
-      //   { field: "password", type: "string" },
-      //   { field: "email", type: "string" },
-      //   { field: "urlphoto", type: "string" },
-      // ]);
+      checkProperties({ ...userBody }, [
+        { field: "name", type: "string" },
+        { field: "lastname", type: "string" },
+        { field: "password", type: "string" },
+        { field: "email", type: "string" },
+        { field: "urlphoto", type: "string" },
+      ]);
       const { userFiltered, token } = await AuthService.register(userBody);
 
       res.status(200).json({
@@ -69,10 +69,10 @@ class AuthController {
     try {
       const userBody = req.body;
 
-      // checkProperties(userBody, [
-      //   { field: "password", type: "string" },
-      //   { field: "email", type: "string" },
-      // ]);
+      checkProperties({ ...userBody }, [
+        { field: "password", type: "string" },
+        { field: "email", type: "string" },
+      ]);
 
       const loginResult = await AuthService.login(userBody);
 
