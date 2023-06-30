@@ -20,7 +20,7 @@ export interface RegisterResponse {
   data: {
     user?: UserResponse | null | string;
     token: string | null;
-    findUser?: UserResponse | null;
+    foundUser?: UserResponse | null;
   } | null;
 }
 export interface UserRequestBody {
@@ -135,8 +135,34 @@ class AuthController {
     }
   }
 
+  static async initResetPassword(
+    req: Request<
+      unknown,
+      unknown,
+      {
+        email: string;
+      },
+      unknown
+    >,
+    res: Response<unknown>,
+    next: NextFunction
+  ) {
+    try {
+      const email = req.body.email;
+      await AuthService.initResetPassword(email);
+
+      res.status(200).send({
+        status: 200,
+        message: "Started reset password process",
+        data: null,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async resetPassword(
-    _req: Request<
+    req: Request<
       unknown,
       unknown,
       {
@@ -147,10 +173,31 @@ class AuthController {
       },
       unknown
     >,
-    _res: Response<unknown>,
-    _next: NextFunction
-    // eslint-disable-next-line no-empty-function, @typescript-eslint/no-empty-function
-  ) {}
+    res: Response<unknown>,
+    next: NextFunction
+  ) {
+    try {
+      const { email, code, password, confirmPassword } = req.body;
+
+      if (password !== confirmPassword) {
+        return res.status(400).send({
+          status: 400,
+          message: "Passwords do not match",
+          data: null,
+        });
+      }
+
+      await AuthService.resetPassword(email, code, password);
+
+      res.status(200).send({
+        status: 200,
+        message: "Password reset successfully",
+        data: null,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export { AuthController };

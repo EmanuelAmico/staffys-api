@@ -9,7 +9,6 @@ import cors from "cors";
 import morgan from "morgan";
 import { envs } from "./config/env/env.config";
 import connectToDB from "./config/db";
-import History from "./models/History";
 import { allRoutes } from "./routes";
 
 const { PORT, BACKOFFICE_CLIENT_HOST, DELIVERY_CLIENT_HOST } = envs;
@@ -27,18 +26,6 @@ app.use("/", allRoutes);
 
 app.use((error: Error, _req: Request, res: Response, _next: NextFunction) => {
   res.status(500).send(error.message);
-});
-
-app.post("/testHistory", async (req: Request, res: Response) => {
-  try {
-    const newDay = await History.create(req.body);
-    newDay.save();
-    res.send(newDay);
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.log(err);
-    res.sendStatus(500);
-  }
 });
 
 if (

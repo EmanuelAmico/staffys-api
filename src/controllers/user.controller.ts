@@ -47,12 +47,12 @@ class UserController {
         }
       }
 
-      const updateuser = await UserService.updateUserById(userBody);
-      if (updateuser) {
-        const { findUser, token } = updateuser;
+      const updatedUser = await UserService.updateUserById(userBody);
+      if (updatedUser) {
+        const { foundUser, token } = updatedUser;
 
         res.status(200).json({
-          data: { findUser, token },
+          data: { foundUser, token },
           status: 200,
           message: "User updated",
         });
