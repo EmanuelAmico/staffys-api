@@ -13,7 +13,7 @@ interface IParameter {
 }
 
 const checkPassword = (password: string) => {
-  const passwordRegex = /^(?=.*[A-Z]).{6,}$/;
+  const passwordRegex = /^(?=.*\d).{8,}$/;
 
   if (!passwordRegex.test(password)) {
     throw new Error(
@@ -22,7 +22,7 @@ const checkPassword = (password: string) => {
   }
 };
 
-const checkNotAllowedParameters = (
+const checkTypes = (
   object: Record<string, object | string | number | boolean | null | undefined>,
   allowedParameters: string[],
   allowedTypes: (
@@ -35,34 +35,37 @@ const checkNotAllowedParameters = (
     | typeof Types.ObjectId
   )[]
 ) => {
-  const incorrectProperties = allowedParameters.filter((key, index) => {
+  const incorrectProperties: Record<string, string> = {}; // Objeto para almacenar las propiedades incorrectas y sus tipos esperados
+
+  allowedParameters.forEach((key, index) => {
     const type = allowedTypes[index];
     const value = object[key];
 
     if (type === null && value === null) {
-      return false;
+      return;
     }
 
     if (type === Types.ObjectId && typeof value === "string") {
       if (!Types.ObjectId.isValid(value)) {
-        throw new Error("the id is not an ObjectId");
+        incorrectProperties[key] = "ObjectId";
       }
-      return false;
+      return;
     }
 
     if (type === "password" && typeof value === "string") {
       return checkPassword(value);
     }
 
-    return typeof value !== type;
+    if (typeof value !== type) {
+      incorrectProperties[key] = type as string;
+    }
   });
 
-  if (incorrectProperties.length > 0) {
+  if (Object.keys(incorrectProperties).length > 0) {
     throw new Error(
-      "Properties with incorrect types:" + incorrectProperties.join(",")
+      "Properties with incorrect types: " + JSON.stringify(incorrectProperties)
     );
   }
-  return;
 };
 
 const checkRequiredParameters = (
@@ -98,5 +101,5 @@ export const checkProperties = (
   const allowedParameters = params.map(({ field }) => field);
   const allowedTypes = params.map(({ type }) => type);
   checkRequiredParameters(object, allowedParameters);
-  checkNotAllowedParameters(object, allowedParameters, allowedTypes);
+  checkTypes(object, allowedParameters, allowedTypes);
 };
