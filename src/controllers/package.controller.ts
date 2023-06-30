@@ -5,6 +5,7 @@ import { NextFunction, Request, Response } from "express";
 // import { checkProperties } from "../utils/checkreq.utils";
 import { PackageProps } from "../models/Package";
 import { PackageService } from "../services";
+import { checkProperties } from "../utils/checkreq.utils";
 export interface PackageResponse {
   message: string;
   status: number;
@@ -17,21 +18,32 @@ class PackageController {
   static async getAvailablePackagesByCurrentLocation(
     req: Request<
       Record<string, never>,
-      Response<PackageProps[]>,
+      Response<PackageResponse>,
       { userLatitude: number; userLongitude: number },
       Record<string, never>
     >,
-    res: Response<PackageProps[]>,
+    res: Response<PackageResponse>,
     next: NextFunction
   ) {
     try {
       const { userLatitude, userLongitude } = req.body;
+      checkProperties(req.body, [
+        {
+          field: "userLatitude",
+          type: "number",
+        },
+        { field: "userLongitude", type: "number" },
+      ]);
       const packages =
         await PackageService.getAvailablePackagesByCurrentLocation(
           userLatitude,
           userLongitude
         );
-      res.send(packages);
+      return res.send({
+        status: 200,
+        message: "Packages by current location",
+        data: { packages },
+      }); // M
     } catch (error) {
       next(error);
     }
