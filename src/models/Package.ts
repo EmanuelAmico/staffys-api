@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
-
-interface PackageProps extends Document {
+import { geocodeAddress } from "../utils/googleApiDistance.utils";
+export interface PackageProps extends Document {
   title: string;
   description: string;
   address: string;
@@ -10,6 +10,12 @@ interface PackageProps extends Document {
   deliveredAt: Date | undefined;
   status: "taken" | "in_progress" | "delivered" | undefined;
   deadlines: Date;
+  city: string;
+  coordinates?: {
+    lat: number;
+    lng: number;
+  };
+  distance?: string | number;
 }
 
 const PackageSchema = new Schema<PackageProps>(
@@ -23,11 +29,31 @@ const PackageSchema = new Schema<PackageProps>(
     deliveredAt: { type: Date, default: undefined },
     status: { type: String, default: undefined },
     deadlines: { type: Date, required: true },
+    city: { type: String, required: true },
+    coordinates: {
+      lat: Number,
+      lng: Number,
+    },
   },
   {
     timestamps: true,
   }
 );
+PackageSchema.pre<PackageProps>("save", async function () {
+  try {
+    const { address, city } = this;
+    const geocodeResult = await geocodeAddress(address, city);
+    if (geocodeResult) {
+      const { lat, lng } = geocodeResult;
+
+      this.coordinates = { lat, lng };
+    } else {
+      throw new Error("No coordinates found for the provided address");
+    }
+  } catch (error) {
+    console.error(error);
+  }
+});
 
 const Package = model<PackageProps>("Package", PackageSchema);
 
