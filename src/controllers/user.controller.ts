@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { Types } from "mongoose";
 import { UserRequestBody, RegisterResponse } from "./auth.controller";
 import { UserService } from "../services/user.service";
+import { checkProperties } from "../utils/checkreq.utils";
 
 export interface ExtendedUserRequestBody extends UserRequestBody {
   _id: Types.ObjectId;
@@ -34,34 +35,25 @@ class UserController {
   ) {
     try {
       const userBody = req.body;
-      if (userBody?.password) {
-        const passwordRegex = /^(?=.*[A-Z]).{6,}$/;
-
-        if (!passwordRegex.test(userBody.password)) {
-          return res.status(400).send({
-            status: 400,
-            message:
-              "Password must have at least one uppercase letter and a minimum length of 6 characters",
-            data: null,
-          });
-        }
-      }
+      checkProperties({ _id: userBody._id }, [
+        { field: "_id", type: Types.ObjectId },
+      ]);
 
       const updateuser = await UserService.updateUserById(userBody);
       if (updateuser) {
-        const { findUser, token } = updateuser;
+        const { updatedUser } = updateuser;
 
         res.status(200).json({
-          data: { findUser, token },
+          data: { findUser: updatedUser, token: null },
           status: 200,
           message: "User updated",
         });
       } else {
-        return res.status(400).send({
+        return res.send({
           status: 400,
           message: "User not updated",
           data: null,
-        }); // Manejo de caso donde loginResult es undefined
+        });
       }
     } catch (error) {
       next(error);
@@ -80,13 +72,7 @@ class UserController {
   ) {
     try {
       const id = req.params._id;
-      if (!id) {
-        return res.status(400).send({
-          status: 400,
-          message: "There is no id",
-          data: null,
-        });
-      }
+      checkProperties({ _id: id }, [{ field: "_id", type: Types.ObjectId }]);
       await UserService.deleteUserById(id);
 
       return res.status(200).send({
