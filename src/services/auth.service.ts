@@ -9,20 +9,12 @@ class AuthService {
     try {
       const newUser = await new User(userBody).save();
 
-      const userfiltered = {
-        name: newUser.name,
-        lastname: newUser.lastname,
-        email: newUser.email,
-        is_admin: newUser.is_admin,
-        is_active: newUser.is_active,
-        urlphoto: newUser.urlphoto,
-        pendingPackages: newUser?.pendingPackages,
-        currentPackage: newUser?.currentPackage,
-        historyPackages: newUser?.historyPackages,
-      };
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, salt, ...userFiltered } = newUser.toObject();
+
       const token = generateToken(newUser._id);
 
-      return { token, userfiltered };
+      return { token, userFiltered };
     } catch (error) {
       throw new Error("Registration failed");
     }
@@ -39,17 +31,8 @@ class AuthService {
       if (!isValid) {
         throw new Error("No coincide la contaseña");
       }
-      const foundUser = {
-        name: findUser.name,
-        lastname: findUser.lastname,
-        email: findUser.email,
-        is_admin: findUser.is_admin,
-        is_active: findUser.is_active,
-        urlphoto: findUser.urlphoto,
-        pendingPackages: findUser?.pendingPackages,
-        currentPackage: findUser?.currentPackage,
-        historyPackages: findUser?.historyPackages,
-      };
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, salt, ...foundUser } = findUser.toObject();
 
       const token = generateToken(findUser._id);
 
