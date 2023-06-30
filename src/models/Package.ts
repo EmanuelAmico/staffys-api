@@ -15,7 +15,7 @@ export interface PackageProps extends Document {
     lat: number;
     lng: number;
   };
-  distance?: string | number;
+  distance?: number | null;
 }
 
 const PackageSchema = new Schema<PackageProps>(

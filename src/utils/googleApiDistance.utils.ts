@@ -1,4 +1,9 @@
 import axios from "axios";
+
+const parseDistance = (distanceText: string): number => {
+  const distanceValue = parseFloat(distanceText.replace(/[^0-9.]/g, ""));
+  return distanceValue;
+};
 export const geocodeAddress = async (address: string, province: string) => {
   const countryFilter = "country:AR";
   const provinceFilter = `administrative_area:${encodeURIComponent(province)}`;
@@ -39,8 +44,10 @@ export const calculateDistanceUsingDirectionsAPI = async (
       response.data.routes[0].legs &&
       response.data.routes[0].legs.length > 0
     ) {
-      const distance = response.data.routes[0].legs[0].distance.text;
-      return distance;
+      const distanceText = response.data.routes[0].legs[0].distance.text;
+      const distanceInKm = parseDistance(distanceText);
+
+      return distanceInKm;
     }
 
     return null;

@@ -33,6 +33,12 @@ class PackageService {
         return { ...pkg.toObject(), distance };
       })
     );
+    updatedPackages.sort((a, b) => {
+      const distanceA = a.distance || 0;
+      const distanceB = b.distance || 0;
+      return distanceA - distanceB;
+    });
+
     return updatedPackages;
   }
 }
