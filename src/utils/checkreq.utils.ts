@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { APIError } from "./error.utils";
 
 interface IParameter {
   field: string;
@@ -10,16 +11,19 @@ interface IParameter {
     | "email"
     | null
     | undefined
-    | typeof Types.ObjectId;
+    | typeof Types.ObjectId
+    | Types.ObjectId;
 }
 
 const checkPassword = (password: string) => {
   const passwordRegex = /^(?=.*\d).{8,}$/;
 
   if (!passwordRegex.test(password)) {
-    throw new Error(
-      "Password must have at least one uppercase letter and a minimum length of 6 characters"
-    );
+    throw new APIError({
+      message:
+        "Password must have at least one uppercase letter and a minimum length of 6 characters",
+      status: 400,
+    });
   }
 };
 
@@ -43,6 +47,7 @@ const checkTypes = (
     | null
     | undefined
     | typeof Types.ObjectId
+    | Types.ObjectId
   )[]
 ) => {
   const incorrectProperties: Record<string, string> = {}; // Objeto para almacenar las propiedades incorrectas y sus tipos esperados
@@ -76,9 +81,12 @@ const checkTypes = (
   });
 
   if (Object.keys(incorrectProperties).length > 0) {
-    throw new Error(
-      "Properties with incorrect types: " + JSON.stringify(incorrectProperties)
-    );
+    throw new APIError({
+      message:
+        "Properties with incorrect types: " +
+        JSON.stringify(incorrectProperties),
+      status: 400,
+    });
   }
 };
 
@@ -93,23 +101,40 @@ const checkRequiredParameters = (
     (key) => !(key in object) || object[key] === undefined
   );
   if (missingParameters.length > 0) {
-    throw new Error("This fields are required:" + missingParameters.join(","));
+    throw new APIError({
+      message: "This fields are required:" + missingParameters.join(","),
+      status: 400,
+    });
   }
   const extraProperties = Object.keys(object).filter(
     (key) => !allowedParameters.includes(key)
   );
 
   if (extraProperties.length > 0) {
-    throw new Error(
-      "Extra properties not allowed: " + extraProperties.join(",")
-    );
+    throw new APIError({
+      message: "Extra properties not allowed: " + extraProperties.join(","),
+      status: 400,
+    });
   }
 
   return;
 };
 
-export const checkProperties = (
-  object: Record<string, object | string | number | boolean | null | undefined>,
+export const checkProperties = <
+  T extends Partial<
+    Record<
+      keyof T,
+      | string
+      | number
+      | boolean
+      | null
+      | undefined
+      | typeof Types.ObjectId
+      | Types.ObjectId
+    >
+  >
+>(
+  object: T,
   params: IParameter[]
 ) => {
   const allowedParameters = params.map(({ field }) => field);
