@@ -18,35 +18,35 @@ class AuthService {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, salt, ...userFiltered } = newUser.toObject();
+    const { password, salt, ...user } = newUser.toObject();
 
     const token = generateToken(newUser._id);
 
-    return { token, userFiltered };
+    return { token, user };
   }
 
   static async login(userBody: LoginRequestBody) {
-    const findUser = await User.findOne({ email: userBody.email });
+    const foundUser = await User.findOne({ email: userBody.email });
 
-    if (!findUser) {
+    if (!foundUser) {
       throw new APIError({
-        message: "User was not found",
+        message: "User does not exist",
         status: 404,
       });
     }
-    const isValid = await findUser.validatePassword(userBody.password);
+    const isValid = await foundUser.validatePassword(userBody.password);
     if (!isValid) {
       throw new APIError({
-        message: "Password was not validated",
+        message: "Password does not match",
         status: 404,
       });
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, salt, ...foundUser } = findUser.toObject();
+    const { password, salt, ...user } = foundUser.toObject();
 
-    const token = generateToken(findUser._id);
+    const token = generateToken(foundUser._id);
 
-    return { foundUser, token };
+    return { user, token };
   }
 
   static async resetPassword(

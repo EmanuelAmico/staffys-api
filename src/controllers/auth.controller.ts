@@ -19,7 +19,7 @@ export interface RegisterResponse {
   message: string;
   status: number;
   data: {
-    newUser?: UserResponse | null | string;
+    user?: UserResponse | null | string;
     token: string | null;
     findUser?: UserResponse | null;
   } | null;
@@ -50,10 +50,10 @@ class AuthController {
         { field: "email", type: "string" },
         { field: "urlphoto", type: "string" },
       ]);
-      const { userFiltered, token } = await AuthService.register(userBody);
+      const { user, token } = await AuthService.register(userBody);
 
       res.status(200).json({
-        data: { newUser: userFiltered, token },
+        data: { user, token },
         status: 200,
         message: "User was registered succesfully",
       });
@@ -76,12 +76,12 @@ class AuthController {
 
       const loginResult = await AuthService.login(userBody);
 
-      const { foundUser, token } = loginResult;
+      const { user, token } = loginResult;
 
       res.status(200).json({
-        data: { newUser: foundUser, token },
+        data: { user, token },
         status: 200,
-        message: "User succesfully login",
+        message: "User logged in successfully",
       });
     } catch (error) {
       next(error);
