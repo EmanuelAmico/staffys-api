@@ -76,21 +76,13 @@ class AuthController {
 
       const loginResult = await AuthService.login(userBody);
 
-      if (loginResult) {
-        const { foundUser, token } = loginResult;
+      const { foundUser, token } = loginResult;
 
-        res.json({
-          data: { newUser: foundUser, token },
-          status: 200,
-          message: "User succesfully login",
-        });
-      } else {
-        return res.send({
-          status: 400,
-          message: "User is have problems to login",
-          data: null,
-        });
-      }
+      res.status(200).json({
+        data: { newUser: foundUser, token },
+        status: 200,
+        message: "User succesfully login",
+      });
     } catch (error) {
       next(error);
     }
