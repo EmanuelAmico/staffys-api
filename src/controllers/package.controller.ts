@@ -2,7 +2,6 @@
 /* eslint-disable no-empty-function */
 
 import { NextFunction, Request, Response } from "express";
-// import { checkProperties } from "../utils/checkreq.utils";
 import { PackageProps } from "../models/Package";
 import { PackageService } from "../services";
 import { checkProperties } from "../utils/checkreq.utils";

@@ -4,6 +4,7 @@ const parseDistance = (distanceText: string): number => {
   const distanceValue = parseFloat(distanceText.replace(/[^0-9.]/g, ""));
   return distanceValue;
 };
+
 export const geocodeAddress = async (address: string, province: string) => {
   const countryFilter = "country:AR";
   const provinceFilter = `administrative_area:${encodeURIComponent(province)}`;

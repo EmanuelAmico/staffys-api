@@ -1,5 +1,7 @@
 import { Schema, model } from "mongoose";
 import { geocodeAddress } from "../utils/googleApiDistance.utils";
+import { APIError } from "../utils/error.utils";
+
 export interface PackageProps extends Document {
   title: string;
   description: string;
@@ -43,13 +45,15 @@ PackageSchema.pre<PackageProps>("save", async function () {
   try {
     const { address, city } = this;
     const geocodeResult = await geocodeAddress(address, city);
-    if (geocodeResult) {
-      const { lat, lng } = geocodeResult;
+    if (!geocodeResult)
+      throw new APIError({
+        message: "No coordinates found for the provided address",
+        status: 404,
+      });
 
-      this.coordinates = { lat, lng };
-    } else {
-      throw new Error("No coordinates found for the provided address");
-    }
+    const { lat, lng } = geocodeResult;
+
+    this.coordinates = { lat, lng };
   } catch (error) {
     console.error(error);
   }

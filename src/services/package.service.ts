@@ -2,6 +2,7 @@
 /* eslint-disable no-empty-function */
 import Package from "../models/Package";
 import { calculateDistanceUsingDirectionsAPI } from "../utils/googleApiDistance.utils";
+import { APIError } from "../utils/error.utils";
 
 class PackageService {
   static createHistory() {}
@@ -15,31 +16,41 @@ class PackageService {
     userLongitude: number
   ) {
     const packages = await Package.find();
-    const updatedPackages = await Promise.all(
-      packages.map(async (pkg) => {
-        const { coordinates } = pkg;
-        if (!coordinates) {
-          return pkg;
-        }
-        const { lat, lng } = coordinates;
 
-        const distance = await calculateDistanceUsingDirectionsAPI(
-          userLatitude,
-          userLongitude,
-          lat,
-          lng
-        );
+    const coordinates = packages.map((pkg) => pkg.coordinates);
 
-        return { ...pkg.toObject(), distance };
-      })
-    );
-    updatedPackages.sort((a, b) => {
-      const distanceA = a.distance || 0;
-      const distanceB = b.distance || 0;
-      return distanceA - distanceB;
-    });
+    try {
+      const distances = await Promise.all(
+        coordinates.map((coordinate) => {
+          if (coordinate) {
+            return calculateDistanceUsingDirectionsAPI(
+              userLatitude,
+              userLongitude,
+              coordinate.lat,
+              coordinate.lng
+            );
+          }
+          return null;
+        })
+      );
+      const packagesWithDistance = packages.map((pkg, index) => ({
+        ...pkg.toObject(),
+        distance: distances[index],
+      }));
 
-    return updatedPackages;
+      packagesWithDistance.sort((a, b) => {
+        const distanceA = a.distance || 0;
+        const distanceB = b.distance || 0;
+        return distanceA - distanceB;
+      });
+
+      return packagesWithDistance;
+    } catch (error) {
+      throw new APIError({
+        message: "Error occurred during distance calculation",
+        status: 404,
+      });
+    }
   }
 }
 

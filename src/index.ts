@@ -11,6 +11,7 @@ import { envs } from "./config/env/env.config";
 import connectToDB from "./config/db";
 import History from "./models/History";
 import { allRoutes } from "./routes";
+import { APIError } from "./utils/error.utils";
 
 const { PORT, BACKOFFICE_CLIENT_HOST, DELIVERY_CLIENT_HOST } = envs;
 const app = express();
@@ -25,9 +26,15 @@ app.use(urlencoded({ extended: false }));
 
 app.use("/", allRoutes);
 
-app.use((error: Error, _req: Request, res: Response, _next: NextFunction) => {
-  res.status(500).send(error.message);
-});
+app.use(
+  (error: APIError, _req: Request, res: Response, _next: NextFunction) => {
+    res.status(error.status).send({
+      status: error.status,
+      message: error.message,
+      data: null,
+    });
+  }
+);
 
 app.post("/testHistory", async (req: Request, res: Response) => {
   try {
