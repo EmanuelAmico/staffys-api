@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable no-empty-function */
 import { generateToken } from "../config/jwt/tokens";
 import User from "../models/User";
 import {
@@ -46,6 +48,12 @@ class AuthService {
 
     return { foundUser, token };
   }
+
+  static async resetPassword(
+    _email: string,
+    _code: number,
+    _password: string
+  ) {}
 }
 
 export { AuthService };

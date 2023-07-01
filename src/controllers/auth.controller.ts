@@ -95,6 +95,23 @@ class AuthController {
       next(error);
     }
   }
+
+  static async resetPassword(
+    _req: Request<
+      unknown,
+      unknown,
+      {
+        email: string;
+        code: number;
+        password: string;
+        confirmPassword: string;
+      },
+      unknown
+    >,
+    _res: Response<unknown>,
+    _next: NextFunction
+    // eslint-disable-next-line no-empty-function, @typescript-eslint/no-empty-function
+  ) {}
 }
 
 export { AuthController };

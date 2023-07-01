@@ -6,10 +6,11 @@ export interface UserProps extends Document {
   lastname: string;
   password: string;
   email: string;
-  salt?: string;
+  salt: string;
   is_admin: boolean;
   is_active: boolean;
   urlphoto: string;
+  is_deleted: boolean;
   pendingPackages?: Schema.Types.ObjectId[];
   currentPackage?: Schema.Types.ObjectId;
   historyPackages?: Schema.Types.ObjectId[];
@@ -27,6 +28,7 @@ const userSchema = new mongoose.Schema<UserProps>(
     is_admin: { type: Boolean, default: false },
     is_active: { type: Boolean, default: false },
     urlphoto: { type: String, required: true },
+    is_deleted: { type: Boolean, default: false },
     pendingPackages: [{ type: mongoose.Schema.Types.ObjectId, ref: "Package" }],
     currentPackage: { type: mongoose.Schema.Types.ObjectId, ref: "Package" },
     historyPackages: [{ type: mongoose.Schema.Types.ObjectId, ref: "Package" }],
