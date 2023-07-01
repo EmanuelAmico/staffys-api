@@ -23,6 +23,7 @@ export interface RegisterResponse {
     findUser?: UserResponse | null;
   } | null;
 }
+
 export interface UserRequestBody {
   name: string;
   lastname: string;
@@ -30,10 +31,12 @@ export interface UserRequestBody {
   email: string;
   urlphoto: string;
 }
+
 export interface LoginRequestBody {
   password: string;
   email: string;
 }
+
 class AuthController {
   static async register(
     req: Request<void, RegisterResponse, UserRequestBody, void>,
@@ -88,6 +91,7 @@ class AuthController {
       next(error);
     }
   }
+
   static async login(
     req: Request<void, RegisterResponse, LoginRequestBody, void>,
     res: Response<RegisterResponse>,
@@ -132,6 +136,23 @@ class AuthController {
       next(error);
     }
   }
+
+  static async resetPassword(
+    _req: Request<
+      unknown,
+      unknown,
+      {
+        email: string;
+        code: number;
+        password: string;
+        confirmPassword: string;
+      },
+      unknown
+    >,
+    _res: Response<unknown>,
+    _next: NextFunction
+    // eslint-disable-next-line no-empty-function, @typescript-eslint/no-empty-function
+  ) {}
 }
 
 export { AuthController };

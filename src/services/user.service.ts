@@ -4,6 +4,7 @@
 import { Types } from "mongoose";
 import User from "../models/User";
 import { ExtendedUserRequestBody } from "../controllers/user.controller";
+import { APIError } from "../utils/error.utils";
 
 // TODO Remove "_" from unused parameters
 class UserService {
@@ -23,7 +24,10 @@ class UserService {
     ).select("-salt -password");
 
     if (!updatedUser) {
-      throw new Error("Usuario no existe");
+      throw new APIError({
+        message: "User not exist",
+        status: 400,
+      });
     }
 
     return { updatedUser };
@@ -36,7 +40,10 @@ class UserService {
       { new: true }
     );
     if (!findUser) {
-      throw new Error("Usuario no existe");
+      throw new APIError({
+        message: "User not exist",
+        status: 400,
+      });
     }
     return "";
   }

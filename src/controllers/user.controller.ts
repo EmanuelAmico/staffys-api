@@ -35,26 +35,17 @@ class UserController {
   ) {
     try {
       const userBody = req.body;
-      checkProperties({ _id: userBody._id }, [
-        { field: "_id", type: Types.ObjectId },
-      ]);
+      checkProperties(userBody, [{ field: "_id", type: Types.ObjectId }]);
 
       const updateuser = await UserService.updateUserById(userBody);
-      if (updateuser) {
-        const { updatedUser } = updateuser;
 
-        res.status(200).json({
-          data: { findUser: updatedUser, token: null },
-          status: 200,
-          message: "User updated",
-        });
-      } else {
-        return res.send({
-          status: 400,
-          message: "User not updated",
-          data: null,
-        });
-      }
+      const { updatedUser } = updateuser;
+
+      res.status(200).json({
+        data: { findUser: updatedUser, token: null },
+        status: 200,
+        message: "User updated",
+      });
     } catch (error) {
       next(error);
     }

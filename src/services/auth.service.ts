@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable no-empty-function */
 import { generateToken } from "../config/jwt/tokens";
 import User from "../models/User";
 import {
   LoginRequestBody,
   UserRequestBody,
 } from "../controllers/auth.controller";
+
 class AuthService {
   static async register(userBody: UserRequestBody) {
     const newUser = await new User(userBody).save();
@@ -59,6 +62,12 @@ class AuthService {
 
     return { foundUser, token };
   }
+
+  static async resetPassword(
+    _email: string,
+    _code: number,
+    _password: string
+  ) {}
 }
 
 export { AuthService };
