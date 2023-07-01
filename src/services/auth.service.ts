@@ -92,9 +92,8 @@ class AuthService {
     const user = await User.findOne({ email });
 
     if (!user) {
-      throw new Error("User does not exist");
+      throw new Error("User was not found");
     }
-
     await user.resetPassword(code.toString(), password);
 
     await sendEmail({

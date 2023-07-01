@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { JSON } from "../types/utility.types";
+import { ResponseBody } from "../types/request.types";
 
 export const mockControllerParams = <
   ParamsType extends Record<string, string> = Record<string, never>,
@@ -13,7 +14,11 @@ export const mockControllerParams = <
   params?: ParamsType;
   query?: QueryType;
   body?: BodyType;
-}): [Request, Response, NextFunction] => {
+}): [
+  Request<ParamsType, ResponseBody, BodyType, QueryType>,
+  Response<ResponseBody>,
+  NextFunction
+] => {
   const send = jest.fn();
   const json = jest.fn();
 
@@ -22,7 +27,7 @@ export const mockControllerParams = <
       params,
       query,
       body,
-    } as unknown as Request<ParamsType, unknown, BodyType, QueryType>,
+    } as unknown as Request<ParamsType, ResponseBody, BodyType, QueryType>,
     {
       status: jest.fn().mockImplementation(() => ({
         send,
@@ -30,7 +35,7 @@ export const mockControllerParams = <
       })),
       send,
       json,
-    } as unknown as Response<unknown>,
+    } as unknown as Response<ResponseBody>,
     jest.fn() as unknown as NextFunction,
   ];
 };

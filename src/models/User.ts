@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema<User>(
     is_active: { type: Boolean, default: false },
     urlphoto: { type: String, required: true },
     is_deleted: { type: Boolean, default: false },
-    resetToken: { type: String, unique: true, default: null },
+    resetToken: { type: String, default: null },
     pendingPackages: [{ type: mongoose.Schema.Types.ObjectId, ref: "Package" }],
     currentPackage: { type: mongoose.Schema.Types.ObjectId, ref: "Package" },
     historyPackages: [{ type: mongoose.Schema.Types.ObjectId, ref: "Package" }],
@@ -68,14 +68,19 @@ userSchema.methods.resetPassword = async function (
   code: string,
   newPassword: string
 ) {
+  if (code.length !== 6) throw new Error("Invalid code");
+
   const isMatch = await compare(code, this.resetToken);
+
   if (!isMatch) {
     throw new Error("Invalid code");
   }
 
   const hashedPassword = await this.hashPassword(newPassword, this.salt);
+
   this.password = hashedPassword;
   this.resetToken = undefined;
+
   await this.save();
 };
 

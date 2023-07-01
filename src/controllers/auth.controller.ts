@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { AuthService } from "../services/auth.service";
 import { Schema } from "mongoose";
+import { checkProperties } from "../utils/checkreq.utils";
+import { ResponseBody } from "../types/request.types";
 
 export interface UserResponse {
   name: string;
@@ -137,18 +139,26 @@ class AuthController {
 
   static async initResetPassword(
     req: Request<
-      unknown,
-      unknown,
+      Record<string, never>,
+      ResponseBody,
       {
         email: string;
       },
-      unknown
+      Record<string, never>
     >,
-    res: Response<unknown>,
+    res: Response<ResponseBody>,
     next: NextFunction
   ) {
     try {
       const email = req.body.email;
+
+      checkProperties(req.body, [
+        {
+          field: "email",
+          type: "email",
+        },
+      ]);
+
       await AuthService.initResetPassword(email);
 
       res.status(200).send({
@@ -163,21 +173,40 @@ class AuthController {
 
   static async resetPassword(
     req: Request<
-      unknown,
-      unknown,
+      Record<string, never>,
+      ResponseBody,
       {
         email: string;
         code: number;
         password: string;
         confirmPassword: string;
       },
-      unknown
+      Record<string, never>
     >,
-    res: Response<unknown>,
+    res: Response<ResponseBody>,
     next: NextFunction
   ) {
     try {
       const { email, code, password, confirmPassword } = req.body;
+
+      checkProperties(req.body, [
+        {
+          field: "email",
+          type: "email",
+        },
+        {
+          field: "code",
+          type: "number",
+        },
+        {
+          field: "password",
+          type: "password",
+        },
+        {
+          field: "confirmPassword",
+          type: "password",
+        },
+      ]);
 
       if (password !== confirmPassword) {
         return res.status(400).send({
@@ -194,7 +223,33 @@ class AuthController {
         message: "Password reset successfully",
         data: null,
       });
-    } catch (error) {
+    } catch (err) {
+      const error = err as Error;
+
+      if (error.message === "Email must be a valid email")
+        return res.status(400).send({
+          status: 400,
+          message: error.message,
+          data: null,
+        });
+
+      if (
+        error.message ===
+        "Password must have at least one uppercase letter and a minimum length of 6 characters"
+      )
+        return res.status(400).send({
+          status: 400,
+          message: error.message,
+          data: null,
+        });
+
+      if (error.message === "Invalid code")
+        return res.status(400).send({
+          status: 400,
+          message: error.message,
+          data: null,
+        });
+
       next(error);
     }
   }
