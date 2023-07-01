@@ -42,8 +42,8 @@ class AuthController {
     next: NextFunction
   ) {
     try {
-      const userBody: UserRequestBody = req.body;
-      checkProperties({ ...userBody }, [
+      const userBody = req.body;
+      checkProperties(userBody, [
         { field: "name", type: "string" },
         { field: "lastname", type: "string" },
         { field: "password", type: "string" },
@@ -69,7 +69,7 @@ class AuthController {
     try {
       const userBody = req.body;
 
-      checkProperties({ ...userBody }, [
+      checkProperties(userBody, [
         { field: "password", type: "string" },
         { field: "email", type: "string" },
       ]);
@@ -89,7 +89,7 @@ class AuthController {
           status: 400,
           message: "User is have problems to login",
           data: null,
-        }); // Manejo de caso donde loginResult es undefined
+        });
       }
     } catch (error) {
       next(error);
