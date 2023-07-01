@@ -94,8 +94,10 @@ const checkRequiredParameters = (
   return;
 };
 
-export const checkProperties = (
-  object: Record<string, object | string | number | boolean | null | undefined>,
+export const checkProperties = <
+  T extends Record<keyof T, string | number | boolean | null | undefined>
+>(
+  object: T,
   params: IParameter[]
 ) => {
   const allowedParameters = params.map(({ field }) => field);
