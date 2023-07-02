@@ -25,6 +25,7 @@ class AuthController {
         { field: "urlphoto", type: "string" },
         { field: "is_admin", type: "boolean" },
       ]);
+
       const { user, token } = await AuthService.register(userBody);
 
       res.status(200).json({
