@@ -3,7 +3,7 @@ import { JsonWebTokenError, JwtPayload } from "jsonwebtoken";
 import { validateToken } from "../config/jwt/tokens";
 
 export interface CustomRequest extends Request {
-  user?: string | JwtPayload;
+  user?: JwtPayload;
 }
 
 class AuthMiddleware {
@@ -25,7 +25,8 @@ class AuthMiddleware {
 
       const payload = validateToken(token);
 
-      if (!payload) return res.status(401).send("Invalid authorization token");
+      if (!payload || typeof payload === "string")
+        return res.status(401).send("Invalid authorization token");
       req.user = payload;
       next();
     } catch (error) {
@@ -36,5 +37,17 @@ class AuthMiddleware {
       next(error);
     }
   }
+  static async CheckAdmin(
+    req: CustomRequest,
+    res: Response<string | JwtPayload>,
+    next: NextFunction
+  ) {
+    if (req.user && req.user.is_admin) {
+      next();
+    } else {
+      res.status(403).send("Access denied");
+    }
+  }
 }
+
 export { AuthMiddleware };
