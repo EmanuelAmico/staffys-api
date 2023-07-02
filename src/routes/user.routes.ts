@@ -15,4 +15,5 @@ router.delete(
   AuthMiddleware.validateUser,
   UserController.deleteUserById
 );
+
 export { router as userRoutes };

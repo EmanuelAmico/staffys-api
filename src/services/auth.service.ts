@@ -1,20 +1,22 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-empty-function */
 import { generateToken } from "../config/jwt/tokens";
-import User from "../models/User";
+import { User } from "../models/User";
 import {
   LoginRequestBody,
   UserRequestBody,
 } from "../controllers/auth.controller";
+import { sendEmail } from "../utils/mailer.utils";
 
 class AuthService {
   static async register(userBody: UserRequestBody) {
     const newUser = await new User(userBody).save();
+
     if (!newUser) {
       throw new Error("Registration failed");
     }
 
-    const userfiltered = {
+    const user = {
       name: newUser.name,
       lastname: newUser.lastname,
       email: newUser.email,
@@ -25,49 +27,82 @@ class AuthService {
       currentPackage: newUser?.currentPackage,
       historyPackages: newUser?.historyPackages,
     };
+
     const token = generateToken(newUser._id);
+
     if (!token) {
-      throw new Error("token failed");
+      throw new Error("Failed to generate token");
     }
 
-    return { token, userfiltered };
+    return { token, user };
   }
 
   static async login(userBody: LoginRequestBody) {
-    const findUser = await User.findOne({ email: userBody.email });
+    const foundUser = await User.findOne({ email: userBody.email });
 
-    if (!findUser) {
-      throw new Error("User dont exitst");
+    if (!foundUser) {
+      throw new Error("User does not exist");
     }
-    const isValid = await findUser.validatePassword(userBody.password);
+
+    const isValid = await foundUser.validatePassword(userBody.password);
+
     if (!isValid) {
-      throw new Error("Password dont match");
+      throw new Error("Password does not match");
     }
-    const foundUser = {
-      name: findUser.name,
-      lastname: findUser.lastname,
-      email: findUser.email,
-      is_admin: findUser.is_admin,
-      is_active: findUser.is_active,
-      urlphoto: findUser.urlphoto,
-      pendingPackages: findUser?.pendingPackages,
-      currentPackage: findUser?.currentPackage,
-      historyPackages: findUser?.historyPackages,
+
+    const user = {
+      name: foundUser.name,
+      lastname: foundUser.lastname,
+      email: foundUser.email,
+      is_admin: foundUser.is_admin,
+      is_active: foundUser.is_active,
+      urlphoto: foundUser.urlphoto,
+      pendingPackages: foundUser?.pendingPackages,
+      currentPackage: foundUser?.currentPackage,
+      historyPackages: foundUser?.historyPackages,
     };
 
-    const token = generateToken(findUser._id);
+    const token = generateToken(foundUser._id);
+
     if (!token) {
-      throw new Error("token failed");
+      throw new Error("Failed to generate token");
     }
 
-    return { foundUser, token };
+    return { user, token };
   }
 
-  static async resetPassword(
-    _email: string,
-    _code: number,
-    _password: string
-  ) {}
+  static async initResetPassword(email: string) {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      throw new Error("User does not exist");
+    }
+
+    const code = await user.generateResetPasswordCode();
+
+    await sendEmail({
+      to: user.email,
+      subject: "Reset password",
+      html: `<h1>Reset password</h1>
+      <p>Use this code to reset your password: ${code}</p>`,
+    });
+  }
+
+  static async resetPassword(email: string, code: number, password: string) {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      throw new Error("User was not found");
+    }
+    await user.resetPassword(code.toString(), password);
+
+    await sendEmail({
+      to: user.email,
+      subject: "Password reset successfully",
+      html: `<h1>Password reset successfully</h1>
+      <p>Your password has been reset successfully</p>`,
+    });
+  }
 }
 
 export { AuthService };

@@ -8,6 +8,7 @@ interface IParameter {
     | "boolean"
     | "number"
     | "password"
+    | "email"
     | null
     | undefined
     | typeof Types.ObjectId
@@ -26,6 +27,14 @@ const checkPassword = (password: string) => {
   }
 };
 
+const checkEmail = (email: string) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailRegex.test(email)) {
+    throw new APIError({ message: "Email must be a valid email", status: 400 });
+  }
+};
+
 const checkTypes = (
   object: Record<string, object | string | number | boolean | null | undefined>,
   allowedParameters: string[],
@@ -34,6 +43,7 @@ const checkTypes = (
     | "boolean"
     | "number"
     | "password"
+    | "email"
     | null
     | undefined
     | typeof Types.ObjectId
@@ -59,6 +69,10 @@ const checkTypes = (
 
     if (type === "password" && typeof value === "string") {
       return checkPassword(value);
+    }
+
+    if (type === "email" && typeof value === "string") {
+      return checkEmail(value);
     }
 
     if (typeof value !== type) {
