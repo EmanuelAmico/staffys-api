@@ -20,7 +20,7 @@ const checkPassword = (password: string) => {
   if (!passwordRegex.test(password)) {
     throw new APIError({
       message:
-        "Password must have at least one uppercase letter and a minimum length of 6 characters",
+        "Password must have at least one uppercase letter and a minimum length of 8 characters",
       status: 400,
     });
   }
