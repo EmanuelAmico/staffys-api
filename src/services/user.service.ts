@@ -25,7 +25,7 @@ class UserService {
     if (!updatedUser) {
       throw new APIError({
         message: "User not found",
-        status: 400,
+        status: 404,
       });
     }
 
@@ -41,7 +41,7 @@ class UserService {
     if (!foundUser) {
       throw new APIError({
         message: "User not exist",
-        status: 400,
+        status: 404,
       });
     }
     return "";
