@@ -4,7 +4,7 @@ export interface FromModelProps extends Document {
   date: Date;
   responses: [
     {
-      users: Schema.Types.ObjectId;
+      user: Schema.Types.ObjectId;
       hasDrank: boolean;
       hasPsychotropicDrugs: boolean;
       hasEmotionalProblems: boolean;
@@ -27,7 +27,7 @@ const FormSchema = new Schema({
   },
   responses: [
     {
-      users: [
+      user: [
         {
           type: Schema.Types.ObjectId,
           ref: "Users",
