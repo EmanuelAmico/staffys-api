@@ -2,7 +2,6 @@
 /* eslint-disable no-empty-function */
 
 import { Types } from "mongoose";
-import { generateToken } from "../config/jwt/tokens";
 import User from "../models/User";
 import { ExtendedUserRequestBody } from "../types/users.types";
 
@@ -13,40 +12,16 @@ class UserService {
   static getUserById(_id: Types.ObjectId) {}
 
   static async getDeliveryPeople() {
-    const deliveryPeoples = await User.find({ is_admin: false }).exec();
+    const deliveryPeoples = await User.find({ is_admin: false }).select(
+      "-salt -password"
+    );
+
     return deliveryPeoples;
   }
 
-  static async updateUserById(userBody: ExtendedUserRequestBody) {
-    const findUser = await User.findByIdAndUpdate(
-      { _id: userBody._id },
-      userBody,
-      {
-        new: true,
-      }
-    ).select("-salt -password");
+  static async updateUserById(_userBody: ExtendedUserRequestBody) {}
 
-    if (!findUser) {
-      throw new Error("Usuario no existe");
-    }
-    const token = generateToken(findUser._id);
-    if (!token) {
-      throw new Error("Failed to generate token");
-    }
-    return { token, findUser };
-  }
-
-  static async deleteUserById(id: string) {
-    const findUser = await User.findByIdAndUpdate(
-      { _id: id },
-      { is_deleted: true },
-      { new: true }
-    );
-    if (!findUser) {
-      throw new Error("Usuario no existe");
-    }
-    return "";
-  }
+  static async deleteUserById(_id: string) {}
 
   static takePackage() {}
 
