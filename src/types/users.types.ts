@@ -16,7 +16,7 @@ export interface UserResponse {
   message: string;
   status: number;
   data: {
-    newUser?: UserProp | null | string;
+    user?: UserProp | null | string;
     token?: string | null;
     findUser?: UserProp | null;
     users?: UserProp[];

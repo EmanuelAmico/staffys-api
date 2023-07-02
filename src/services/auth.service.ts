@@ -3,61 +3,48 @@
 import { generateToken } from "../config/jwt/tokens";
 import User from "../models/User";
 import { LoginRequestBody, RegisterRequestBody } from "../types/users.types";
+import { APIError } from "../utils/error.utils";
 
 class AuthService {
   static async register(userBody: RegisterRequestBody) {
     const newUser = await new User(userBody).save();
     if (!newUser) {
-      throw new Error("Registration failed");
+      throw new APIError({
+        message: "Error with creating a User",
+        status: 404,
+      });
     }
 
-    const userfiltered = {
-      name: newUser.name,
-      lastname: newUser.lastname,
-      email: newUser.email,
-      is_admin: newUser.is_admin,
-      is_active: newUser.is_active,
-      urlphoto: newUser.urlphoto,
-      pendingPackages: newUser?.pendingPackages,
-      currentPackage: newUser?.currentPackage,
-      historyPackages: newUser?.historyPackages,
-    };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, salt, ...user } = newUser.toObject();
+
     const token = generateToken(newUser._id);
-    if (!token) {
-      throw new Error("token failed");
-    }
 
-    return { token, userfiltered };
+    return { token, user };
   }
 
   static async login(userBody: LoginRequestBody) {
-    const findUser = await User.findOne({ email: userBody.email });
+    const foundUser = await User.findOne({ email: userBody.email });
 
-    if (!findUser) {
-      throw new Error("User dont exitst");
+    if (!foundUser) {
+      throw new APIError({
+        message: "User does not exist",
+        status: 404,
+      });
     }
-    const isValid = await findUser.validatePassword(userBody.password);
+    const isValid = await foundUser.validatePassword(userBody.password);
     if (!isValid) {
-      throw new Error("Password dont match");
+      throw new APIError({
+        message: "Password does not match",
+        status: 404,
+      });
     }
-    const foundUser = {
-      name: findUser.name,
-      lastname: findUser.lastname,
-      email: findUser.email,
-      is_admin: findUser.is_admin,
-      is_active: findUser.is_active,
-      urlphoto: findUser.urlphoto,
-      pendingPackages: findUser?.pendingPackages,
-      currentPackage: findUser?.currentPackage,
-      historyPackages: findUser?.historyPackages,
-    };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, salt, ...user } = foundUser.toObject();
 
-    const token = generateToken(findUser._id);
-    if (!token) {
-      throw new Error("token failed");
-    }
+    const token = generateToken(foundUser._id);
 
-    return { foundUser, token };
+    return { user, token };
   }
 
   static async resetPassword(
