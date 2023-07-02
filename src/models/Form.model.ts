@@ -1,15 +1,11 @@
 import { Document, model, Schema } from "mongoose";
 
-export interface FromModelProps extends Document {
+export interface FormModelProps extends Document {
   date: Date;
-  responses: [
-    {
-      user: Schema.Types.ObjectId;
-      hasDrank: boolean;
-      hasPsychotropicDrugs: boolean;
-      hasEmotionalProblems: boolean;
-    }
-  ];
+  user: Schema.Types.ObjectId;
+  hasDrank: boolean;
+  hasPsychotropicDrugs: boolean;
+  hasEmotionalProblems: boolean;
 }
 
 const FormSchema = new Schema({
@@ -25,29 +21,23 @@ const FormSchema = new Schema({
       message: "The date cannot be earlier than the current date",
     },
   },
-  responses: [
-    {
-      user: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: "Users",
-          required: true,
-        },
-      ],
-      hasDrank: {
-        type: Boolean,
-        required: true,
-      },
-      hasPsychotropicDrugs: {
-        type: Boolean,
-        required: true,
-      },
-      hasEmotionalProblems: {
-        type: Boolean,
-        required: true,
-      },
-    },
-  ],
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: "Users",
+    required: true,
+  },
+  hasDrank: {
+    type: Boolean,
+    required: true,
+  },
+  hasPsychotropicDrugs: {
+    type: Boolean,
+    required: true,
+  },
+  hasEmotionalProblems: {
+    type: Boolean,
+    required: true,
+  },
 });
 
-export default model<FromModelProps>("Form", FormSchema);
+export default model<FormModelProps>("Form", FormSchema);
