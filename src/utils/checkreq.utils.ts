@@ -20,7 +20,7 @@ const checkPassword = (password: string) => {
   if (!passwordRegex.test(password)) {
     throw new APIError({
       message:
-        "Password must have at least one uppercase letter and a minimum length of 6 characters",
+        "Password must have at least one uppercase letter and a minimum length of 8 characters",
       status: 400,
     });
   }
@@ -81,26 +81,46 @@ const checkRequiredParameters = (
     string,
     object | string | number | boolean | null | undefined | unknown
   >,
-  allowedParameters: string[]
+  allowedParameters: string[],
+  optionalParameters?: string[]
 ) => {
   const missingParameters = allowedParameters.filter(
     (key) => !(key in object) || object[key] === undefined
   );
-  if (missingParameters.length > 0) {
+
+  const missingParametersFinal = missingParameters.filter(
+    (key) => !(key in object)
+  );
+
+  if (missingParametersFinal.length > 0) {
     throw new APIError({
-      message: "This fields are required:" + missingParameters.join(","),
+      message: "This fields  are required:" + missingParameters.join(","),
       status: 400,
     });
   }
-  const extraProperties = Object.keys(object).filter(
-    (key) => !allowedParameters.includes(key)
-  );
+  if (optionalParameters) {
+    const extraProperties = Object.keys(object).filter(
+      (key) =>
+        !allowedParameters.includes(key) && !optionalParameters.includes(key)
+    );
 
-  if (extraProperties.length > 0) {
-    throw new APIError({
-      message: "Extra properties not allowed: " + extraProperties.join(","),
-      status: 400,
-    });
+    if (extraProperties.length > 0) {
+      throw new APIError({
+        message: "Extra properties not allowed: " + extraProperties.join(","),
+        status: 400,
+      });
+    }
+  } else {
+    const extraProperties = Object.keys(object).filter(
+      (key) => !allowedParameters.includes(key)
+    );
+
+    if (extraProperties.length > 0) {
+      throw new APIError({
+        message: "Extra properties not allowed: " + extraProperties.join(","),
+        status: 400,
+      });
+    }
   }
 
   return;
@@ -121,10 +141,29 @@ export const checkProperties = <
   >
 >(
   object: T,
-  params: IParameter[]
+  params: IParameter[],
+  optionalFields?: IParameter[]
 ) => {
   const allowedParameters = params.map(({ field }) => field);
   const allowedTypes = params.map(({ type }) => type);
-  checkRequiredParameters(object, allowedParameters);
-  checkTypes(object, allowedParameters, allowedTypes);
+  if (optionalFields) {
+    const OptionalParameters = optionalFields.map(({ field }) => field);
+    checkRequiredParameters(object, allowedParameters, OptionalParameters);
+
+    const optionalFieldsFiltered = optionalFields.filter(
+      ({ field }) => field in object
+    );
+
+    const optionalParametersfiltered = optionalFieldsFiltered.map(
+      ({ field }) => field
+    );
+    const optionalTypesfiltered = optionalFieldsFiltered.map(
+      ({ type }) => type
+    );
+    checkTypes(object, allowedParameters, allowedTypes);
+    checkTypes(object, optionalParametersfiltered, optionalTypesfiltered);
+  } else {
+    checkRequiredParameters(object, allowedParameters);
+    checkTypes(object, allowedParameters, allowedTypes);
+  }
 };
