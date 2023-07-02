@@ -25,6 +25,21 @@ const checkPassword = (password: string) => {
     });
   }
 };
+const checkExtraProperties = (
+  object: Record<string, unknown>,
+  optionalParameters: string[]
+) => {
+  const extraProperties = Object.keys(object).filter(
+    (key) => !optionalParameters.includes(key)
+  );
+
+  if (extraProperties.length > 0) {
+    throw new APIError({
+      message: "Extra properties not allowed: " + extraProperties.join(", "),
+      status: 400,
+    });
+  }
+};
 
 const checkTypes = (
   object: Record<string, object | string | number | boolean | null | undefined>,
@@ -92,6 +107,7 @@ const checkRequiredParameters = (
       status: 400,
     });
   }
+
   const extraProperties = Object.keys(object).filter(
     (key) => !allowedParameters.includes(key)
   );
@@ -121,10 +137,34 @@ export const checkProperties = <
   >
 >(
   object: T,
-  params: IParameter[]
+  params: IParameter[],
+  optionalFields?: IParameter[]
 ) => {
   const allowedParameters = params.map(({ field }) => field);
   const allowedTypes = params.map(({ type }) => type);
-  checkRequiredParameters(object, allowedParameters);
-  checkTypes(object, allowedParameters, allowedTypes);
+  if (optionalFields) {
+    if (!("_id" in object)) {
+      throw new APIError({
+        message: "id must be provided",
+        status: 400,
+      });
+    }
+    const OptionalParameters = optionalFields.map(({ field }) => field);
+
+    checkExtraProperties(object, OptionalParameters);
+    const optionalFieldsFiltered = optionalFields.filter(
+      ({ field }) => field in object
+    );
+
+    const optionalParametersfiltered = optionalFieldsFiltered.map(
+      ({ field }) => field
+    );
+    const optionalTypesfiltered = optionalFieldsFiltered.map(
+      ({ type }) => type
+    );
+    checkTypes(object, optionalParametersfiltered, optionalTypesfiltered);
+  } else {
+    checkRequiredParameters(object, allowedParameters);
+    checkTypes(object, allowedParameters, allowedTypes);
+  }
 };

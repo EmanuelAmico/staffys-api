@@ -35,7 +35,18 @@ class UserController {
   ) {
     try {
       const userBody = req.body;
-      checkProperties(userBody, [{ field: "_id", type: Types.ObjectId }]);
+      checkProperties(
+        req.body,
+        [{ field: "no need", type: "string" }],
+        [
+          { field: "_id", type: Types.ObjectId },
+          { field: "name", type: "string" },
+          { field: "lastname", type: "string" },
+          { field: "password", type: "string" },
+          { field: "email", type: "string" },
+          { field: "urlphoto", type: "string" },
+        ]
+      );
 
       const updateuser = await UserService.updateUserById(userBody);
 
