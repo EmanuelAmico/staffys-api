@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import { AuthService } from "../services/auth.service";
-
 import { checkProperties } from "../utils/checkreq.utils";
 import {
   RegisterRequestBody,
   UserResponse,
   LoginRequestBody,
 } from "../types/user.types";
+import { ResponseBody } from "../types/request.types";
 
 class AuthController {
   static async register(
@@ -31,7 +31,7 @@ class AuthController {
       res.status(200).json({
         data: { user, token },
         status: 200,
-        message: "User was registered succesfully",
+        message: "User was registered successfully",
       });
     } catch (error) {
       next(error);
@@ -65,22 +65,96 @@ class AuthController {
     }
   }
 
+  static async initResetPassword(
+    req: Request<
+      Record<string, never>,
+      ResponseBody,
+      {
+        email: string;
+      },
+      Record<string, never>
+    >,
+    res: Response<ResponseBody>,
+    next: NextFunction
+  ) {
+    try {
+      const email = req.body.email;
+
+      checkProperties(req.body, [
+        {
+          field: "email",
+          type: "email",
+        },
+      ]);
+
+      await AuthService.initResetPassword(email);
+
+      res.status(200).send({
+        status: 200,
+        message: "Started reset password process",
+        data: null,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async resetPassword(
-    _req: Request<
-      unknown,
-      unknown,
+    req: Request<
+      Record<string, never>,
+      ResponseBody,
       {
         email: string;
         code: number;
         password: string;
         confirmPassword: string;
       },
-      unknown
+      Record<string, never>
     >,
-    _res: Response<unknown>,
-    _next: NextFunction
-    // eslint-disable-next-line no-empty-function, @typescript-eslint/no-empty-function
-  ) {}
+    res: Response<ResponseBody>,
+    next: NextFunction
+  ) {
+    try {
+      const { email, code, password, confirmPassword } = req.body;
+
+      checkProperties(req.body, [
+        {
+          field: "email",
+          type: "email",
+        },
+        {
+          field: "code",
+          type: "number",
+        },
+        {
+          field: "password",
+          type: "password",
+        },
+        {
+          field: "confirmPassword",
+          type: "password",
+        },
+      ]);
+
+      if (password !== confirmPassword) {
+        return res.status(400).send({
+          status: 400,
+          message: "Passwords do not match",
+          data: null,
+        });
+      }
+
+      await AuthService.resetPassword(email, code, password);
+
+      res.status(200).send({
+        status: 200,
+        message: "Password reset successfully",
+        data: null,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export { AuthController };
