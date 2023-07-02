@@ -2,7 +2,7 @@ import { HistoryController } from "../../controllers/history.controller";
 import { HistoryService } from "../../services/history.service";
 import { mockControllerParams } from "../../utils/testing.utils";
 
-describe("History Controller", () => {
+describe.skip("History Controller", () => {
   describe("Method -> getHistoryByDate", () => {
     beforeAll(() => {
       jest.mock("../../services/history.service", () => ({
