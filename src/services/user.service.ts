@@ -25,7 +25,7 @@ class UserService {
 
     if (!updatedUser) {
       throw new APIError({
-        message: "User not exist",
+        message: "User not found",
         status: 400,
       });
     }
@@ -34,12 +34,12 @@ class UserService {
   }
 
   static async deleteUserById(id: string) {
-    const findUser = await User.findByIdAndUpdate(
+    const foundUser = await User.findByIdAndUpdate(
       { _id: id },
       { is_deleted: true },
       { new: true }
     );
-    if (!findUser) {
+    if (!foundUser) {
       throw new APIError({
         message: "User not exist",
         status: 400,
