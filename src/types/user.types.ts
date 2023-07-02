@@ -27,6 +27,7 @@ export interface RegisterRequestBody {
   name: string;
   lastname: string;
   password: string;
+  confirmpassword: string;
   email: string;
   urlphoto: string;
 }

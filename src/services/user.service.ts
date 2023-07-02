@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-empty-function */
-
 import { Types } from "mongoose";
-import User from "../models/User";
+import { User } from "../models/User";
 import { ExtendedUserRequestBody } from "../types/user.types";
 import { APIError } from "../utils/error.utils";
 

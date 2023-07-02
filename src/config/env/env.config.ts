@@ -6,6 +6,12 @@ const envList = [
   "MONGO_URI",
   "BACKOFFICE_CLIENT_HOST",
   "DELIVERY_CLIENT_HOST",
+  "GOOGLE_API_KEY",
+  "OAUTH2_EMAIL",
+  "OAUTH2_CLIENT_ID",
+  "OAUTH2_CLIENT_SECRET",
+  "OAUTH2_REFRESH_TOKEN",
+  "OAUTH2_ACCESS_TOKEN",
 ];
 export const envs = (() => {
   if (
@@ -15,7 +21,13 @@ export const envs = (() => {
     !process.env.JWT_SECRET ||
     !process.env.MONGO_URI ||
     !process.env.BACKOFFICE_CLIENT_HOST ||
-    !process.env.DELIVERY_CLIENT_HOST
+    !process.env.DELIVERY_CLIENT_HOST ||
+    !process.env.GOOGLE_API_KEY ||
+    !process.env.OAUTH2_EMAIL ||
+    !process.env.OAUTH2_CLIENT_ID ||
+    !process.env.OAUTH2_CLIENT_SECRET ||
+    !process.env.OAUTH2_REFRESH_TOKEN ||
+    !process.env.OAUTH2_ACCESS_TOKEN
   ) {
     const missingEnvs: string[] = [];
 
@@ -37,5 +49,11 @@ export const envs = (() => {
     MONGO_URI: process.env.MONGO_URI,
     BACKOFFICE_CLIENT_HOST: process.env.BACKOFFICE_CLIENT_HOST,
     DELIVERY_CLIENT_HOST: process.env.DELIVERY_CLIENT_HOST,
+    GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
+    OAUTH2_EMAIL: process.env.OAUTH2_EMAIL,
+    OAUTH2_CLIENT_ID: process.env.OAUTH2_CLIENT_ID,
+    OAUTH2_CLIENT_SECRET: process.env.OAUTH2_CLIENT_SECRET,
+    OAUTH2_REFRESH_TOKEN: process.env.OAUTH2_REFRESH_TOKEN,
+    OAUTH2_ACCESS_TOKEN: process.env.OAUTH2_ACCESS_TOKEN,
   } as const;
 })();
