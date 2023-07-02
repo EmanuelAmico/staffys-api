@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { User } from "../../models/User";
+import { User } from "../../models/User.model";
 import { envs } from "../../config/env/env.config";
 
 const { MONGO_URI } = envs;
