@@ -37,6 +37,7 @@ class AuthController {
       next(error);
     }
   }
+
   static async login(
     req: Request<void, UserResponse, LoginRequestBody, void>,
     res: Response<UserResponse>,
