@@ -2,8 +2,8 @@
 /* eslint-disable no-empty-function */
 
 import { NextFunction, Request, Response } from "express";
-import { PackageProps } from "../models/Package";
-import { PackageService } from "../services";
+import { PackageProps } from "../models/Package.model";
+import { PackageService } from "../services/package.service";
 import { checkProperties } from "../utils/checkreq.utils";
 export interface PackageResponse {
   message: string;
