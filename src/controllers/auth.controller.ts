@@ -6,7 +6,7 @@ import {
   RegisterRequestBody,
   UserResponse,
   LoginRequestBody,
-} from "../utils/user.utils";
+} from "../types/user.types";
 
 class AuthController {
   static async register(

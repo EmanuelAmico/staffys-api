@@ -2,7 +2,7 @@
 /* eslint-disable no-empty-function */
 import { generateToken } from "../config/jwt/tokens";
 import User from "../models/User";
-import { LoginRequestBody, RegisterRequestBody } from "../utils/user.utils";
+import { LoginRequestBody, RegisterRequestBody } from "../types/user.types";
 import { APIError } from "../utils/error.utils";
 class AuthService {
   static async register(userBody: RegisterRequestBody) {
