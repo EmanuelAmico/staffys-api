@@ -1,12 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { Types } from "mongoose";
-import { UserRequestBody, RegisterResponse } from "./auth.controller";
+import { UserResponse, ExtendedUserRequestBody } from "../types/user.types";
 import { UserService } from "../services/user.service";
 import { checkProperties } from "../utils/checkreq.utils";
-
-export interface ExtendedUserRequestBody extends UserRequestBody {
-  _id: Types.ObjectId;
-}
 
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-empty-function */
@@ -26,11 +22,11 @@ class UserController {
   static async updateUserById(
     req: Request<
       Record<string, never>,
-      RegisterResponse,
+      UserResponse,
       ExtendedUserRequestBody,
       Record<string, never>
     >,
-    res: Response<RegisterResponse>,
+    res: Response<UserResponse>,
     next: NextFunction
   ) {
     try {
@@ -65,11 +61,11 @@ class UserController {
   static async deleteUserById(
     req: Request<
       { _id: string },
-      RegisterResponse,
+      UserResponse,
       Record<string, never>,
       Record<string, never>
     >,
-    res: Response<RegisterResponse>,
+    res: Response<UserResponse>,
     next: NextFunction
   ) {
     try {

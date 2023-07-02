@@ -3,7 +3,7 @@
 
 import { Types } from "mongoose";
 import User from "../models/User";
-import { ExtendedUserRequestBody } from "../controllers/user.controller";
+import { ExtendedUserRequestBody } from "../types/user.types";
 import { APIError } from "../utils/error.utils";
 
 // TODO Remove "_" from unused parameters
