@@ -1,86 +1,30 @@
 import { NextFunction, Request, Response } from "express";
-import { AuthService } from "../services/auth.service";
-import { Schema } from "mongoose";
+import { AuthService } from "../services";
 import { checkProperties } from "../utils/checkreq.utils";
+import {
+  RegisterRequestBody,
+  UserResponse,
+  LoginRequestBody,
+} from "../types/user.types";
 import { ResponseBody } from "../types/request.types";
-
-export interface UserResponse {
-  name: string;
-  lastname: string;
-  email: string;
-  is_admin: boolean;
-  is_active: boolean;
-  urlphoto: string;
-  pendingPackages?: Schema.Types.ObjectId[];
-  currentPackage?: Schema.Types.ObjectId;
-  historyPackages?: Schema.Types.ObjectId[];
-}
-
-export interface RegisterResponse {
-  message: string;
-  status: number;
-  data: {
-    user?: UserResponse | null | string;
-    token: string | null;
-    foundUser?: UserResponse | null;
-  } | null;
-}
-
-export interface UserRequestBody {
-  name: string;
-  lastname: string;
-  password: string;
-  email: string;
-  urlphoto: string;
-}
-
-export interface LoginRequestBody {
-  password: string;
-  email: string;
-}
 
 class AuthController {
   static async register(
-    req: Request<void, RegisterResponse, UserRequestBody, void>,
-    res: Response<RegisterResponse>,
+    req: Request<void, UserResponse, RegisterRequestBody, void>,
+    res: Response<UserResponse>,
     next: NextFunction
   ) {
     try {
-      const requiredFields: Array<keyof UserRequestBody> = [
-        "name",
-        "lastname",
-        "password",
-        "email",
-        "urlphoto",
-      ];
-
-      const missingFields: Array<keyof UserRequestBody> = [];
       const userBody = req.body;
-
-      for (const field of requiredFields) {
-        if (!userBody[field]) {
-          missingFields.push(field);
-        }
-      }
-
-      if (missingFields.length > 0) {
-        const errorMessage = `The following fields are required: ${missingFields.join(
-          ", "
-        )}`;
-        return res
-          .status(400)
-          .send({ status: 400, message: errorMessage, data: null });
-      }
-      const passwordRegex = /^(?=.*[A-Z]).{6,}$/;
-
-      if (!passwordRegex.test(userBody.password)) {
-        return res.status(400).send({
-          status: 400,
-          message:
-            "Password must have at least one uppercase letter and a minimum length of 6 characters",
-          data: null,
-        });
-      }
+      checkProperties(userBody, [
+        { field: "name", type: "string" },
+        { field: "lastname", type: "string" },
+        { field: "password", type: "password" },
+        { field: "confirmpassword", type: "password" },
+        { field: "email", type: "string" },
+        { field: "urlphoto", type: "string" },
+        { field: "is_admin", type: "boolean" },
+      ]);
 
       const { user, token } = await AuthService.register(userBody);
 
@@ -95,46 +39,27 @@ class AuthController {
   }
 
   static async login(
-    req: Request<void, RegisterResponse, LoginRequestBody, void>,
-    res: Response<RegisterResponse>,
+    req: Request<void, UserResponse, LoginRequestBody, void>,
+    res: Response<UserResponse>,
     next: NextFunction
   ) {
     try {
       const userBody = req.body;
 
-      if (!userBody.email) {
-        return res
-          .status(400)
-          .send({ status: 400, message: "email is empty", data: null });
-      }
-      const passwordRegex = /^(?=.*[A-Z]).{6,}$/;
-
-      if (!passwordRegex.test(userBody.password)) {
-        return res.status(400).send({
-          status: 400,
-          message:
-            "Password must have at least one uppercase letter and a minimum length of 6 characters",
-          data: null,
-        });
-      }
+      checkProperties(userBody, [
+        { field: "password", type: "string" },
+        { field: "email", type: "string" },
+      ]);
 
       const loginResult = await AuthService.login(userBody);
 
-      if (loginResult) {
-        const { user, token } = loginResult;
+      const { user, token } = loginResult;
 
-        res.status(200).json({
-          data: { user, token },
-          status: 200,
-          message: "User logged in successfully",
-        });
-      } else {
-        return res.status(400).send({
-          status: 400,
-          message: "There was an error while logging in",
-          data: null,
-        });
-      }
+      res.status(200).json({
+        data: { user, token },
+        status: 200,
+        message: "User logged in successfully",
+      });
     } catch (error) {
       next(error);
     }

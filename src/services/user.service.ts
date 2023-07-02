@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-empty-function */
-import { generateToken } from "../config/jwt/tokens";
-import { User } from "../models/User";
-import { ExtendedUserRequestBody } from "../controllers/user.controller";
+import { User } from "../models/User.model";
+import { ExtendedUserRequestBody } from "../types/user.types";
+import { APIError } from "../utils/error.utils";
 
 // TODO Remove "_" from unused parameters
 class UserService {
@@ -16,7 +16,7 @@ class UserService {
   static getDeliveryPeople() {}
 
   static async updateUserById(userBody: ExtendedUserRequestBody) {
-    const foundUser = await User.findByIdAndUpdate(
+    const updatedUser = await User.findByIdAndUpdate(
       { _id: userBody._id },
       userBody,
       {
@@ -24,17 +24,14 @@ class UserService {
       }
     ).select("-salt -password");
 
-    if (!foundUser) {
-      throw new Error("User not found");
+    if (!updatedUser) {
+      throw new APIError({
+        message: "User not found",
+        status: 404,
+      });
     }
 
-    const token = generateToken(foundUser._id);
-
-    if (!token) {
-      throw new Error("Failed to generate token");
-    }
-
-    return { token, foundUser };
+    return { updatedUser };
   }
 
   static async deleteUserById(id: string) {
@@ -43,11 +40,12 @@ class UserService {
       { is_deleted: true },
       { new: true }
     );
-
     if (!foundUser) {
-      throw new Error("User not found");
+      throw new APIError({
+        message: "User not exist",
+        status: 404,
+      });
     }
-
     return "";
   }
 

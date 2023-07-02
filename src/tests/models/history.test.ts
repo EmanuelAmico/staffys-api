@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import History from "../../models/History";
+import History from "../../models/History.model";
 import { envs } from "../../config/env/env.config";
 
 const { MONGO_URI } = envs;
