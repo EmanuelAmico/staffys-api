@@ -49,7 +49,7 @@ class UserController {
       const { updatedUser } = updateuser;
 
       res.status(200).json({
-        data: { findUser: updatedUser, token: null },
+        data: { findUser: updatedUser },
         status: 200,
         message: "User updated",
       });
