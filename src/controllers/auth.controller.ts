@@ -1,46 +1,17 @@
 import { NextFunction, Request, Response } from "express";
 import { AuthService } from "../services/auth.service";
-import { Schema } from "mongoose";
+
 import { checkProperties } from "../utils/checkreq.utils";
+import {
+  RegisterRequestBody,
+  UserResponse,
+  LoginRequestBody,
+} from "../utils/user.utils";
 
-export interface UserResponse {
-  name: string;
-  lastname: string;
-  email: string;
-  is_admin: boolean;
-  is_active: boolean;
-  urlphoto: string;
-  pendingPackages?: Schema.Types.ObjectId[];
-  currentPackage?: Schema.Types.ObjectId;
-  historyPackages?: Schema.Types.ObjectId[];
-}
-
-export interface RegisterResponse {
-  message: string;
-  status: number;
-  data: {
-    user?: UserResponse | null | string;
-    token: string | null;
-    findUser?: UserResponse | null;
-  } | null;
-}
-export interface UserRequestBody {
-  name: string;
-  lastname: string;
-  password: string;
-  email: string;
-  urlphoto: string;
-  confirmpassword?: string;
-  is_admin: boolean;
-}
-export interface LoginRequestBody {
-  password: string;
-  email: string;
-}
 class AuthController {
   static async register(
-    req: Request<void, RegisterResponse, UserRequestBody, void>,
-    res: Response<RegisterResponse>,
+    req: Request<void, UserResponse, RegisterRequestBody, void>,
+    res: Response<UserResponse>,
     next: NextFunction
   ) {
     try {
@@ -66,8 +37,8 @@ class AuthController {
     }
   }
   static async login(
-    req: Request<void, RegisterResponse, LoginRequestBody, void>,
-    res: Response<RegisterResponse>,
+    req: Request<void, UserResponse, LoginRequestBody, void>,
+    res: Response<UserResponse>,
     next: NextFunction
   ) {
     try {
