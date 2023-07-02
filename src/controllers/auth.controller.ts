@@ -30,6 +30,8 @@ export interface UserRequestBody {
   password: string;
   email: string;
   urlphoto: string;
+  confirmpassword?: string;
+  is_admin: boolean;
 }
 export interface LoginRequestBody {
   password: string;
@@ -46,9 +48,11 @@ class AuthController {
       checkProperties(userBody, [
         { field: "name", type: "string" },
         { field: "lastname", type: "string" },
-        { field: "password", type: "string" },
+        { field: "password", type: "password" },
+        { field: "confirmpassword", type: "password" },
         { field: "email", type: "string" },
         { field: "urlphoto", type: "string" },
+        { field: "is_admin", type: "boolean" },
       ]);
       const { user, token } = await AuthService.register(userBody);
 
