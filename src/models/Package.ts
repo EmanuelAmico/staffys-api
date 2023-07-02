@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-interface PackageProps extends Document {
+interface PackageModelProps extends Document {
   title: string;
   description: string;
   address: string;
@@ -12,7 +12,7 @@ interface PackageProps extends Document {
   deadlines: Date;
 }
 
-const PackageSchema = new Schema<PackageProps>(
+const PackageSchema = new Schema<PackageModelProps>(
   {
     title: { type: String, required: true },
     description: { type: String, required: true },
@@ -29,6 +29,6 @@ const PackageSchema = new Schema<PackageProps>(
   }
 );
 
-const Package = model<PackageProps>("Package", PackageSchema);
+const Package = model<PackageModelProps>("Package", PackageSchema);
 
 export default Package;

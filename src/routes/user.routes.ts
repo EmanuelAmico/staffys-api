@@ -5,6 +5,11 @@ import { AuthMiddleware } from "../middlewares/auth.middleware";
 
 const router = Router();
 
+router.get(
+  "/all/delivery-people",
+  AuthMiddleware.validateUser,
+  UserController.getDeliveryPeople
+);
 router.put(
   "/update",
   AuthMiddleware.validateUser,

@@ -2,13 +2,10 @@
 /* eslint-disable no-empty-function */
 import { generateToken } from "../config/jwt/tokens";
 import User from "../models/User";
-import {
-  LoginRequestBody,
-  UserRequestBody,
-} from "../controllers/auth.controller";
+import { LoginRequestBody, RegisterRequestBody } from "../types/users.types";
 
 class AuthService {
-  static async register(userBody: UserRequestBody) {
+  static async register(userBody: RegisterRequestBody) {
     const newUser = await new User(userBody).save();
     if (!newUser) {
       throw new Error("Registration failed");

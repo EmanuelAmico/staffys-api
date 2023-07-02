@@ -1,12 +1,12 @@
-import { Document, model, Schema } from "mongoose";
+import { model, Schema } from "mongoose";
 
-export interface HistoryProps extends Document {
+export interface HistoryModelProps extends Document {
   date: string;
   activeUsers: Schema.Types.ObjectId[];
   targetPackages: Schema.Types.ObjectId[];
 }
 
-const historySchema = new Schema({
+const HistorySchema = new Schema({
   date: {
     type: String,
     required: true,
@@ -28,4 +28,6 @@ const historySchema = new Schema({
   ],
 });
 
-export default model<HistoryProps>("History", historySchema);
+const History = model<HistoryModelProps>("History", HistorySchema);
+
+export default History;

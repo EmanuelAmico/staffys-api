@@ -4,7 +4,7 @@
 import { Types } from "mongoose";
 import { generateToken } from "../config/jwt/tokens";
 import User from "../models/User";
-import { ExtendedUserRequestBody } from "../controllers/user.controller";
+import { ExtendedUserRequestBody } from "../types/users.types";
 
 // TODO Remove "_" from unused parameters
 class UserService {
@@ -12,7 +12,10 @@ class UserService {
 
   static getUserById(_id: Types.ObjectId) {}
 
-  static getDeliveryPeople() {}
+  static async getDeliveryPeople() {
+    const deliveryPeoples = await User.find({ is_admin: false }).exec();
+    return deliveryPeoples;
+  }
 
   static async updateUserById(userBody: ExtendedUserRequestBody) {
     const findUser = await User.findByIdAndUpdate(

@@ -1,11 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { Types } from "mongoose";
-import { UserRequestBody, RegisterResponse } from "./auth.controller";
 import { UserService } from "../services/user.service";
-
-export interface ExtendedUserRequestBody extends UserRequestBody {
-  _id: Types.ObjectId;
-}
+import { ExtendedUserRequestBody, UserResponse } from "../types/users.types";
 
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-empty-function */
@@ -16,20 +11,45 @@ class UserController {
 
   static getUserById(_req: Request, _res: Response, _next: NextFunction) {}
 
-  static getDeliveryPeople(
-    _req: Request,
-    _res: Response,
-    _next: NextFunction
-  ) {}
+  static async getDeliveryPeople(
+    _req: Request<
+      Record<string, never>,
+      UserResponse,
+      Record<string, never>,
+      Record<string, never>
+    >,
+    res: Response<UserResponse>,
+    next: NextFunction
+  ) {
+    try {
+      const deliveryPeoples = await UserService.getDeliveryPeople();
+
+      if (deliveryPeoples.length === 0) {
+        return res.status(200).send({
+          status: 200,
+          message: "Not found delivery people",
+          data: null,
+        });
+      }
+
+      return res.status(200).send({
+        status: 200,
+        message: "all delivery people",
+        data: { users: deliveryPeoples },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 
   static async updateUserById(
     req: Request<
       Record<string, never>,
-      RegisterResponse,
+      UserResponse,
       ExtendedUserRequestBody,
       Record<string, never>
     >,
-    res: Response<RegisterResponse>,
+    res: Response<UserResponse>,
     next: NextFunction
   ) {
     try {
@@ -71,11 +91,11 @@ class UserController {
   static async deleteUserById(
     req: Request<
       { _id: string },
-      RegisterResponse,
+      UserResponse,
       Record<string, never>,
       Record<string, never>
     >,
-    res: Response<RegisterResponse>,
+    res: Response<UserResponse>,
     next: NextFunction
   ) {
     try {
