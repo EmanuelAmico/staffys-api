@@ -81,31 +81,46 @@ const checkRequiredParameters = (
     string,
     object | string | number | boolean | null | undefined | unknown
   >,
-
   allowedParameters: string[],
-  optional: boolean
+  optionalParameters?: string[]
 ) => {
-  if (!optional) {
-    const missingParameters = allowedParameters.filter(
-      (key) => !(key in object) || object[key] === undefined
+  const missingParameters = allowedParameters.filter(
+    (key) => !(key in object) || object[key] === undefined
+  );
+
+  const missingParametersFinal = missingParameters.filter(
+    (key) => !(key in object)
+  );
+
+  if (missingParametersFinal.length > 0) {
+    throw new APIError({
+      message: "This fields  are required:" + missingParameters.join(","),
+      status: 400,
+    });
+  }
+  if (optionalParameters) {
+    const extraProperties = Object.keys(object).filter(
+      (key) =>
+        !allowedParameters.includes(key) && !optionalParameters.includes(key)
     );
-    if (missingParameters.length > 0) {
+
+    if (extraProperties.length > 0) {
       throw new APIError({
-        message: "This fields are required:" + missingParameters.join(","),
+        message: "Extra properties not allowed: " + extraProperties.join(","),
         status: 400,
       });
     }
-  }
+  } else {
+    const extraProperties = Object.keys(object).filter(
+      (key) => !allowedParameters.includes(key)
+    );
 
-  const extraProperties = Object.keys(object).filter(
-    (key) => !allowedParameters.includes(key)
-  );
-
-  if (extraProperties.length > 0) {
-    throw new APIError({
-      message: "Extra properties not allowed: " + extraProperties.join(","),
-      status: 400,
-    });
+    if (extraProperties.length > 0) {
+      throw new APIError({
+        message: "Extra properties not allowed: " + extraProperties.join(","),
+        status: 400,
+      });
+    }
   }
 
   return;
@@ -132,14 +147,8 @@ export const checkProperties = <
   const allowedParameters = params.map(({ field }) => field);
   const allowedTypes = params.map(({ type }) => type);
   if (optionalFields) {
-    if (!("_id" in object)) {
-      throw new APIError({
-        message: "id must be provided",
-        status: 400,
-      });
-    }
     const OptionalParameters = optionalFields.map(({ field }) => field);
-    checkRequiredParameters(object, OptionalParameters, true);
+    checkRequiredParameters(object, allowedParameters, OptionalParameters);
 
     const optionalFieldsFiltered = optionalFields.filter(
       ({ field }) => field in object
@@ -151,9 +160,10 @@ export const checkProperties = <
     const optionalTypesfiltered = optionalFieldsFiltered.map(
       ({ type }) => type
     );
+    checkTypes(object, allowedParameters, allowedTypes);
     checkTypes(object, optionalParametersfiltered, optionalTypesfiltered);
   } else {
-    checkRequiredParameters(object, allowedParameters, false);
+    checkRequiredParameters(object, allowedParameters);
     checkTypes(object, allowedParameters, allowedTypes);
   }
 };
