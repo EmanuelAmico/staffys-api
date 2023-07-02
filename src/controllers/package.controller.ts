@@ -42,7 +42,7 @@ class PackageController {
         status: 200,
         message: "Packages by current location",
         data: { packages },
-      }); // M
+      });
     } catch (error) {
       next(error);
     }
