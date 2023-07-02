@@ -25,21 +25,6 @@ const checkPassword = (password: string) => {
     });
   }
 };
-const checkExtraProperties = (
-  object: Record<string, unknown>,
-  optionalParameters: string[]
-) => {
-  const extraProperties = Object.keys(object).filter(
-    (key) => !optionalParameters.includes(key)
-  );
-
-  if (extraProperties.length > 0) {
-    throw new APIError({
-      message: "Extra properties not allowed: " + extraProperties.join(", "),
-      status: 400,
-    });
-  }
-};
 
 const checkTypes = (
   object: Record<string, object | string | number | boolean | null | undefined>,
@@ -96,16 +81,20 @@ const checkRequiredParameters = (
     string,
     object | string | number | boolean | null | undefined | unknown
   >,
-  allowedParameters: string[]
+
+  allowedParameters: string[],
+  optional: boolean
 ) => {
-  const missingParameters = allowedParameters.filter(
-    (key) => !(key in object) || object[key] === undefined
-  );
-  if (missingParameters.length > 0) {
-    throw new APIError({
-      message: "This fields are required:" + missingParameters.join(","),
-      status: 400,
-    });
+  if (!optional) {
+    const missingParameters = allowedParameters.filter(
+      (key) => !(key in object) || object[key] === undefined
+    );
+    if (missingParameters.length > 0) {
+      throw new APIError({
+        message: "This fields are required:" + missingParameters.join(","),
+        status: 400,
+      });
+    }
   }
 
   const extraProperties = Object.keys(object).filter(
@@ -150,8 +139,8 @@ export const checkProperties = <
       });
     }
     const OptionalParameters = optionalFields.map(({ field }) => field);
+    checkRequiredParameters(object, OptionalParameters, true);
 
-    checkExtraProperties(object, OptionalParameters);
     const optionalFieldsFiltered = optionalFields.filter(
       ({ field }) => field in object
     );
@@ -164,7 +153,7 @@ export const checkProperties = <
     );
     checkTypes(object, optionalParametersfiltered, optionalTypesfiltered);
   } else {
-    checkRequiredParameters(object, allowedParameters);
+    checkRequiredParameters(object, allowedParameters, false);
     checkTypes(object, allowedParameters, allowedTypes);
   }
 };
