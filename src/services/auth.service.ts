@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-empty-function */
 import { generateToken } from "../config/jwt/tokens";
-import User from "../models/User";
+import User from "../models/User.model";
 import {
   LoginRequestBody,
   UserRequestBody,

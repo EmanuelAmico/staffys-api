@@ -3,7 +3,7 @@
 
 import { Types } from "mongoose";
 import { generateToken } from "../config/jwt/tokens";
-import User from "../models/User";
+import User from "../models/User.model";
 import { ExtendedUserRequestBody } from "../controllers/user.controller";
 
 // TODO Remove "_" from unused parameters
