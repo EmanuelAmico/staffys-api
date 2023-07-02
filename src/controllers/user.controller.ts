@@ -33,9 +33,8 @@ class UserController {
       const userBody = req.body;
       checkProperties(
         req.body,
-        [{ field: "no need", type: "string" }],
+        [{ field: "_id", type: Types.ObjectId }],
         [
-          { field: "_id", type: Types.ObjectId },
           { field: "name", type: "string" },
           { field: "lastname", type: "string" },
           { field: "password", type: "string" },
