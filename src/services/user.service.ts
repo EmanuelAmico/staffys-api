@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-empty-function */
-import { Types } from "mongoose";
 import { generateToken } from "../config/jwt/tokens";
 import { User } from "../models/User";
 import { ExtendedUserRequestBody } from "../controllers/user.controller";
@@ -9,7 +8,10 @@ import { ExtendedUserRequestBody } from "../controllers/user.controller";
 class UserService {
   static createUser() {}
 
-  static getUserById(_id: Types.ObjectId) {}
+  static async getUserById(_id: string) {
+    const user = await User.findById(_id).select("-salt -password");
+    return user;
+  }
 
   static getDeliveryPeople() {}
 
