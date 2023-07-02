@@ -31,7 +31,7 @@ const checkEmail = (email: string) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (!emailRegex.test(email)) {
-    throw new Error("Email must be a valid email");
+    throw new APIError({ message: "Email must be a valid email", status: 400 });
   }
 };
 

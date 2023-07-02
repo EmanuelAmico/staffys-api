@@ -226,33 +226,7 @@ class AuthController {
         message: "Password reset successfully",
         data: null,
       });
-    } catch (err) {
-      const error = err as Error;
-
-      if (error.message === "Email must be a valid email")
-        return res.status(400).send({
-          status: 400,
-          message: error.message,
-          data: null,
-        });
-
-      if (
-        error.message ===
-        "Password must have at least one uppercase letter and a minimum length of 6 characters"
-      )
-        return res.status(400).send({
-          status: 400,
-          message: error.message,
-          data: null,
-        });
-
-      if (error.message === "Invalid code")
-        return res.status(400).send({
-          status: 400,
-          message: error.message,
-          data: null,
-        });
-
+    } catch (error) {
       next(error);
     }
   }

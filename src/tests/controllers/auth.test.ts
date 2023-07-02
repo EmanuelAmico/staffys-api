@@ -1,5 +1,6 @@
 import { AuthController } from "../../controllers";
 import { AuthService } from "../../services";
+import { APIError } from "../../utils/error.utils";
 import { mockControllerParams } from "../../utils/testing.utils";
 
 jest.mock("../../services/auth.service", () => ({
@@ -48,9 +49,12 @@ describe("Auth Controller", () => {
         },
       });
 
-      AuthService.resetPassword = jest
-        .fn()
-        .mockRejectedValue(new Error("Invalid code"));
+      AuthService.resetPassword = jest.fn().mockRejectedValue(
+        new APIError({
+          message: "Invalid code",
+          status: 400,
+        })
+      );
 
       expect.assertions(5);
 
