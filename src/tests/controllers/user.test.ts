@@ -1,5 +1,5 @@
 import { UserController } from "../../controllers/user.controller";
-import { User } from "../../models/User";
+import { User } from "../../models/User.model";
 import { UserService } from "../../services/user.service";
 import { mockControllerParams } from "../../utils/testing.utils";
 import mongoose from "mongoose";

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-empty-function */
-import Package from "../models/Package";
+import Package from "../models/Package.model";
 import { calculateDistanceUsingDirectionsAPI } from "../utils/googleApiDistance.utils";
 import { APIError } from "../utils/error.utils";
 
