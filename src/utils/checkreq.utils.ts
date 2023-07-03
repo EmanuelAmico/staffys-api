@@ -102,11 +102,7 @@ const checkRequiredParameters = (
     (key) => !(key in object) || object[key] === undefined
   );
 
-  const missingParametersFinal = missingParameters.filter(
-    (key) => !(key in object)
-  );
-
-  if (missingParametersFinal.length > 0) {
+  if (missingParameters.length > 0) {
     throw new APIError({
       message: "These fields are required:" + missingParameters.join(","),
       status: 400,
