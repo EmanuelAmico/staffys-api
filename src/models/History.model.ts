@@ -1,14 +1,14 @@
 import { model, Schema } from "mongoose";
 
 export interface HistoryModelProps extends Document {
-  date: string;
+  date: Date;
   activeUsers: Schema.Types.ObjectId[];
   targetPackages: Schema.Types.ObjectId[];
 }
 
 const HistorySchema = new Schema({
   date: {
-    type: String,
+    type: Date,
     required: true,
     unique: true,
   },

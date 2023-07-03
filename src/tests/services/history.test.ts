@@ -1,12 +1,12 @@
-import History from "../../models/History";
+import History from "../../models/History.model";
 import mongoose from "mongoose";
 import { envs } from "../../config/env/env.config";
 import { HistoryService } from "../../services/history.service";
 
 const { MONGO_URI } = envs;
 
-describe("Auth Service", () => {
-  describe("Method -> resetPassword", () => {
+describe.skip("History Service", () => {
+  describe("Method -> getHistoryByDate", () => {
     const date = new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let history: any;

@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-empty-function */
-
 import { Types } from "mongoose";
-import User from "../models/User";
-import { ExtendedUserRequestBody } from "../types/users.types";
+import { User } from "../models/User.model";
+import { ExtendedUserRequestBody } from "../types/user.types";
 
 // TODO Remove "_" from unused parameters
 class UserService {

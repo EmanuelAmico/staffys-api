@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
+import { UserResponse } from "../types/user.types";
 import { UserService } from "../services/user.service";
-import { UserResponse } from "../types/users.types";
 
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-empty-function */
