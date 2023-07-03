@@ -34,10 +34,10 @@ jobs:
           aws-region: us-east-1
 
       - name: Install AWS Lightsail Plugin
-        run: curl "https://s3.us-west-2.amazonaws.com/lightsailctl/latest/linux-amd64/lightsailctl" -o "/usr/local/bin/lightsailctl" & sudo chmod +x /usr/local/bin/lightsailctl
+        run: curl "https://s3.us-west-2.amazonaws.com/lightsailctl/latest/linux-amd64/lightsailctl" -o "/usr/local/bin/lightsailctl" && sudo chmod +x /usr/local/bin/lightsailctl
 
       - name: Build Docker Image
         run: docker build -t staffys-api .
 
       - name: Deploy to AWS Lightsail
-        run: aws lightsail push-container-image --region us-east-1 --service-name staffys-api-prod --label latest --image staffys-api:latest
+        run: aws lightsail push-container-image --region us-east-1 --service-name staffys-api --label latest --image staffys-api:latest
