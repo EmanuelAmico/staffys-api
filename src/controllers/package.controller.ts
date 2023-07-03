@@ -6,6 +6,8 @@ import { Package } from "../models/Package.model";
 import { PackageService } from "../services/package.service";
 import { checkProperties } from "../utils/checkreq.utils";
 
+import { Types } from "mongoose";
+
 export interface PackageResponse {
   message: string;
   status: number;
@@ -15,6 +17,35 @@ export interface PackageResponse {
 }
 
 class PackageController {
+  static async getPackageById(
+    req: Request<
+      { _id: string },
+      Response<PackageResponse>,
+      Record<string, never>,
+      Record<string, never>
+    >,
+    res: Response<PackageResponse>,
+    next: NextFunction
+  ) {
+    try {
+      const { _id } = req.params;
+      checkProperties(req.params, [
+        {
+          field: "_id",
+          type: Types.ObjectId,
+        },
+      ]);
+      const foundPackage = await PackageService.getPackageById(_id);
+      res.send({
+        status: 200,
+        message: "package found",
+        data: { packages: foundPackage },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async getAvailablePackagesByCurrentLocation(
     req: Request<
       Record<string, never>,

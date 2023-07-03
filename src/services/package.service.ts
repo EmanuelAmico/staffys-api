@@ -7,6 +7,10 @@ import { APIError } from "../utils/error.utils";
 class PackageService {
   static createHistory() {}
 
+  static async getPackageById(_id: string) {
+    return await Package.findById(_id);
+  }
+
   static getHistoryByDate(_date: string) {}
 
   static updateHistoryByDate() {}
