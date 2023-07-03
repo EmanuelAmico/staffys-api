@@ -17,7 +17,7 @@ class PackageService {
   ) {
     const packages = await Package.find().exec();
 
-    const coordinates = packages.map((pkg) => pkg.coordinates);
+    const coordinates = packages.map((_package) => _package.coordinates);
 
     try {
       const distances = await Promise.all(
@@ -33,8 +33,8 @@ class PackageService {
           return null;
         })
       );
-      const packagesWithDistance = packages.map((pkg, index) => ({
-        ...pkg.toObject(),
+      const packagesWithDistance = packages.map((_package, index) => ({
+        ..._package.toObject(),
         distance: distances[index],
       }));
 

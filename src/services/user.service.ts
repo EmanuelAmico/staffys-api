@@ -135,7 +135,7 @@ class UserService {
       });
     }
 
-    if (user.pendingPackages.some((pkg) => pkg.status !== null)) {
+    if (user.pendingPackages.some((_package) => _package.status !== null)) {
       throw new APIError({
         message:
           "There was an error trying to start delivery, some packages you selected were already taken by other person. Please try start again.",
@@ -187,7 +187,60 @@ class UserService {
     return { user };
   }
 
-  static async startPackageDelivery() {}
+  static async startPackageDelivery(userId: string, packageId: string) {
+    const user = await User.findById(userId).exec();
+
+    if (!user) {
+      throw new APIError({
+        message: "User not found",
+        status: 404,
+      });
+    }
+
+    if (!user.is_active) {
+      throw new APIError({
+        message: "User is not active",
+        status: 403,
+      });
+    }
+
+    const _package = await Package.findById(packageId).exec();
+
+    if (!_package) {
+      throw new APIError({
+        message: "Package not found",
+        status: 404,
+      });
+    }
+
+    if (_package.status !== "taken") {
+      throw new APIError({
+        message: "Package is not taken",
+        status: 400,
+      });
+    }
+
+    if (!_package.deliveryMan) {
+      throw new APIError({
+        message: "This package was not taken by any user",
+        status: 400,
+      });
+    }
+
+    if (_package.deliveryMan.toString() !== userId) {
+      throw new APIError({
+        message: "Package is not taken by this user",
+        status: 403,
+      });
+    }
+
+    _package.status = "in_progress";
+    user.currentPackage = _package._id;
+
+    await Promise.all([_package.save(), user.save()]);
+
+    return { user, package: _package };
+  }
 
   static async finishPackageDelivery() {}
 

@@ -167,7 +167,7 @@ class UserController {
 
       const { packageId, userId } = req.body;
 
-      const { user, package: pkg } = await UserService.takePackage(
+      const { user, package: _package } = await UserService.takePackage(
         packageId,
         userId
       );
@@ -175,7 +175,7 @@ class UserController {
       return res.status(200).send({
         status: 200,
         message: "Package taken",
-        data: { user, package: pkg },
+        data: { user, package: _package },
       });
     } catch (error) {
       next(error);
@@ -251,10 +251,45 @@ class UserController {
   }
 
   static async startPackageDelivery(
-    _req: Request,
-    _res: Response,
-    _next: NextFunction
-  ) {}
+    req: Request<
+      Record<string, never>,
+      ResponseBody<
+        Awaited<ReturnType<typeof UserService.startPackageDelivery>>
+      >,
+      { userId: string; packageId: string },
+      Record<string, never>
+    >,
+    res: Response<
+      ResponseBody<Awaited<ReturnType<typeof UserService.startPackageDelivery>>>
+    >,
+    next: NextFunction
+  ) {
+    try {
+      checkProperties(req.body, [
+        {
+          field: "userId",
+          type: Types.ObjectId,
+        },
+        {
+          field: "packageId",
+          type: Types.ObjectId,
+        },
+      ]);
+
+      const { userId, packageId } = req.body;
+
+      const { user, package: _package } =
+        await UserService.startPackageDelivery(userId, packageId);
+
+      return res.status(200).send({
+        status: 200,
+        message: "Package delivery started successfully",
+        data: { user, package: _package },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 
   static async finishPackageDelivery(
     _req: Request,
