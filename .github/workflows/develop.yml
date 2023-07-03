@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      #- name: Run tests
+      # - name: Run tests
       #   run: npm run test
 
       - name: Configure AWS Credentials
@@ -36,7 +36,7 @@ jobs:
       - name: Install AWS Lightsail Plugin
         run: curl "https://s3.us-west-2.amazonaws.com/lightsailctl/latest/linux-amd64/lightsailctl" -o "/usr/local/bin/lightsailctl" && sudo chmod +x /usr/local/bin/lightsailctl
 
-      - name: Install jq
+      - name: Install JQ
         run: sudo apt install jq -y
 
       - name: Build Docker Image
@@ -47,11 +47,14 @@ jobs:
           aws lightsail push-container-image --region us-east-1 --service-name staffys-api --label latest --image staffys-api:latest
           > push-output.json
 
+      - name: Debug output
+        run: cat push-output.json
+
       - name: Trigger a new deploy in AWS Lightsail
         run: |
           IMAGE_URL=$(jq -r '.image' push-output.json)
           aws lightsail create-container-service-deployment --region us-east-1 --service-name staffys-api --containers '{
-            "staffys-api": {
+            "staffys-api-container": {
               "image": "'"$IMAGE_URL"'",
               "environment": {
                 "NODE_ENV": "${{ secrets.NODE_ENV }}",
@@ -72,5 +75,5 @@ jobs:
                 "80": "HTTP"
               }
             }
-          }' --public-endpoint '{ "containerName": "staffys-api", "containerPort": 80 }'
+          }' --public-endpoint '{ "containerName": "staffys-api-container", "containerPort": 80 }'
         shell: bash
