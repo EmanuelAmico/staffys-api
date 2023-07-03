@@ -1,52 +1,157 @@
 import { NextFunction, Request, Response } from "express";
-import { AuthService } from "../services/auth.service";
-import { JsonWebTokenError, JwtPayload } from "jsonwebtoken";
+import { AuthService } from "../services";
+import { checkProperties } from "../utils/checkreq.utils";
+import { ResponseBody } from "../types/request.types";
+import {
+  RegisterRequestBody,
+  UserResponse,
+  LoginRequestBody,
+} from "../types/user.types";
 
 class AuthController {
   static async register(
-    req: Request<void, string, { name: string }, void>,
-    res: Response<string>,
+    req: Request<void, UserResponse, RegisterRequestBody, void>,
+    res: Response<UserResponse>,
     next: NextFunction
   ) {
     try {
-      if (!req.body.name) throw new Error("Name is required");
+      const userBody = req.body;
+      checkProperties(userBody, [
+        { field: "name", type: "string" },
+        { field: "lastname", type: "string" },
+        { field: "password", type: "password" },
+        { field: "confirmpassword", type: "password" },
+        { field: "email", type: "string" },
+        { field: "urlphoto", type: "string" },
+        { field: "is_admin", type: "boolean" },
+      ]);
 
-      const user = req.body;
+      const { user, token } = await AuthService.register(userBody);
 
-      const token = await AuthService.register(user);
-
-      res.status(200).send(token);
+      res.status(200).json({
+        data: { user, token },
+        status: 200,
+        message: "User was registered successfully",
+      });
     } catch (error) {
       next(error);
     }
   }
 
-  static login(
-    req: Request,
-    res: Response<string | JwtPayload>,
+  static async login(
+    req: Request<void, UserResponse, LoginRequestBody, void>,
+    res: Response<UserResponse>,
     next: NextFunction
   ) {
     try {
-      const authorizationHeader = req.headers.authorization;
+      const userBody = req.body;
 
-      if (!authorizationHeader)
-        return res.status(401).send("Authorization token not found");
+      checkProperties(userBody, [
+        { field: "password", type: "string" },
+        { field: "email", type: "string" },
+      ]);
 
-      const [bearer, token] = authorizationHeader.split(" ");
+      const loginResult = await AuthService.login(userBody);
 
-      if (bearer !== "Bearer" || !token)
-        return res.status(401).send("Invalid authorization header");
+      const { user, token } = loginResult;
 
-      const payload = AuthService.login(token);
-
-      if (!payload) return res.status(401).send("Invalid authorization token");
-
-      res.status(200).send(payload);
+      res.status(200).json({
+        data: { user, token },
+        status: 200,
+        message: "User logged in successfully",
+      });
     } catch (error) {
-      if (error instanceof JsonWebTokenError) {
-        return res.status(401).send("Invalid authorization token");
+      next(error);
+    }
+  }
+
+  static async initResetPassword(
+    req: Request<
+      Record<string, never>,
+      ResponseBody,
+      {
+        email: string;
+      },
+      Record<string, never>
+    >,
+    res: Response<ResponseBody>,
+    next: NextFunction
+  ) {
+    try {
+      const email = req.body.email;
+
+      checkProperties(req.body, [
+        {
+          field: "email",
+          type: "email",
+        },
+      ]);
+
+      await AuthService.initResetPassword(email);
+
+      res.status(200).send({
+        status: 200,
+        message: "Started reset password process",
+        data: null,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async resetPassword(
+    req: Request<
+      Record<string, never>,
+      ResponseBody,
+      {
+        email: string;
+        code: number;
+        password: string;
+        confirmPassword: string;
+      },
+      Record<string, never>
+    >,
+    res: Response<ResponseBody>,
+    next: NextFunction
+  ) {
+    try {
+      const { email, code, password, confirmPassword } = req.body;
+
+      checkProperties(req.body, [
+        {
+          field: "email",
+          type: "email",
+        },
+        {
+          field: "code",
+          type: "number",
+        },
+        {
+          field: "password",
+          type: "password",
+        },
+        {
+          field: "confirmPassword",
+          type: "password",
+        },
+      ]);
+
+      if (password !== confirmPassword) {
+        return res.status(400).send({
+          status: 400,
+          message: "Passwords do not match",
+          data: null,
+        });
       }
 
+      await AuthService.resetPassword(email, code, password);
+
+      res.status(200).send({
+        status: 200,
+        message: "Password reset successfully",
+        data: null,
+      });
+    } catch (error) {
       next(error);
     }
   }
