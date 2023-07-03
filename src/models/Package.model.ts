@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 import { geocodeAddress } from "../utils/googleApiDistance.utils";
 import { APIError } from "../utils/error.utils";
 
-export interface PackageProps extends Document {
+export interface PackageModelProps extends Document {
   title: string;
   description: string;
   address: string;
@@ -20,7 +20,7 @@ export interface PackageProps extends Document {
   distance?: number | null;
 }
 
-const PackageSchema = new Schema<PackageProps>(
+const PackageSchema = new Schema<PackageModelProps>(
   {
     title: { type: String, required: true },
     description: { type: String, required: true },
@@ -41,7 +41,7 @@ const PackageSchema = new Schema<PackageProps>(
     timestamps: true,
   }
 );
-PackageSchema.pre<PackageProps>("save", async function () {
+PackageSchema.pre<PackageModelProps>("save", async function () {
   try {
     const { address, city } = this;
     const geocodeResult = await geocodeAddress(address, city);
@@ -59,6 +59,6 @@ PackageSchema.pre<PackageProps>("save", async function () {
   }
 });
 
-const Package = model<PackageProps>("Package", PackageSchema);
+const Package = model<PackageModelProps>("Package", PackageSchema);
 
 export default Package;

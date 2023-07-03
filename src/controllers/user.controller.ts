@@ -1,12 +1,12 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable no-empty-function */
+
 import { NextFunction, Request, Response } from "express";
 import { Types } from "mongoose";
 import { UserResponse, ExtendedUserRequestBody } from "../types/user.types";
 import { UserService } from "../services/user.service";
 import { checkProperties } from "../utils/checkreq.utils";
 import { ResponseBody } from "../types/request.types";
-
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-empty-function */
 
 // TODO Remove "_" from unused parameters
 class UserController {
@@ -43,22 +43,41 @@ class UserController {
           data: null,
         });
       }
-
-      return res.status(200).send({
-        status: 200,
-        message: "User found",
-        data: user,
-      });
     } catch (error) {
       next(error);
     }
   }
 
   static async getDeliveryPeople(
-    _req: Request,
-    _res: Response,
-    _next: NextFunction
-  ) {}
+    _req: Request<
+      Record<string, never>,
+      UserResponse,
+      Record<string, never>,
+      Record<string, never>
+    >,
+    res: Response<UserResponse>,
+    next: NextFunction
+  ) {
+    try {
+      const deliveryPeoples = await UserService.getDeliveryPeople();
+
+      if (deliveryPeoples.length === 0) {
+        return res.status(200).send({
+          status: 200,
+          message: "Not found delivery people",
+          data: null,
+        });
+      }
+
+      return res.status(200).send({
+        status: 200,
+        message: "all delivery people",
+        data: { users: deliveryPeoples },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 
   static async updateUserById(
     req: Request<
