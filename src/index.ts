@@ -20,6 +20,9 @@ const options: cors.CorsOptions = {
   origin: [BACKOFFICE_CLIENT_HOST, DELIVERY_CLIENT_HOST],
 };
 
+// Health check
+app.get("/ping", (_req, res) => res.send("OK"));
+
 app.use(morgan("dev"));
 app.use(cors(options));
 app.use(json());
