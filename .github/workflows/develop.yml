@@ -46,7 +46,7 @@ jobs:
 
       - name: Trigger a new deploy in AWS Lightsail
         run: |
-          IMAGE_REFERENCE=$(grep 'Refer to this image as' push-output.txt | awk '{print $6}')
+          IMAGE_REFERENCE=$(grep 'Refer to this image as' push-output.txt | awk -F'"' '{print $2}')
           aws lightsail create-container-service-deployment --region us-east-1 --service-name staffys-api --containers '{
             "staffys-api-container": {
               "image": "'"$IMAGE_REFERENCE"'",
