@@ -15,7 +15,7 @@ class PackageService {
     userLatitude: number,
     userLongitude: number
   ) {
-    const packages = await Package.find();
+    const packages = await Package.find({ status: null });
 
     const coordinates = packages.map((pkg) => pkg.coordinates);
 
