@@ -20,4 +20,10 @@ router.delete(
   AuthMiddleware.validateUser,
   UserController.deleteUserById
 );
+router.post(
+  "/take-package",
+  AuthMiddleware.validateUser,
+  UserController.takePackage
+);
+
 export { router as userRoutes };

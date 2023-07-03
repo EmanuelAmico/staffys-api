@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { hash, genSalt, compare } from "bcrypt";
 import crypto from "crypto";
 
@@ -13,9 +13,9 @@ export interface User extends Document {
   urlphoto: string;
   is_deleted: boolean;
   resetToken?: string;
-  pendingPackages?: Schema.Types.ObjectId[];
-  currentPackage?: Schema.Types.ObjectId;
-  historyPackages?: Schema.Types.ObjectId[];
+  pendingPackages: Types.ObjectId[];
+  currentPackage: Types.ObjectId | null;
+  historyPackages: Types.ObjectId[];
   hashPassword: (password: string, salt: string) => Promise<string>;
   validatePassword: (password: string) => Promise<boolean>;
   generateResetPasswordCode: () => Promise<string>;
@@ -34,9 +34,17 @@ const userSchema = new mongoose.Schema<User>(
     urlphoto: { type: String, required: true },
     is_deleted: { type: Boolean, default: false },
     resetToken: { type: String, default: null },
-    pendingPackages: [{ type: mongoose.Schema.Types.ObjectId, ref: "Package" }],
-    currentPackage: { type: mongoose.Schema.Types.ObjectId, ref: "Package" },
-    historyPackages: [{ type: mongoose.Schema.Types.ObjectId, ref: "Package" }],
+    pendingPackages: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "Package", default: [] },
+    ],
+    currentPackage: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Package",
+      default: null,
+    },
+    historyPackages: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "Package", default: [] },
+    ],
   },
   {
     timestamps: true,
@@ -96,6 +104,4 @@ userSchema.pre<User>("save", async function () {
   }
 });
 
-const User = mongoose.model<User>("Users", userSchema);
-
-export { User };
+export const User = mongoose.model<User>("Users", userSchema);

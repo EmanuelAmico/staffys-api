@@ -1,4 +1,4 @@
-import History from "../../models/History.model";
+import { History } from "../../models/History.model";
 import mongoose from "mongoose";
 import { envs } from "../../config/env/env.config";
 import { HistoryService } from "../../services/history.service";
