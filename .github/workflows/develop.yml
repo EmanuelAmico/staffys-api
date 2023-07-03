@@ -36,26 +36,20 @@ jobs:
       - name: Install AWS Lightsail Plugin
         run: curl "https://s3.us-west-2.amazonaws.com/lightsailctl/latest/linux-amd64/lightsailctl" -o "/usr/local/bin/lightsailctl" && sudo chmod +x /usr/local/bin/lightsailctl
 
-      - name: Install JQ
-        run: sudo apt install jq -y
-
       - name: Build Docker Image
         run: docker build -t staffys-api .
 
       - name: Push image to AWS Lightsail
         run: >
           aws lightsail push-container-image --region us-east-1 --service-name staffys-api --label latest --image staffys-api:latest
-          > push-output.json
-
-      - name: Debug output
-        run: cat push-output.json
+          > push-output.txt
 
       - name: Trigger a new deploy in AWS Lightsail
         run: |
-          IMAGE_URL=$(jq -r '.image' push-output.json)
+          IMAGE_REFERENCE=$(grep 'Refer to this image as' push-output.txt | awk '{print $6}')
           aws lightsail create-container-service-deployment --region us-east-1 --service-name staffys-api --containers '{
             "staffys-api-container": {
-              "image": "'"$IMAGE_URL"'",
+              "image": "'"$IMAGE_REFERENCE"'",
               "environment": {
                 "NODE_ENV": "${{ secrets.NODE_ENV }}",
                 "PORT": "${{ secrets.PORT }}",
