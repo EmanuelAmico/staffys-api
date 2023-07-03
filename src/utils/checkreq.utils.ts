@@ -108,7 +108,7 @@ const checkRequiredParameters = (
 
   if (missingParametersFinal.length > 0) {
     throw new APIError({
-      message: "This fields  are required:" + missingParameters.join(","),
+      message: "These fields are required:" + missingParameters.join(","),
       status: 400,
     });
   }

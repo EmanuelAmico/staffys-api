@@ -6,12 +6,47 @@ import { Types } from "mongoose";
 import { UserResponse, ExtendedUserRequestBody } from "../types/user.types";
 import { UserService } from "../services/user.service";
 import { checkProperties } from "../utils/checkreq.utils";
+import { ResponseBody } from "../types/request.types";
 
 // TODO Remove "_" from unused parameters
 class UserController {
-  static createUser(_req: Request, _res: Response, _next: NextFunction) {}
+  static async createUser(_req: Request, _res: Response, _next: NextFunction) {}
 
-  static getUserById(_req: Request, _res: Response, _next: NextFunction) {}
+  static async getUserById(
+    req: Request<
+      { _id: string },
+      ResponseBody<Awaited<ReturnType<typeof UserService.getUserById>>>,
+      Record<string, never>,
+      Record<string, never>
+    >,
+    res: Response<
+      ResponseBody<Awaited<ReturnType<typeof UserService.getUserById>>>
+    >,
+    next: NextFunction
+  ) {
+    try {
+      const _id = req.params._id;
+
+      checkProperties({ _id }, [
+        {
+          field: "_id",
+          type: Types.ObjectId,
+        },
+      ]);
+
+      const user = await UserService.getUserById(_id);
+
+      if (!user) {
+        return res.status(404).send({
+          status: 404,
+          message: "User not found",
+          data: null,
+        });
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
 
   static async getDeliveryPeople(
     _req: Request<
@@ -107,13 +142,29 @@ class UserController {
     }
   }
 
-  static takePackage(_req: Request, _res: Response, _next: NextFunction) {}
+  static async takePackage(
+    _req: Request,
+    _res: Response,
+    _next: NextFunction
+  ) {}
 
-  static startDelivery(_req: Request, _res: Response, _next: NextFunction) {}
+  static async startDelivery(
+    _req: Request,
+    _res: Response,
+    _next: NextFunction
+  ) {}
 
-  static finishDelivery(_req: Request, _res: Response, _next: NextFunction) {}
+  static async finishDelivery(
+    _req: Request,
+    _res: Response,
+    _next: NextFunction
+  ) {}
 
-  static cancelDelivery(_req: Request, _res: Response, _next: NextFunction) {}
+  static async cancelDelivery(
+    _req: Request,
+    _res: Response,
+    _next: NextFunction
+  ) {}
 }
 
 export { UserController };
