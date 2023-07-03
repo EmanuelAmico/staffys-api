@@ -7,6 +7,7 @@ const router = Router();
 router.get(
   "/all/delivery-people",
   AuthMiddleware.validateUser,
+  AuthMiddleware.checkAdmin,
   UserController.getDeliveryPeople
 );
 router.put(
