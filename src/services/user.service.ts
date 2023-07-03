@@ -3,6 +3,7 @@
 import { Types } from "mongoose";
 import { User } from "../models/User.model";
 import { ExtendedUserRequestBody } from "../types/user.types";
+import { APIError } from "../utils/error.utils";
 
 // TODO Remove "_" from unused parameters
 class UserService {
@@ -18,9 +19,39 @@ class UserService {
     return deliveryPeoples;
   }
 
-  static async updateUserById(_userBody: ExtendedUserRequestBody) {}
+  static async updateUserById(userBody: ExtendedUserRequestBody) {
+    const updatedUser = await User.findByIdAndUpdate(
+      { _id: userBody._id },
+      userBody,
+      {
+        new: true,
+      }
+    ).select("-salt -password");
 
-  static async deleteUserById(_id: string) {}
+    if (!updatedUser) {
+      throw new APIError({
+        message: "User not found",
+        status: 404,
+      });
+    }
+
+    return { updatedUser };
+  }
+
+  static async deleteUserById(id: string) {
+    const foundUser = await User.findByIdAndUpdate(
+      { _id: id },
+      { is_deleted: true },
+      { new: true }
+    );
+    if (!foundUser) {
+      throw new APIError({
+        message: "User not exist",
+        status: 404,
+      });
+    }
+    return "";
+  }
 
   static takePackage() {}
 
