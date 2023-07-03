@@ -2,15 +2,17 @@
 /* eslint-disable no-empty-function */
 
 import { NextFunction, Request, Response } from "express";
-import { PackageModelProps } from "../models/Package.model";
+import { Package } from "../models/Package.model";
 import { PackageService } from "../services/package.service";
 import { checkProperties } from "../utils/checkreq.utils";
+
 import { Types } from "mongoose";
+
 export interface PackageResponse {
   message: string;
   status: number;
   data: {
-    packages: PackageModelProps[] | PackageModelProps | null | string;
+    packages: Package[] | Package | null | string;
   } | null;
 }
 

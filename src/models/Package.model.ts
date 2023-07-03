@@ -1,16 +1,17 @@
-import { Schema, model } from "mongoose";
 import { geocodeAddress } from "../utils/googleApiDistance.utils";
 import { APIError } from "../utils/error.utils";
+import { Schema, Types, model } from "mongoose";
 
-export interface PackageModelProps extends Document {
+export interface Package extends Document {
+  _id: Types.ObjectId;
   title: string;
   description: string;
   address: string;
   receptorName: string;
-  deliveryMan: string | undefined;
+  deliveryMan: Types.ObjectId | undefined;
   weight: number;
   deliveredAt: Date | undefined;
-  status: "taken" | "in_progress" | "delivered" | undefined;
+  status: "taken" | "in_progress" | "delivered" | null;
   deadlines: Date;
   city: string;
   coordinates?: {
@@ -20,7 +21,7 @@ export interface PackageModelProps extends Document {
   distance?: number | null;
 }
 
-const PackageSchema = new Schema<PackageModelProps>(
+const PackageSchema = new Schema<Package>(
   {
     title: { type: String, required: true },
     description: { type: String, required: true },
@@ -29,7 +30,7 @@ const PackageSchema = new Schema<PackageModelProps>(
     deliveryMan: { type: String, default: undefined },
     weight: { type: Number, required: true },
     deliveredAt: { type: Date, default: undefined },
-    status: { type: String, default: undefined },
+    status: { type: String, default: null },
     deadlines: { type: Date, required: true },
     city: { type: String, required: true },
     coordinates: {
@@ -41,7 +42,8 @@ const PackageSchema = new Schema<PackageModelProps>(
     timestamps: true,
   }
 );
-PackageSchema.pre<PackageModelProps>("save", async function () {
+
+PackageSchema.pre<Package>("save", async function () {
   try {
     const { address, city } = this;
     const geocodeResult = await geocodeAddress(address, city);
@@ -59,6 +61,4 @@ PackageSchema.pre<PackageModelProps>("save", async function () {
   }
 });
 
-const Package = model<PackageModelProps>("Package", PackageSchema);
-
-export default Package;
+export const Package = model<Package>("Package", PackageSchema);

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-empty-function */
-import Package from "../models/Package.model";
+import { Package } from "../models/Package.model";
 import { calculateDistanceUsingDirectionsAPI } from "../utils/googleApiDistance.utils";
 import { APIError } from "../utils/error.utils";
 
@@ -19,9 +19,9 @@ class PackageService {
     userLatitude: number,
     userLongitude: number
   ) {
-    const packages = await Package.find();
+    const packages = await Package.find({ status: null });
 
-    const coordinates = packages.map((pkg) => pkg.coordinates);
+    const coordinates = packages.map((_package) => _package.coordinates);
 
     try {
       const distances = await Promise.all(
@@ -37,8 +37,8 @@ class PackageService {
           return null;
         })
       );
-      const packagesWithDistance = packages.map((pkg, index) => ({
-        ...pkg.toObject(),
+      const packagesWithDistance = packages.map((_package, index) => ({
+        ..._package.toObject(),
         distance: distances[index],
       }));
 
