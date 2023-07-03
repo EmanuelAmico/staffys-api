@@ -24,7 +24,7 @@ jobs:
         run: npm install
 
       # - name: Run tests
-      # run: npm run test
+      #   run: npm run test
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -36,8 +36,41 @@ jobs:
       - name: Install AWS Lightsail Plugin
         run: curl "https://s3.us-west-2.amazonaws.com/lightsailctl/latest/linux-amd64/lightsailctl" -o "/usr/local/bin/lightsailctl" && sudo chmod +x /usr/local/bin/lightsailctl
 
+      - name: Install jq
+        run: sudo apt install jq -y
+
       - name: Build Docker Image
         run: docker build -t staffys-api .
 
-      - name: Deploy to AWS Lightsail
-        run: aws lightsail push-container-image --region us-east-1 --service-name staffys-api --label latest --image staffys-api:latest
+      - name: Push image to AWS Lightsail
+        run: >
+          aws lightsail push-container-image --region us-east-1 --service-name staffys-api --label latest --image staffys-api:latest
+          > push-output.json
+
+      - name: Trigger a new deploy in AWS Lightsail
+        run: |
+          IMAGE_URL=$(jq -r '.image' push-output.json)
+          aws lightsail create-container-service-deployment --region us-east-1 --service-name staffys-api --containers '{
+            "staffys-api": {
+              "image": "'"$IMAGE_URL"'",
+              "environment": {
+                "NODE_ENV": "${{ secrets.NODE_ENV }}",
+                "PORT": "${{ secrets.PORT }}",
+                "TESTING_PORT": "${{ secrets.TESTING_PORT }}",
+                "JWT_SECRET": "${{ secrets.JWT_SECRET }}",
+                "MONGO_URI": "${{ secrets.MONGO_URI }}",
+                "BACKOFFICE_CLIENT_HOST": "${{ secrets.BACKOFFICE_CLIENT_HOST }}",
+                "DELIVERY_CLIENT_HOST": "${{ secrets.DELIVERY_CLIENT_HOST }}",
+                "GOOGLE_API_KEY": "${{ secrets.GOOGLE_API_KEY }}",
+                "OAUTH2_EMAIL": "${{ secrets.OAUTH2_EMAIL }}",
+                "OAUTH2_CLIENT_ID": "${{ secrets.OAUTH2_CLIENT_ID }}",
+                "OAUTH2_CLIENT_SECRET": "${{ secrets.OAUTH2_CLIENT_SECRET }}",
+                "OAUTH2_REFRESH_TOKEN": "${{ secrets.OAUTH2_REFRESH_TOKEN }}",
+                "OAUTH2_ACCESS_TOKEN": "${{ secrets.OAUTH2_ACCESS_TOKEN }}"
+              },
+              "ports": {
+                "80": "HTTP"
+              }
+            }
+          }' --public-endpoint '{ "containerName": "staffys-api", "containerPort": 80 }'
+        shell: bash

@@ -35,7 +35,7 @@
   "repository": "https://github.com/EmanuelAmico/staffys-api",
   "bugs": "https://github.com/EmanuelAmico/staffys-api/issues",
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "node dist/src/index.js",
     "dev": "tsc-watch --onSuccess \"node dist/src/index.js\"",
     "build": "tsc",
     "check-types": "tsc --noEmit",
