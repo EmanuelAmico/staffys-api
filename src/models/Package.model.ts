@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 import { geocodeAddress } from "../utils/googleApiDistance.utils";
 import { APIError } from "../utils/error.utils";
 
-interface PackageModelProps extends Document {
+export interface PackageModelProps extends Document {
   title: string;
   description: string;
   address: string;
