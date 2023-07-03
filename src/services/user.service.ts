@@ -5,20 +5,21 @@ import { ExtendedUserRequestBody } from "../types/user.types";
 import { APIError } from "../utils/error.utils";
 import { Package } from "../models/Package.model";
 import { getTodayFormForUser } from "../utils/form.utils";
+import { createTodayHistory, getTodayHistory } from "../utils/history.utils";
 
 // TODO Remove "_" from unused parameters
 class UserService {
   static createUser() {}
 
   static async getUserById(_id: string) {
-    const user = await User.findById(_id).select("-salt -password");
+    const user = await User.findById(_id).select("-salt -password").exec();
     return user;
   }
 
   static async getDeliveryPeople() {
-    const deliveryPeoples = await User.find({ is_admin: false }).select(
-      "-salt -password"
-    );
+    const deliveryPeoples = await User.find({ is_admin: false })
+      .select("-salt -password")
+      .exec();
 
     return deliveryPeoples;
   }
@@ -30,7 +31,9 @@ class UserService {
       {
         new: true,
       }
-    ).select("-salt -password");
+    )
+      .select("-salt -password")
+      .exec();
 
     if (!updatedUser) {
       throw new APIError({
@@ -47,18 +50,20 @@ class UserService {
       { _id: id },
       { is_deleted: true },
       { new: true }
-    );
+    ).exec();
+
     if (!foundUser) {
       throw new APIError({
         message: "User not exist",
         status: 404,
       });
     }
+
     return "";
   }
 
   static async takePackage(packageId: string, userId: string) {
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).exec();
     const todayForm = await getTodayFormForUser(userId);
     const hasCompletedTodayForm = todayForm !== null;
 
@@ -83,7 +88,7 @@ class UserService {
       });
     }
 
-    const _package = await Package.findById(packageId);
+    const _package = await Package.findById(packageId).exec();
 
     if (!_package) {
       throw new APIError({
@@ -106,7 +111,61 @@ class UserService {
     return { user, package: _package };
   }
 
-  static startDelivery() {}
+  static async startDelivery(userId: string) {
+    const todayForm = await getTodayFormForUser(userId);
+    const hasCompletedTodayForm = todayForm !== null;
+
+    if (!hasCompletedTodayForm) {
+      throw new APIError({
+        message: "User has not completed today form",
+        status: 403,
+      });
+    }
+
+    const user = await User.findById(userId)
+      .populate<{
+        pendingPackages: Package[];
+      }>("pendingPackages")
+      .exec();
+
+    if (!user) {
+      throw new APIError({
+        message: "User not found",
+        status: 404,
+      });
+    }
+
+    if (user.pendingPackages.some((pkg) => pkg.status !== null)) {
+      throw new APIError({
+        message:
+          "There was an error trying to start delivery, some packages you selected were already taken by other person. Please try start again.",
+        status: 400,
+      });
+    }
+
+    await Promise.all(
+      user.pendingPackages.map(({ _id }) =>
+        Package.findByIdAndUpdate(_id, {
+          status: "taken",
+          deliveryMan: user._id,
+        }).exec()
+      )
+    );
+
+    const todayHistory =
+      (await getTodayHistory()) || (await createTodayHistory());
+
+    todayHistory.activeUsers.push(user._id);
+    todayHistory.targetPackages.push(
+      ...user.pendingPackages.map(({ _id }) => _id)
+    );
+    await todayHistory.save();
+
+    user.is_active = true;
+    await user.save();
+
+    return { user };
+  }
 
   static finishDelivery() {}
 

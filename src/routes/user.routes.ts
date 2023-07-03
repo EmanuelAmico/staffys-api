@@ -25,5 +25,10 @@ router.post(
   AuthMiddleware.validateUser,
   UserController.takePackage
 );
+router.post(
+  "/start-delivery",
+  AuthMiddleware.validateUser,
+  UserController.startDelivery
+);
 
 export { router as userRoutes };

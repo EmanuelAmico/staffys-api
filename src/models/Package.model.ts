@@ -3,6 +3,7 @@ import { APIError } from "../utils/error.utils";
 import { Schema, Types, model } from "mongoose";
 
 export interface Package extends Document {
+  _id: Types.ObjectId;
   title: string;
   description: string;
   address: string;

@@ -42,7 +42,9 @@ describe("User Service", () => {
 
       const user = await User.findOne({
         _id: createdUser._id.toString(),
-      }).select("-salt -password");
+      })
+        .select("-salt -password")
+        .exec();
 
       if (!user) {
         throw new Error("User not found in tests");

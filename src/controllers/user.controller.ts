@@ -180,10 +180,38 @@ class UserController {
   }
 
   static async startDelivery(
-    _req: Request,
-    _res: Response,
-    _next: NextFunction
-  ) {}
+    req: Request<
+      Record<string, never>,
+      ResponseBody,
+      { userId: string },
+      Record<string, never>
+    >,
+    res: Response<
+      ResponseBody<Awaited<ReturnType<typeof UserService.getUserById>>>
+    >,
+    next: NextFunction
+  ) {
+    try {
+      checkProperties(req.body, [
+        {
+          field: "userId",
+          type: Types.ObjectId,
+        },
+      ]);
+
+      const { userId } = req.body;
+
+      await UserService.startDelivery(userId);
+
+      return res.status(200).send({
+        status: 200,
+        message: "Delivery started successfully",
+        data: null,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 
   static async finishDelivery(
     _req: Request,

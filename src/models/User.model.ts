@@ -3,6 +3,7 @@ import { hash, genSalt, compare } from "bcrypt";
 import crypto from "crypto";
 
 export interface User extends Document {
+  _id: Types.ObjectId;
   name: string;
   lastname: string;
   password: string;
