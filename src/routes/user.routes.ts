@@ -29,5 +29,10 @@ router.post(
   AuthMiddleware.validateUser,
   UserController.startDelivery
 );
+router.put(
+  "/cancel-delivery",
+  AuthMiddleware.validateUser,
+  UserController.cancelDelivery
+);
 
 export { router as userRoutes };
