@@ -19,4 +19,9 @@ router.delete(
   AuthMiddleware.validateUser,
   UserController.deleteUserById
 );
+router.get(
+  "/finish-package-delivery",
+  AuthMiddleware.validateUser,
+  UserController.finishDelivery
+);
 export { router as userRoutes };

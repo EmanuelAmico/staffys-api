@@ -60,7 +60,12 @@ class UserService {
 
   static startDelivery() {}
 
-  static finishDelivery() {}
+  static async finishDelivery(_id: string) {
+    const updatedUser = await User.findByIdAndUpdate(_id, {
+      currentPackage: false,
+    });
+    return updatedUser;
+  }
 
   static cancelDelivery() {}
 }

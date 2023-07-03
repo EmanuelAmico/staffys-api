@@ -155,10 +155,28 @@ class UserController {
   ) {}
 
   static async finishDelivery(
-    _req: Request,
-    _res: Response,
-    _next: NextFunction
-  ) {}
+    req: Request<
+      { _id: string },
+      UserResponse,
+      Record<string, never>,
+      Record<string, never>
+    >,
+    res: Response<UserResponse>,
+    next: NextFunction
+  ) {
+    try {
+      checkProperties(req.params, [{ field: "_id", type: Types.ObjectId }]);
+      const { _id } = req.params;
+      await UserService.finishDelivery(_id);
+      return res.status(200).send({
+        status: 200,
+        message: "User is eliminated",
+        data: null,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 
   static async cancelDelivery(
     _req: Request,
