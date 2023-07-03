@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-empty-function */
-
 import { NextFunction, Request, Response } from "express";
 import { Types } from "mongoose";
 import { UserResponse, ExtendedUserRequestBody } from "../types/user.types";
@@ -143,10 +142,42 @@ class UserController {
   }
 
   static async takePackage(
-    _req: Request,
-    _res: Response,
-    _next: NextFunction
-  ) {}
+    req: Request<
+      Record<string, never>,
+      ResponseBody,
+      { packageId: string; userId: string },
+      Record<string, never>
+    >,
+    res: Response<
+      ResponseBody<Awaited<ReturnType<typeof UserService.getUserById>>>
+    >,
+    next: NextFunction
+  ) {
+    try {
+      checkProperties(req.body, [
+        {
+          field: "packageId",
+          type: Types.ObjectId,
+        },
+        {
+          field: "userId",
+          type: Types.ObjectId,
+        },
+      ]);
+
+      const { packageId, userId } = req.body;
+
+      await UserService.takePackage(packageId, userId);
+
+      return res.status(200).send({
+        status: 200,
+        message: "Package taken",
+        data: null,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 
   static async startDelivery(
     _req: Request,
