@@ -8,7 +8,7 @@ export const getTodayFormForUser = async (userId: string) => {
   const todayForm = await Form.findOne({
     date: today,
     user: userId,
-  });
+  }).exec();
 
   return todayForm;
 };

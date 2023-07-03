@@ -1,9 +1,11 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 
 export interface History extends Document {
+  _id: Types.ObjectId;
   date: Date;
-  activeUsers: Schema.Types.ObjectId[];
-  targetPackages: Schema.Types.ObjectId[];
+  activeUsers: Types.ObjectId[];
+  targetPackages: Types.ObjectId[];
+  deliveredPackages: Types.ObjectId[];
 }
 
 const HistorySchema = new Schema<History>({

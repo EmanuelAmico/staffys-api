@@ -1,6 +1,7 @@
-import { Document, model, Schema } from "mongoose";
+import { Document, model, Schema, Types } from "mongoose";
 
 export interface Form extends Document {
+  _id: Types.ObjectId;
   date: Date;
   user: Schema.Types.ObjectId;
   hasDrank: boolean;
