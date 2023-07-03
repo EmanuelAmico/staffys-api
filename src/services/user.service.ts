@@ -167,9 +167,31 @@ class UserService {
     return { user };
   }
 
-  static finishDelivery() {}
+  static async cancelDelivery(userId: string) {
+    const user = await User.findById(userId);
 
-  static cancelDelivery() {}
+    if (!user) {
+      throw new APIError({
+        message: "User not found",
+        status: 404,
+      });
+    }
+
+    if (user.is_active) {
+      user.is_active = false;
+    }
+
+    user.pendingPackages = [];
+    await user.save();
+
+    return { user };
+  }
+
+  static async startPackageDelivery() {}
+
+  static async finishPackageDelivery() {}
+
+  static async cancelPackageDelivery() {}
 }
 
 export { UserService };

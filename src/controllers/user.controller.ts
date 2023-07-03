@@ -144,12 +144,12 @@ class UserController {
   static async takePackage(
     req: Request<
       Record<string, never>,
-      ResponseBody,
+      ResponseBody<Awaited<ReturnType<typeof UserService.takePackage>>>,
       { packageId: string; userId: string },
       Record<string, never>
     >,
     res: Response<
-      ResponseBody<Awaited<ReturnType<typeof UserService.getUserById>>>
+      ResponseBody<Awaited<ReturnType<typeof UserService.takePackage>>>
     >,
     next: NextFunction
   ) {
@@ -167,12 +167,15 @@ class UserController {
 
       const { packageId, userId } = req.body;
 
-      await UserService.takePackage(packageId, userId);
+      const { user, package: pkg } = await UserService.takePackage(
+        packageId,
+        userId
+      );
 
       return res.status(200).send({
         status: 200,
         message: "Package taken",
-        data: null,
+        data: { user, package: pkg },
       });
     } catch (error) {
       next(error);
@@ -182,12 +185,12 @@ class UserController {
   static async startDelivery(
     req: Request<
       Record<string, never>,
-      ResponseBody,
+      ResponseBody<Awaited<ReturnType<typeof UserService.startDelivery>>>,
       { userId: string },
       Record<string, never>
     >,
     res: Response<
-      ResponseBody<Awaited<ReturnType<typeof UserService.getUserById>>>
+      ResponseBody<Awaited<ReturnType<typeof UserService.startDelivery>>>
     >,
     next: NextFunction
   ) {
@@ -201,25 +204,59 @@ class UserController {
 
       const { userId } = req.body;
 
-      await UserService.startDelivery(userId);
+      const user = await UserService.startDelivery(userId);
 
       return res.status(200).send({
         status: 200,
         message: "Delivery started successfully",
-        data: null,
+        data: user,
       });
     } catch (error) {
       next(error);
     }
   }
 
-  static async finishDelivery(
+  static async cancelDelivery(
+    req: Request<
+      Record<string, never>,
+      ResponseBody<Awaited<ReturnType<typeof UserService.cancelDelivery>>>,
+      { userId: string },
+      Record<string, never>
+    >,
+    res: Response<
+      ResponseBody<Awaited<ReturnType<typeof UserService.cancelDelivery>>>
+    >,
+    next: NextFunction
+  ) {
+    try {
+      checkProperties(req.body, [
+        {
+          field: "userId",
+          type: Types.ObjectId,
+        },
+      ]);
+
+      const { userId } = req.body;
+
+      const user = await UserService.cancelDelivery(userId);
+
+      return res.status(200).send({
+        status: 200,
+        message: "Delivery canceled successfully",
+        data: user,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async startPackageDelivery(
     _req: Request,
     _res: Response,
     _next: NextFunction
   ) {}
 
-  static async cancelDelivery(
+  static async finishPackageDelivery(
     _req: Request,
     _res: Response,
     _next: NextFunction
