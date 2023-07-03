@@ -21,19 +21,20 @@ jobs:
           node-version: "18"
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      # - name: Run tests
-      #   run: npm run test
+      - name: Run tests
+        run: npm run test
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_ACCESS_KEY_SECRET }}
           aws-region: us-east-1
 
       - name: Build Docker Image
         run: docker build -t staffys-api .
 
       - name: Deploy to AWS Lightsail
-        run: aws lightsail push-container-image --region us-east-1 --service-name staffys-api-dev --label latest --image staffys-api:latest
+        run: aws lightsail push-container-image --region us-east-1 --service-name staffys-api-prod --label latest --image staffys-api:latest
