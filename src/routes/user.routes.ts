@@ -1,10 +1,14 @@
 import { Router } from "express";
-
-import { UserController } from "../controllers/index";
 import { AuthMiddleware } from "../middlewares/auth.middleware";
+import { UserController } from "../controllers";
 
 const router = Router();
 
+router.get(
+  "/all/delivery-people",
+  AuthMiddleware.validateUser,
+  UserController.getDeliveryPeople
+);
 router.put(
   "/update",
   AuthMiddleware.validateUser,
@@ -15,5 +19,4 @@ router.delete(
   AuthMiddleware.validateUser,
   UserController.deleteUserById
 );
-
 export { router as userRoutes };

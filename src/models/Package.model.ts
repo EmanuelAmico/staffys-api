@@ -1,6 +1,8 @@
 import { Schema, model } from "mongoose";
+import { geocodeAddress } from "../utils/googleApiDistance.utils";
+import { APIError } from "../utils/error.utils";
 
-interface PackageProps extends Document {
+export interface PackageModelProps extends Document {
   title: string;
   description: string;
   address: string;
@@ -10,9 +12,15 @@ interface PackageProps extends Document {
   deliveredAt: Date | undefined;
   status: "taken" | "in_progress" | "delivered" | undefined;
   deadlines: Date;
+  city: string;
+  coordinates?: {
+    lat: number;
+    lng: number;
+  };
+  distance?: number | null;
 }
 
-const PackageSchema = new Schema<PackageProps>(
+const PackageSchema = new Schema<PackageModelProps>(
   {
     title: { type: String, required: true },
     description: { type: String, required: true },
@@ -23,12 +31,34 @@ const PackageSchema = new Schema<PackageProps>(
     deliveredAt: { type: Date, default: undefined },
     status: { type: String, default: undefined },
     deadlines: { type: Date, required: true },
+    city: { type: String, required: true },
+    coordinates: {
+      lat: Number,
+      lng: Number,
+    },
   },
   {
     timestamps: true,
   }
 );
+PackageSchema.pre<PackageModelProps>("save", async function () {
+  try {
+    const { address, city } = this;
+    const geocodeResult = await geocodeAddress(address, city);
+    if (!geocodeResult)
+      throw new APIError({
+        message: "No coordinates found for the provided address",
+        status: 404,
+      });
 
-const Package = model<PackageProps>("Package", PackageSchema);
+    const { lat, lng } = geocodeResult;
+
+    this.coordinates = { lat, lng };
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+const Package = model<PackageModelProps>("Package", PackageSchema);
 
 export default Package;

@@ -1,38 +1,27 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-empty-function */
+
 import { generateToken } from "../config/jwt/tokens";
 import { User } from "../models/User.model";
-import {
-  LoginRequestBody,
-  UserRequestBody,
-} from "../controllers/auth.controller";
+import { LoginRequestBody, RegisterRequestBody } from "../types/user.types";
+import { APIError } from "../utils/error.utils";
 import { sendEmail } from "../utils/mailer.utils";
 
 class AuthService {
-  static async register(userBody: UserRequestBody) {
+  static async register(userBody: RegisterRequestBody) {
     const newUser = await new User(userBody).save();
 
     if (!newUser) {
-      throw new Error("Registration failed");
+      throw new APIError({
+        message: "Error with creating a User",
+        status: 404,
+      });
     }
 
-    const user = {
-      name: newUser.name,
-      lastname: newUser.lastname,
-      email: newUser.email,
-      is_admin: newUser.is_admin,
-      is_active: newUser.is_active,
-      urlphoto: newUser.urlphoto,
-      pendingPackages: newUser?.pendingPackages,
-      currentPackage: newUser?.currentPackage,
-      historyPackages: newUser?.historyPackages,
-    };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, salt, ...user } = newUser.toObject();
 
     const token = generateToken(newUser._id);
-
-    if (!token) {
-      throw new Error("Failed to generate token");
-    }
 
     return { token, user };
   }
@@ -41,32 +30,22 @@ class AuthService {
     const foundUser = await User.findOne({ email: userBody.email });
 
     if (!foundUser) {
-      throw new Error("User does not exist");
+      throw new APIError({
+        message: "User does not exist",
+        status: 404,
+      });
     }
-
     const isValid = await foundUser.validatePassword(userBody.password);
-
     if (!isValid) {
-      throw new Error("Password does not match");
+      throw new APIError({
+        message: "Password does not match",
+        status: 404,
+      });
     }
-
-    const user = {
-      name: foundUser.name,
-      lastname: foundUser.lastname,
-      email: foundUser.email,
-      is_admin: foundUser.is_admin,
-      is_active: foundUser.is_active,
-      urlphoto: foundUser.urlphoto,
-      pendingPackages: foundUser?.pendingPackages,
-      currentPackage: foundUser?.currentPackage,
-      historyPackages: foundUser?.historyPackages,
-    };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, salt, ...user } = foundUser.toObject();
 
     const token = generateToken(foundUser._id);
-
-    if (!token) {
-      throw new Error("Failed to generate token");
-    }
 
     return { user, token };
   }

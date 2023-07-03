@@ -1,16 +1,12 @@
-import { NextFunction, Request, Response } from "express";
-import { Types } from "mongoose";
-import { UserRequestBody, RegisterResponse } from "./auth.controller";
-import { UserService } from "../services/user.service";
-import { ResponseBody } from "../types/request.types";
-import { checkProperties } from "../utils/checkreq.utils";
-
-export interface ExtendedUserRequestBody extends UserRequestBody {
-  _id: Types.ObjectId;
-}
-
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-empty-function */
+
+import { NextFunction, Request, Response } from "express";
+import { Types } from "mongoose";
+import { UserResponse, ExtendedUserRequestBody } from "../types/user.types";
+import { UserService } from "../services/user.service";
+import { checkProperties } from "../utils/checkreq.utils";
+import { ResponseBody } from "../types/request.types";
 
 // TODO Remove "_" from unused parameters
 class UserController {
@@ -47,64 +43,75 @@ class UserController {
           data: null,
         });
       }
-
-      return res.status(200).send({
-        status: 200,
-        message: "User found",
-        data: user,
-      });
     } catch (error) {
       next(error);
     }
   }
 
   static async getDeliveryPeople(
-    _req: Request,
-    _res: Response,
-    _next: NextFunction
-  ) {}
+    _req: Request<
+      Record<string, never>,
+      UserResponse,
+      Record<string, never>,
+      Record<string, never>
+    >,
+    res: Response<UserResponse>,
+    next: NextFunction
+  ) {
+    try {
+      const deliveryPeoples = await UserService.getDeliveryPeople();
+
+      if (deliveryPeoples.length === 0) {
+        return res.status(200).send({
+          status: 200,
+          message: "Not found delivery people",
+          data: null,
+        });
+      }
+
+      return res.status(200).send({
+        status: 200,
+        message: "all delivery people",
+        data: { users: deliveryPeoples },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 
   static async updateUserById(
     req: Request<
       Record<string, never>,
-      RegisterResponse,
+      UserResponse,
       ExtendedUserRequestBody,
       Record<string, never>
     >,
-    res: Response<RegisterResponse>,
+    res: Response<UserResponse>,
     next: NextFunction
   ) {
     try {
       const userBody = req.body;
-      if (userBody?.password) {
-        const passwordRegex = /^(?=.*[A-Z]).{6,}$/;
+      checkProperties(
+        req.body,
+        [{ field: "_id", type: Types.ObjectId }],
+        [
+          { field: "name", type: "string" },
+          { field: "lastname", type: "string" },
+          { field: "password", type: "string" },
+          { field: "email", type: "string" },
+          { field: "urlphoto", type: "string" },
+        ]
+      );
 
-        if (!passwordRegex.test(userBody.password)) {
-          return res.status(400).send({
-            status: 400,
-            message:
-              "Password must have at least one uppercase letter and a minimum length of 6 characters",
-            data: null,
-          });
-        }
-      }
+      const updateuser = await UserService.updateUserById(userBody);
 
-      const updatedUser = await UserService.updateUserById(userBody);
-      if (updatedUser) {
-        const { foundUser, token } = updatedUser;
+      const { updatedUser } = updateuser;
 
-        res.status(200).json({
-          data: { foundUser, token },
-          status: 200,
-          message: "User updated",
-        });
-      } else {
-        return res.status(400).send({
-          status: 400,
-          message: "User not updated",
-          data: null,
-        }); // Manejo de caso donde loginResult es undefined
-      }
+      res.status(200).json({
+        data: { findUser: updatedUser },
+        status: 200,
+        message: "User updated",
+      });
     } catch (error) {
       next(error);
     }
@@ -113,22 +120,16 @@ class UserController {
   static async deleteUserById(
     req: Request<
       { _id: string },
-      RegisterResponse,
+      UserResponse,
       Record<string, never>,
       Record<string, never>
     >,
-    res: Response<RegisterResponse>,
+    res: Response<UserResponse>,
     next: NextFunction
   ) {
     try {
       const id = req.params._id;
-      if (!id) {
-        return res.status(400).send({
-          status: 400,
-          message: "There is no id",
-          data: null,
-        });
-      }
+      checkProperties({ _id: id }, [{ field: "_id", type: Types.ObjectId }]);
       await UserService.deleteUserById(id);
 
       return res.status(200).send({
