@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-empty-function */
+
 import { User } from "../models/User.model";
 import { ExtendedUserRequestBody } from "../types/user.types";
 import { APIError } from "../utils/error.utils";
@@ -13,7 +14,13 @@ class UserService {
     return user;
   }
 
-  static getDeliveryPeople() {}
+  static async getDeliveryPeople() {
+    const deliveryPeoples = await User.find({ is_admin: false }).select(
+      "-salt -password"
+    );
+
+    return deliveryPeoples;
+  }
 
   static async updateUserById(userBody: ExtendedUserRequestBody) {
     const updatedUser = await User.findByIdAndUpdate(
