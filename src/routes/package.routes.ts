@@ -10,5 +10,9 @@ router.post(
   AuthMiddleware.validateUser,
   PackageController.getAvailablePackagesByCurrentLocation
 );
-
+router.get(
+  "/find-package/:_id",
+  AuthMiddleware.validateUser,
+  PackageController.getPackageById
+);
 export { router as packageRoutes };
