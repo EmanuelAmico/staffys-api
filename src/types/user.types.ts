@@ -1,25 +1,14 @@
-import { Schema, Types } from "mongoose";
-
-export interface UserProp {
-  name: string;
-  lastname: string;
-  email: string;
-  is_admin: boolean;
-  is_active: boolean;
-  urlphoto: string;
-  pendingPackages?: Schema.Types.ObjectId[];
-  currentPackage?: Schema.Types.ObjectId;
-  historyPackages?: Schema.Types.ObjectId[];
-}
+import { Types } from "mongoose";
+import { User } from "../models/User.model";
 
 export interface UserResponse {
   message: string;
   status: number;
   data: {
-    user?: UserProp | null | string;
+    user?: Omit<User, "password" | "salt"> | null | string;
     token?: string | null;
-    findUser?: UserProp | null;
-    users?: UserProp[];
+    findUser?: Omit<User, "password" | "salt"> | null;
+    users?: Omit<User, "password" | "salt">[];
   } | null;
 }
 

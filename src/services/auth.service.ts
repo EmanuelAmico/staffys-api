@@ -30,7 +30,7 @@ class AuthService {
   }
 
   static async login(userBody: LoginRequestBody) {
-    const foundUser = await User.findOne({ email: userBody.email });
+    const foundUser = await User.findOne({ email: userBody.email }).exec();
 
     if (!foundUser) {
       throw new APIError({
@@ -57,7 +57,7 @@ class AuthService {
   }
 
   static async initResetPassword(email: string) {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).exec();
 
     if (!user) {
       throw new Error("User does not exist");
@@ -74,7 +74,7 @@ class AuthService {
   }
 
   static async resetPassword(email: string, code: number, password: string) {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).exec();
 
     if (!user) {
       throw new Error("User was not found");
