@@ -1,33 +1,39 @@
 import { model, Schema, Types } from "mongoose";
+import { History } from "../types/history.types";
 
-export interface History extends Document {
+export interface HistoryModelProps extends History, Document {
   _id: Types.ObjectId;
-  date: Date;
-  activeUsers: Types.ObjectId[];
-  targetPackages: Types.ObjectId[];
-  deliveredPackages: Types.ObjectId[];
 }
 
-const HistorySchema = new Schema<History>({
-  date: {
-    type: Date,
-    required: true,
-    unique: true,
+const HistorySchema = new Schema(
+  {
+    date: {
+      type: Date,
+      required: true,
+      unique: true,
+    },
+    activeUsers: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Users",
+        required: true,
+        default: [],
+      },
+    ],
+    targetPackages: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Packages",
+        required: true,
+        default: [],
+      },
+    ],
   },
-  activeUsers: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Users",
-      required: true,
-    },
-  ],
-  targetPackages: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Packages",
-      required: true,
-    },
-  ],
-});
+  {
+    timestamps: true,
+  }
+);
 
-export const History = model<History>("History", HistorySchema);
+const History = model<History>("History", HistorySchema);
+
+export default History;

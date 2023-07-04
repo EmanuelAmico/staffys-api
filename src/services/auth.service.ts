@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-empty-function */
 
+import User from "../models/User.model";
 import { generateToken } from "../config/jwt/tokens";
-import { User } from "../models/User.model";
 import { LoginRequestBody, RegisterRequestBody } from "../types/user.types";
 import { APIError } from "../utils/error.utils";
 import { sendEmail } from "../utils/mailer.utils";

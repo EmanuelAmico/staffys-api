@@ -1,24 +1,10 @@
 import { geocodeAddress } from "../utils/googleApiDistance.utils";
 import { APIError } from "../utils/error.utils";
+import { Package } from "../types/package.types";
 import { Schema, Types, model } from "mongoose";
 
-export interface Package extends Document {
+export interface PackageModelProps extends Package, Document {
   _id: Types.ObjectId;
-  title: string;
-  description: string;
-  address: string;
-  receptorName: string;
-  deliveryMan: Types.ObjectId | undefined;
-  weight: number;
-  deliveredAt: Date | undefined;
-  status: "taken" | "in_progress" | "delivered" | null;
-  deadlines: Date;
-  city: string;
-  coordinates?: {
-    lat: number;
-    lng: number;
-  };
-  distance?: number | null;
 }
 
 const PackageSchema = new Schema<Package>(
@@ -27,10 +13,18 @@ const PackageSchema = new Schema<Package>(
     description: { type: String, required: true },
     address: { type: String, required: true },
     receptorName: { type: String, required: true },
-    deliveryMan: { type: String, default: undefined },
+    deliveryMan: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
     weight: { type: Number, required: true },
-    deliveredAt: { type: Date, default: undefined },
-    status: { type: String, default: null },
+    deliveredAt: { type: Date, default: null },
+    status: {
+      type: String,
+      enum: ["taken", "in_progress", "delivered"],
+      default: null,
+    },
     deadlines: { type: Date, required: true },
     city: { type: String, required: true },
     coordinates: {
@@ -43,7 +37,7 @@ const PackageSchema = new Schema<Package>(
   }
 );
 
-PackageSchema.pre<Package>("save", async function () {
+PackageSchema.pre<PackageModelProps>("save", async function () {
   try {
     const { address, city } = this;
     const geocodeResult = await geocodeAddress(address, city);
@@ -61,4 +55,6 @@ PackageSchema.pre<Package>("save", async function () {
   }
 });
 
-export const Package = model<Package>("Package", PackageSchema);
+const Package = model<Package>("Package", PackageSchema);
+
+export default Package;

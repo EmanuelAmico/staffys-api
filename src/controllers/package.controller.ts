@@ -2,29 +2,60 @@
 /* eslint-disable no-empty-function */
 
 import { NextFunction, Request, Response } from "express";
-import { Package } from "../models/Package.model";
-import { PackageService } from "../services/package.service";
+import { PackageService } from "../services";
 import { checkProperties } from "../utils/checkreq.utils";
-
+import {
+  PackageRequestBody,
+  CreatePackageResponse,
+  GetAvailablePackagesByCurrentLocationResponse,
+  GetAvailablePackagesByCurrentLocationRequestBody,
+  GetPackageByIdResponse,
+} from "../types/package.types";
 import { Types } from "mongoose";
 
-export interface PackageResponse {
-  message: string;
-  status: number;
-  data: {
-    packages: Package[] | Package | null | string;
-  } | null;
-}
-
 class PackageController {
+  static async createPackage(
+    req: Request<
+      Record<string, never>,
+      CreatePackageResponse,
+      PackageRequestBody,
+      Record<string, never>
+    >,
+    res: Response<CreatePackageResponse>,
+    next: NextFunction
+  ) {
+    try {
+      const packageBody = req.body;
+      checkProperties(packageBody, [
+        { field: "title", type: "string" },
+        { field: "description", type: "string" },
+        { field: "address", type: "string" },
+        { field: "receptorName", type: "string" },
+        { field: "weight", type: "number" },
+        { field: "deadlines", type: "string" },
+        { field: "city", type: "string" },
+      ]);
+
+      const _package = await PackageService.createPackage(packageBody);
+
+      res.status(200).json({
+        status: 200,
+        message: "Package was registered successfully",
+        data: { package: _package },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async getPackageById(
     req: Request<
       { _id: string },
-      Response<PackageResponse>,
+      GetPackageByIdResponse,
       Record<string, never>,
       Record<string, never>
     >,
-    res: Response<PackageResponse>,
+    res: Response<GetPackageByIdResponse>,
     next: NextFunction
   ) {
     try {
@@ -46,14 +77,22 @@ class PackageController {
     }
   }
 
+  static updatePackageById() {}
+
+  static deletePackageById() {}
+
+  static searchPackages() {}
+
+  static getAvailablePackages() {}
+
   static async getAvailablePackagesByCurrentLocation(
     req: Request<
       Record<string, never>,
-      Response<PackageResponse>,
-      { userLatitude: number; userLongitude: number },
+      GetAvailablePackagesByCurrentLocationResponse,
+      GetAvailablePackagesByCurrentLocationRequestBody,
       Record<string, never>
     >,
-    res: Response<PackageResponse>,
+    res: Response<GetAvailablePackagesByCurrentLocationResponse>,
     next: NextFunction
   ) {
     try {

@@ -2,8 +2,21 @@
 /* eslint-disable no-empty-function */
 import { NextFunction, Request, Response } from "express";
 import { Types } from "mongoose";
-import { UserResponse, ExtendedUserRequestBody } from "../types/user.types";
-import { UserService } from "../services/user.service";
+import {
+  ExtendedUserRequestBody,
+  GetDeliveryPeopleResponse,
+  StartDeliveryRequestBody,
+  StartDeliveryRequestBody as cancelDeliveryRequestBody,
+  TakePackageRequestBody,
+  TakePackageRequestBody as startPackageDeliveryRequestBody,
+  UpdateUserByIdResponse,
+  GetUserByIdResponse,
+  TakePackageResponse,
+  StartDeliveryResponse,
+  CancelDeliveryResponse,
+  StartPackageDeliveryResponse,
+} from "../types/user.types";
+import { UserService } from "../services";
 import { checkProperties } from "../utils/checkreq.utils";
 import { ResponseBody } from "../types/request.types";
 
@@ -14,13 +27,11 @@ class UserController {
   static async getUserById(
     req: Request<
       { _id: string },
-      ResponseBody<Awaited<ReturnType<typeof UserService.getUserById>>>,
+      GetUserByIdResponse,
       Record<string, never>,
       Record<string, never>
     >,
-    res: Response<
-      ResponseBody<Awaited<ReturnType<typeof UserService.getUserById>>>
-    >,
+    res: Response<GetUserByIdResponse>,
     next: NextFunction
   ) {
     try {
@@ -50,11 +61,11 @@ class UserController {
   static async getDeliveryPeople(
     _req: Request<
       Record<string, never>,
-      UserResponse,
+      GetDeliveryPeopleResponse,
       Record<string, never>,
       Record<string, never>
     >,
-    res: Response<UserResponse>,
+    res: Response<GetDeliveryPeopleResponse>,
     next: NextFunction
   ) {
     try {
@@ -81,11 +92,11 @@ class UserController {
   static async updateUserById(
     req: Request<
       Record<string, never>,
-      UserResponse,
+      UpdateUserByIdResponse,
       ExtendedUserRequestBody,
       Record<string, never>
     >,
-    res: Response<UserResponse>,
+    res: Response<UpdateUserByIdResponse>,
     next: NextFunction
   ) {
     try {
@@ -119,11 +130,11 @@ class UserController {
   static async deleteUserById(
     req: Request<
       { _id: string },
-      UserResponse,
+      ResponseBody,
       Record<string, never>,
       Record<string, never>
     >,
-    res: Response<UserResponse>,
+    res: Response<ResponseBody>,
     next: NextFunction
   ) {
     try {
@@ -144,13 +155,11 @@ class UserController {
   static async takePackage(
     req: Request<
       Record<string, never>,
-      ResponseBody<Awaited<ReturnType<typeof UserService.takePackage>>>,
-      { packageId: string; userId: string },
+      TakePackageResponse,
+      TakePackageRequestBody,
       Record<string, never>
     >,
-    res: Response<
-      ResponseBody<Awaited<ReturnType<typeof UserService.takePackage>>>
-    >,
+    res: Response<TakePackageResponse>,
     next: NextFunction
   ) {
     try {
@@ -185,13 +194,11 @@ class UserController {
   static async startDelivery(
     req: Request<
       Record<string, never>,
-      ResponseBody<Awaited<ReturnType<typeof UserService.startDelivery>>>,
-      { userId: string },
+      StartDeliveryResponse,
+      StartDeliveryRequestBody,
       Record<string, never>
     >,
-    res: Response<
-      ResponseBody<Awaited<ReturnType<typeof UserService.startDelivery>>>
-    >,
+    res: Response<StartDeliveryResponse>,
     next: NextFunction
   ) {
     try {
@@ -219,13 +226,11 @@ class UserController {
   static async cancelDelivery(
     req: Request<
       Record<string, never>,
-      ResponseBody<Awaited<ReturnType<typeof UserService.cancelDelivery>>>,
-      { userId: string },
+      CancelDeliveryResponse,
+      cancelDeliveryRequestBody,
       Record<string, never>
     >,
-    res: Response<
-      ResponseBody<Awaited<ReturnType<typeof UserService.cancelDelivery>>>
-    >,
+    res: Response<CancelDeliveryResponse>,
     next: NextFunction
   ) {
     try {
@@ -253,15 +258,11 @@ class UserController {
   static async startPackageDelivery(
     req: Request<
       Record<string, never>,
-      ResponseBody<
-        Awaited<ReturnType<typeof UserService.startPackageDelivery>>
-      >,
-      { userId: string; packageId: string },
+      StartPackageDeliveryResponse,
+      startPackageDeliveryRequestBody,
       Record<string, never>
     >,
-    res: Response<
-      ResponseBody<Awaited<ReturnType<typeof UserService.startPackageDelivery>>>
-    >,
+    res: Response<StartPackageDeliveryResponse>,
     next: NextFunction
   ) {
     try {

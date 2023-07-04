@@ -1,29 +1,17 @@
-import mongoose, { Types } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 import { hash, genSalt, compare } from "bcrypt";
 import crypto from "crypto";
+import { User } from "../types/user.types";
 
-export interface User extends Document {
+export interface UserModelProps extends User, Document {
   _id: Types.ObjectId;
-  name: string;
-  lastname: string;
-  password: string;
-  email: string;
-  salt: string;
-  is_admin: boolean;
-  is_active: boolean;
-  urlphoto: string;
-  is_deleted: boolean;
-  resetToken?: string;
-  pendingPackages: Types.ObjectId[];
-  currentPackage: Types.ObjectId | null;
-  historyPackages: Types.ObjectId[];
   hashPassword: (password: string, salt: string) => Promise<string>;
   validatePassword: (password: string) => Promise<boolean>;
   generateResetPasswordCode: () => Promise<string>;
   resetPassword: (code: string, password: string) => Promise<void>;
 }
 
-const userSchema = new mongoose.Schema<User>(
+const UserSchema = new Schema<UserModelProps>(
   {
     name: { type: String, required: true },
     lastname: { type: String, required: true },
@@ -36,15 +24,15 @@ const userSchema = new mongoose.Schema<User>(
     is_deleted: { type: Boolean, default: false },
     resetToken: { type: String, default: null },
     pendingPackages: [
-      { type: mongoose.Schema.Types.ObjectId, ref: "Package", default: [] },
+      { type: Schema.Types.ObjectId, ref: "Package", default: [] },
     ],
     currentPackage: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Package",
       default: null,
     },
     historyPackages: [
-      { type: mongoose.Schema.Types.ObjectId, ref: "Package", default: [] },
+      { type: Schema.Types.ObjectId, ref: "Package", default: [] },
     ],
   },
   {
@@ -52,7 +40,7 @@ const userSchema = new mongoose.Schema<User>(
   }
 );
 
-userSchema.methods.hashPassword = async function (
+UserSchema.methods.hashPassword = async function (
   password: string,
   salt: string
 ) {
@@ -60,12 +48,12 @@ userSchema.methods.hashPassword = async function (
   return hashedPassword;
 };
 
-userSchema.methods.validatePassword = async function (password: string) {
+UserSchema.methods.validatePassword = async function (password: string) {
   const isMatch = await compare(password, this.password);
   return isMatch;
 };
 
-userSchema.methods.generateResetPasswordCode = async function () {
+UserSchema.methods.generateResetPasswordCode = async function () {
   const code = crypto.randomInt(100000, 1000000).toString();
   const hashedCode = await this.hashPassword(code, this.salt);
   this.resetToken = hashedCode;
@@ -73,7 +61,7 @@ userSchema.methods.generateResetPasswordCode = async function () {
   return code;
 };
 
-userSchema.methods.resetPassword = async function (
+UserSchema.methods.resetPassword = async function (
   code: string,
   newPassword: string
 ) {
@@ -93,7 +81,7 @@ userSchema.methods.resetPassword = async function (
   await this.save();
 };
 
-userSchema.pre<User>("save", async function () {
+UserSchema.pre<UserModelProps>("save", async function () {
   try {
     const salt = await genSalt();
     const hashedPassword = await this.hashPassword(this.password, salt);
@@ -105,4 +93,6 @@ userSchema.pre<User>("save", async function () {
   }
 });
 
-export const User = mongoose.model<User>("Users", userSchema);
+const User = model<UserModelProps>("Users", UserSchema);
+
+export default User;

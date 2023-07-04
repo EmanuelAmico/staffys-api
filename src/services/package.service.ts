@@ -1,11 +1,24 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-empty-function */
-import { Package } from "../models/Package.model";
+
+import Package from "../models/Package.model";
 import { calculateDistanceUsingDirectionsAPI } from "../utils/googleApiDistance.utils";
 import { APIError } from "../utils/error.utils";
+import { PackageRequestBody } from "../types/package.types";
 
 class PackageService {
-  static createHistory() {}
+  static async createPackage(packageBody: PackageRequestBody) {
+    const newPackage = await new Package(packageBody).save();
+
+    if (!newPackage) {
+      throw new APIError({
+        message: "Error with creating a package",
+        status: 404,
+      });
+    }
+
+    return newPackage;
+  }
 
   static async getPackageById(_id: string) {
     return await Package.findById(_id);
@@ -13,7 +26,13 @@ class PackageService {
 
   static getHistoryByDate(_date: string) {}
 
-  static updateHistoryByDate() {}
+  static updatePackageById() {}
+
+  static deletePackageById() {}
+
+  static searchPackages() {}
+
+  static getAvailablePackages() {}
 
   static async getAvailablePackagesByCurrentLocation(
     userLatitude: number,

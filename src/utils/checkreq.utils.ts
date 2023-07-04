@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 import { APIError } from "./error.utils";
 
-interface IParameter {
+interface Parameter {
   field: string;
   type:
     | "string"
@@ -12,7 +12,8 @@ interface IParameter {
     | null
     | undefined
     | typeof Types.ObjectId
-    | Types.ObjectId;
+    | Types.ObjectId
+    | Date;
 }
 
 const checkPassword = (password: string) => {
@@ -36,7 +37,10 @@ const checkEmail = (email: string) => {
 };
 
 const checkTypes = (
-  object: Record<string, object | string | number | boolean | null | undefined>,
+  object: Record<
+    string,
+    object | string | number | boolean | null | undefined | Date
+  >,
   allowedParameters: string[],
   allowedTypes: (
     | "string"
@@ -48,9 +52,10 @@ const checkTypes = (
     | undefined
     | typeof Types.ObjectId
     | Types.ObjectId
+    | Date
   )[]
 ) => {
-  const incorrectProperties: Record<string, string> = {}; // Objeto para almacenar las propiedades incorrectas y sus tipos esperados
+  const incorrectProperties: Record<string, string> = {};
 
   allowedParameters.forEach((key, index) => {
     const type = allowedTypes[index];
@@ -93,7 +98,7 @@ const checkTypes = (
 const checkRequiredParameters = (
   object: Record<
     string,
-    object | string | number | boolean | null | undefined | unknown
+    object | string | number | boolean | null | undefined | unknown | Date
   >,
   allowedParameters: string[],
   optionalParameters?: string[]
@@ -147,12 +152,13 @@ export const checkProperties = <
       | undefined
       | typeof Types.ObjectId
       | Types.ObjectId
+      | Date
     >
   >
 >(
   object: T,
-  params: IParameter[],
-  optionalFields?: IParameter[]
+  params: Parameter[],
+  optionalFields?: Parameter[]
 ) => {
   const allowedParameters = params.map(({ field }) => field);
   const allowedTypes = params.map(({ type }) => type);

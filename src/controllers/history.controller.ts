@@ -1,9 +1,15 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-empty-function */
+
 import { NextFunction, Request, Response } from "express";
-import { ResponseBody } from "../types/request.types";
 import { checkProperties } from "../utils/checkreq.utils";
 import { HistoryService } from "../services/history.service";
+import {
+  GetHistoryByDateRequestBody,
+  GetHistoryByDateResponse,
+} from "../types/history.types";
+
+new Date().toISOString();
 
 class HistoryController {
   static async createHistory() {}
@@ -11,13 +17,11 @@ class HistoryController {
   static async getHistoryByDate(
     req: Request<
       Record<string, never>,
-      ResponseBody<Awaited<ReturnType<typeof HistoryService.getHistoryByDate>>>,
-      { date: string },
+      GetHistoryByDateResponse,
+      GetHistoryByDateRequestBody,
       Record<string, never>
     >,
-    res: Response<
-      ResponseBody<Awaited<ReturnType<typeof HistoryService.getHistoryByDate>>>
-    >,
+    res: Response<GetHistoryByDateResponse>,
     next: NextFunction
   ) {
     try {

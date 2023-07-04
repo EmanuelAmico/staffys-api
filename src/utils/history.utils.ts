@@ -1,4 +1,4 @@
-import { History } from "../models/History.model";
+import History from "../models/History.model";
 import { today } from "./date.utils";
 
 export const getTodayHistory = async () => {
