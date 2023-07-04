@@ -1,28 +1,16 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 import { hash, genSalt, compare } from "bcrypt";
 import crypto from "crypto";
+import { User } from "../types/user.types";
 
-export interface User extends Document {
-  name: string;
-  lastname: string;
-  password: string;
-  email: string;
-  salt: string;
-  is_admin: boolean;
-  is_active: boolean;
-  urlphoto: string;
-  is_deleted: boolean;
-  resetToken?: string;
-  pendingPackages?: Schema.Types.ObjectId[];
-  currentPackage?: Schema.Types.ObjectId;
-  historyPackages?: Schema.Types.ObjectId[];
+export interface UserModelProps extends User, Document {
   hashPassword: (password: string, salt: string) => Promise<string>;
   validatePassword: (password: string) => Promise<boolean>;
   generateResetPasswordCode: () => Promise<string>;
   resetPassword: (code: string, password: string) => Promise<void>;
 }
 
-const userSchema = new mongoose.Schema<User>(
+const UserSchema = new mongoose.Schema<UserModelProps>(
   {
     name: { type: String, required: true },
     lastname: { type: String, required: true },
@@ -43,7 +31,7 @@ const userSchema = new mongoose.Schema<User>(
   }
 );
 
-userSchema.methods.hashPassword = async function (
+UserSchema.methods.hashPassword = async function (
   password: string,
   salt: string
 ) {
@@ -51,12 +39,12 @@ userSchema.methods.hashPassword = async function (
   return hashedPassword;
 };
 
-userSchema.methods.validatePassword = async function (password: string) {
+UserSchema.methods.validatePassword = async function (password: string) {
   const isMatch = await compare(password, this.password);
   return isMatch;
 };
 
-userSchema.methods.generateResetPasswordCode = async function () {
+UserSchema.methods.generateResetPasswordCode = async function () {
   const code = crypto.randomInt(100000, 1000000).toString();
   const hashedCode = await this.hashPassword(code, this.salt);
   this.resetToken = hashedCode;
@@ -64,7 +52,7 @@ userSchema.methods.generateResetPasswordCode = async function () {
   return code;
 };
 
-userSchema.methods.resetPassword = async function (
+UserSchema.methods.resetPassword = async function (
   code: string,
   newPassword: string
 ) {
@@ -84,7 +72,7 @@ userSchema.methods.resetPassword = async function (
   await this.save();
 };
 
-userSchema.pre<User>("save", async function () {
+UserSchema.pre<UserModelProps>("save", async function () {
   try {
     const salt = await genSalt();
     const hashedPassword = await this.hashPassword(this.password, salt);
@@ -96,6 +84,6 @@ userSchema.pre<User>("save", async function () {
   }
 });
 
-const User = mongoose.model<User>("Users", userSchema);
+const User = mongoose.model<UserModelProps>("Users", UserSchema);
 
-export { User };
+export default User;

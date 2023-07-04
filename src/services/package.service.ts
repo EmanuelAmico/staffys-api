@@ -1,15 +1,34 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-empty-function */
+
 import Package from "../models/Package.model";
 import { calculateDistanceUsingDirectionsAPI } from "../utils/googleApiDistance.utils";
 import { APIError } from "../utils/error.utils";
+import { PackageRequestBody } from "../types/package.types";
 
 class PackageService {
-  static createHistory() {}
+  static async createPackage(packageBody: PackageRequestBody) {
+    const newPackage = await new Package(packageBody).save();
 
-  static getHistoryByDate(_date: string) {}
+    if (!newPackage) {
+      throw new APIError({
+        message: "Error with creating a package",
+        status: 404,
+      });
+    }
 
-  static updateHistoryByDate() {}
+    return newPackage;
+  }
+
+  static getPackageById() {}
+
+  static updatePackageById() {}
+
+  static deletePackageById() {}
+
+  static searchPackages() {}
+
+  static getAvailablePackages() {}
 
   static async getAvailablePackagesByCurrentLocation(
     userLatitude: number,

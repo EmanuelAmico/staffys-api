@@ -2,26 +2,68 @@
 /* eslint-disable no-empty-function */
 
 import { NextFunction, Request, Response } from "express";
-import { PackageModelProps } from "../models/Package.model";
-import { PackageService } from "../services/package.service";
+import { PackageService } from "../services";
 import { checkProperties } from "../utils/checkreq.utils";
-export interface PackageResponse {
-  message: string;
-  status: number;
-  data: {
-    packages: PackageModelProps[] | PackageModelProps | null | string;
-  } | null;
-}
+import {
+  PackageRequestBody,
+  CreatePackageResponse,
+  GetAvailablePackagesByCurrentLocationResponse,
+  GetAvailablePackagesByCurrentLocationRequestBody,
+} from "../types/package.types";
 
 class PackageController {
+  static async createPackage(
+    req: Request<
+      Record<string, never>,
+      CreatePackageResponse,
+      PackageRequestBody,
+      Record<string, never>
+    >,
+    res: Response<CreatePackageResponse>,
+    next: NextFunction
+  ) {
+    try {
+      const packageBody = req.body;
+      checkProperties(packageBody, [
+        { field: "title", type: "string" },
+        { field: "description", type: "string" },
+        { field: "address", type: "string" },
+        { field: "receptorName", type: "string" },
+        { field: "weight", type: "number" },
+        { field: "deadlines", type: "string" },
+        { field: "city", type: "string" },
+      ]);
+
+      const _package = await PackageService.createPackage(packageBody);
+
+      res.status(200).json({
+        status: 200,
+        message: "Package was registered successfully",
+        data: { package: _package },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static getPackageById() {}
+
+  static updatePackageById() {}
+
+  static deletePackageById() {}
+
+  static searchPackages() {}
+
+  static getAvailablePackages() {}
+
   static async getAvailablePackagesByCurrentLocation(
     req: Request<
       Record<string, never>,
-      Response<PackageResponse>,
-      { userLatitude: number; userLongitude: number },
+      GetAvailablePackagesByCurrentLocationResponse,
+      GetAvailablePackagesByCurrentLocationRequestBody,
       Record<string, never>
     >,
-    res: Response<PackageResponse>,
+    res: Response<GetAvailablePackagesByCurrentLocationResponse>,
     next: NextFunction
   ) {
     try {

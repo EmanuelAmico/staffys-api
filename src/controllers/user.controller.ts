@@ -3,8 +3,12 @@
 
 import { NextFunction, Request, Response } from "express";
 import { Types } from "mongoose";
-import { UserResponse, ExtendedUserRequestBody } from "../types/user.types";
-import { UserService } from "../services/user.service";
+import {
+  ExtendedUserRequestBody,
+  GetDeliveryPeopleResponse,
+  UpdateUserByIdResponse,
+} from "../types/user.types";
+import { UserService } from "../services";
 import { checkProperties } from "../utils/checkreq.utils";
 import { ResponseBody } from "../types/request.types";
 
@@ -51,11 +55,11 @@ class UserController {
   static async getDeliveryPeople(
     _req: Request<
       Record<string, never>,
-      UserResponse,
+      GetDeliveryPeopleResponse,
       Record<string, never>,
       Record<string, never>
     >,
-    res: Response<UserResponse>,
+    res: Response<GetDeliveryPeopleResponse>,
     next: NextFunction
   ) {
     try {
@@ -82,11 +86,11 @@ class UserController {
   static async updateUserById(
     req: Request<
       Record<string, never>,
-      UserResponse,
+      UpdateUserByIdResponse,
       ExtendedUserRequestBody,
       Record<string, never>
     >,
-    res: Response<UserResponse>,
+    res: Response<UpdateUserByIdResponse>,
     next: NextFunction
   ) {
     try {
@@ -120,11 +124,11 @@ class UserController {
   static async deleteUserById(
     req: Request<
       { _id: string },
-      UserResponse,
+      ResponseBody,
       Record<string, never>,
       Record<string, never>
     >,
-    res: Response<UserResponse>,
+    res: Response<ResponseBody>,
     next: NextFunction
   ) {
     try {

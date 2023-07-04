@@ -9,11 +9,13 @@ router.get(
   AuthMiddleware.validateUser,
   UserController.getDeliveryPeople
 );
+
 router.put(
   "/update",
   AuthMiddleware.validateUser,
   UserController.updateUserById
 );
+
 router.delete(
   "/:_id",
   AuthMiddleware.validateUser,

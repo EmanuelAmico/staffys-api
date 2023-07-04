@@ -4,14 +4,22 @@ import { checkProperties } from "../utils/checkreq.utils";
 import { ResponseBody } from "../types/request.types";
 import {
   RegisterRequestBody,
-  UserResponse,
   LoginRequestBody,
+  RegisterResponse,
+  LoginResponse,
+  InitResetPasswordRequestBody,
+  ResetPasswordRequestBody,
 } from "../types/user.types";
 
 class AuthController {
   static async register(
-    req: Request<void, UserResponse, RegisterRequestBody, void>,
-    res: Response<UserResponse>,
+    req: Request<
+      Record<string, never>,
+      RegisterResponse,
+      RegisterRequestBody,
+      Record<string, never>
+    >,
+    res: Response<RegisterResponse>,
     next: NextFunction
   ) {
     try {
@@ -39,8 +47,13 @@ class AuthController {
   }
 
   static async login(
-    req: Request<void, UserResponse, LoginRequestBody, void>,
-    res: Response<UserResponse>,
+    req: Request<
+      Record<string, never>,
+      LoginResponse,
+      LoginRequestBody,
+      Record<string, never>
+    >,
+    res: Response<LoginResponse>,
     next: NextFunction
   ) {
     try {
@@ -69,9 +82,7 @@ class AuthController {
     req: Request<
       Record<string, never>,
       ResponseBody,
-      {
-        email: string;
-      },
+      InitResetPasswordRequestBody,
       Record<string, never>
     >,
     res: Response<ResponseBody>,
@@ -103,12 +114,7 @@ class AuthController {
     req: Request<
       Record<string, never>,
       ResponseBody,
-      {
-        email: string;
-        code: number;
-        password: string;
-        confirmPassword: string;
-      },
+      ResetPasswordRequestBody,
       Record<string, never>
     >,
     res: Response<ResponseBody>,
