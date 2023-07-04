@@ -27,7 +27,9 @@ class AuthMiddleware {
 
       if (!payload || typeof payload === "string")
         return res.status(401).send("Invalid authorization token");
-      req.user = payload;
+
+      req.user = { _id: payload.user._id, is_admin: payload.user.is_admin };
+
       next();
     } catch (error) {
       if (error instanceof JsonWebTokenError) {
@@ -37,7 +39,7 @@ class AuthMiddleware {
       next(error);
     }
   }
-  static async CheckAdmin(
+  static async checkAdmin(
     req: CustomRequest,
     res: Response<string | JwtPayload>,
     next: NextFunction

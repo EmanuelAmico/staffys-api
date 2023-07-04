@@ -1,6 +1,8 @@
-import { Schema, Types } from "mongoose";
+import { Types } from "mongoose";
 import { ResponseBody } from "./request.types";
+import { UserService } from "../services";
 export interface User {
+  _id: Types.ObjectId;
   name: string;
   lastname: string;
   password: string;
@@ -11,9 +13,9 @@ export interface User {
   urlphoto: string;
   is_deleted: boolean;
   resetToken?: string;
-  pendingPackages?: Schema.Types.ObjectId[];
-  currentPackage?: Schema.Types.ObjectId;
-  historyPackages?: Schema.Types.ObjectId[];
+  pendingPackages: Types.ObjectId[];
+  currentPackage: Types.ObjectId | null;
+  historyPackages: Types.ObjectId[];
 }
 export interface RegisterRequestBody {
   name: string;
@@ -38,17 +40,20 @@ export interface ResetPasswordRequestBody {
   password: string;
   confirmPassword: string;
 }
+
+export interface TakePackageRequestBody {
+  packageId: string;
+  userId: string;
+}
+export interface StartDeliveryRequestBody {
+  userId: string;
+}
 export interface ExtendedUserRequestBody extends RegisterRequestBody {
   _id: Types.ObjectId;
 }
 
 export type RegisterResponse = ResponseBody<{
-  user: User;
-  token: string;
-} | null>;
-
-export type LoginResponse = ResponseBody<{
-  user: User;
+  user: Omit<User, "password" | "salt">;
   token: string;
 } | null>;
 
@@ -59,3 +64,23 @@ export type GetDeliveryPeopleResponse = ResponseBody<{
 export type UpdateUserByIdResponse = ResponseBody<{
   findUser: User;
 } | null>;
+
+export type GetUserByIdResponse = ResponseBody<
+  Awaited<ReturnType<typeof UserService.getUserById>>
+>;
+
+export type TakePackageResponse = ResponseBody<
+  Awaited<ReturnType<typeof UserService.takePackage>>
+>;
+
+export type StartDeliveryResponse = ResponseBody<
+  Awaited<ReturnType<typeof UserService.startDelivery>>
+>;
+
+export type CancelDeliveryResponse = ResponseBody<
+  Awaited<ReturnType<typeof UserService.cancelDelivery>>
+>;
+
+export type StartPackageDeliveryResponse = ResponseBody<
+  Awaited<ReturnType<typeof UserService.startPackageDelivery>>
+>;

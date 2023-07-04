@@ -6,7 +6,7 @@ import {
   RegisterRequestBody,
   LoginRequestBody,
   RegisterResponse,
-  LoginResponse,
+  RegisterResponse as LoginResponse,
   InitResetPasswordRequestBody,
   ResetPasswordRequestBody,
 } from "../types/user.types";

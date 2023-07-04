@@ -1,12 +1,20 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-empty-function */
-
 import { NextFunction, Request, Response } from "express";
 import { Types } from "mongoose";
 import {
   ExtendedUserRequestBody,
   GetDeliveryPeopleResponse,
+  StartDeliveryRequestBody,
+  StartDeliveryRequestBody as cancelDeliveryRequestBody,
+  TakePackageRequestBody,
+  TakePackageRequestBody as startPackageDeliveryRequestBody,
   UpdateUserByIdResponse,
+  GetUserByIdResponse,
+  TakePackageResponse,
+  StartDeliveryResponse,
+  CancelDeliveryResponse,
+  StartPackageDeliveryResponse,
 } from "../types/user.types";
 import { UserService } from "../services";
 import { checkProperties } from "../utils/checkreq.utils";
@@ -19,13 +27,11 @@ class UserController {
   static async getUserById(
     req: Request<
       { _id: string },
-      ResponseBody<Awaited<ReturnType<typeof UserService.getUserById>>>,
+      GetUserByIdResponse,
       Record<string, never>,
       Record<string, never>
     >,
-    res: Response<
-      ResponseBody<Awaited<ReturnType<typeof UserService.getUserById>>>
-    >,
+    res: Response<GetUserByIdResponse>,
     next: NextFunction
   ) {
     try {
@@ -147,24 +153,146 @@ class UserController {
   }
 
   static async takePackage(
-    _req: Request,
-    _res: Response,
-    _next: NextFunction
-  ) {}
+    req: Request<
+      Record<string, never>,
+      TakePackageResponse,
+      TakePackageRequestBody,
+      Record<string, never>
+    >,
+    res: Response<TakePackageResponse>,
+    next: NextFunction
+  ) {
+    try {
+      checkProperties(req.body, [
+        {
+          field: "packageId",
+          type: Types.ObjectId,
+        },
+        {
+          field: "userId",
+          type: Types.ObjectId,
+        },
+      ]);
+
+      const { packageId, userId } = req.body;
+
+      const { user, package: _package } = await UserService.takePackage(
+        packageId,
+        userId
+      );
+
+      return res.status(200).send({
+        status: 200,
+        message: "Package taken",
+        data: { user, package: _package },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 
   static async startDelivery(
-    _req: Request,
-    _res: Response,
-    _next: NextFunction
-  ) {}
+    req: Request<
+      Record<string, never>,
+      StartDeliveryResponse,
+      StartDeliveryRequestBody,
+      Record<string, never>
+    >,
+    res: Response<StartDeliveryResponse>,
+    next: NextFunction
+  ) {
+    try {
+      checkProperties(req.body, [
+        {
+          field: "userId",
+          type: Types.ObjectId,
+        },
+      ]);
 
-  static async finishDelivery(
-    _req: Request,
-    _res: Response,
-    _next: NextFunction
-  ) {}
+      const { userId } = req.body;
+
+      const user = await UserService.startDelivery(userId);
+
+      return res.status(200).send({
+        status: 200,
+        message: "Delivery started successfully",
+        data: user,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 
   static async cancelDelivery(
+    req: Request<
+      Record<string, never>,
+      CancelDeliveryResponse,
+      cancelDeliveryRequestBody,
+      Record<string, never>
+    >,
+    res: Response<CancelDeliveryResponse>,
+    next: NextFunction
+  ) {
+    try {
+      checkProperties(req.body, [
+        {
+          field: "userId",
+          type: Types.ObjectId,
+        },
+      ]);
+
+      const { userId } = req.body;
+
+      const user = await UserService.cancelDelivery(userId);
+
+      return res.status(200).send({
+        status: 200,
+        message: "Delivery canceled successfully",
+        data: user,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async startPackageDelivery(
+    req: Request<
+      Record<string, never>,
+      StartPackageDeliveryResponse,
+      startPackageDeliveryRequestBody,
+      Record<string, never>
+    >,
+    res: Response<StartPackageDeliveryResponse>,
+    next: NextFunction
+  ) {
+    try {
+      checkProperties(req.body, [
+        {
+          field: "userId",
+          type: Types.ObjectId,
+        },
+        {
+          field: "packageId",
+          type: Types.ObjectId,
+        },
+      ]);
+
+      const { userId, packageId } = req.body;
+
+      const { user, package: _package } =
+        await UserService.startPackageDelivery(userId, packageId);
+
+      return res.status(200).send({
+        status: 200,
+        message: "Package delivery started successfully",
+        data: { user, package: _package },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async finishPackageDelivery(
     _req: Request,
     _res: Response,
     _next: NextFunction

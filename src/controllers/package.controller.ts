@@ -9,7 +9,9 @@ import {
   CreatePackageResponse,
   GetAvailablePackagesByCurrentLocationResponse,
   GetAvailablePackagesByCurrentLocationRequestBody,
+  GetPackageByIdResponse,
 } from "../types/package.types";
+import { Types } from "mongoose";
 
 class PackageController {
   static async createPackage(
@@ -46,7 +48,34 @@ class PackageController {
     }
   }
 
-  static getPackageById() {}
+  static async getPackageById(
+    req: Request<
+      { _id: string },
+      GetPackageByIdResponse,
+      Record<string, never>,
+      Record<string, never>
+    >,
+    res: Response<GetPackageByIdResponse>,
+    next: NextFunction
+  ) {
+    try {
+      const { _id } = req.params;
+      checkProperties(req.params, [
+        {
+          field: "_id",
+          type: Types.ObjectId,
+        },
+      ]);
+      const foundPackage = await PackageService.getPackageById(_id);
+      res.send({
+        status: 200,
+        message: "package found",
+        data: { packages: foundPackage },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 
   static updatePackageById() {}
 

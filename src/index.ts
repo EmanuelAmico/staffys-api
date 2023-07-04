@@ -11,6 +11,7 @@ import { envs } from "./config/env/env.config";
 import connectToDB from "./config/db";
 import { allRoutes } from "./routes";
 import { APIError } from "./utils/error.utils";
+import helmet from "helmet";
 
 const { PORT, BACKOFFICE_CLIENT_HOST, DELIVERY_CLIENT_HOST } = envs;
 const app = express();
@@ -19,10 +20,14 @@ const options: cors.CorsOptions = {
   origin: [BACKOFFICE_CLIENT_HOST, DELIVERY_CLIENT_HOST],
 };
 
+// Health check
+app.get("/ping", (_req, res) => res.send("OK"));
+
 app.use(morgan("dev"));
 app.use(cors(options));
 app.use(json());
 app.use(urlencoded({ extended: false }));
+app.use(helmet());
 app.use("/", allRoutes);
 
 app.use(

@@ -21,13 +21,16 @@ class AuthService {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, salt, ...user } = newUser.toObject();
 
-    const token = generateToken(newUser._id);
+    const token = generateToken({
+      _id: newUser._id,
+      is_admin: newUser.is_admin,
+    });
 
     return { token, user };
   }
 
   static async login(userBody: LoginRequestBody) {
-    const foundUser = await User.findOne({ email: userBody.email });
+    const foundUser = await User.findOne({ email: userBody.email }).exec();
 
     if (!foundUser) {
       throw new APIError({
@@ -45,13 +48,16 @@ class AuthService {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, salt, ...user } = foundUser.toObject();
 
-    const token = generateToken(foundUser._id);
+    const token = generateToken({
+      _id: foundUser._id,
+      is_admin: foundUser.is_admin,
+    });
 
     return { user, token };
   }
 
   static async initResetPassword(email: string) {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).exec();
 
     if (!user) {
       throw new Error("User does not exist");
@@ -68,7 +74,7 @@ class AuthService {
   }
 
   static async resetPassword(email: string, code: number, password: string) {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).exec();
 
     if (!user) {
       throw new Error("User was not found");

@@ -1,7 +1,9 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 import { History } from "../types/history.types";
 
-export interface HistoryModelProps extends History, Document {}
+export interface HistoryModelProps extends History, Document {
+  _id: Types.ObjectId;
+}
 
 const HistorySchema = new Schema(
   {
@@ -15,6 +17,7 @@ const HistorySchema = new Schema(
         type: Schema.Types.ObjectId,
         ref: "Users",
         required: true,
+        default: [],
       },
     ],
     targetPackages: [
@@ -22,6 +25,7 @@ const HistorySchema = new Schema(
         type: Schema.Types.ObjectId,
         ref: "Packages",
         required: true,
+        default: [],
       },
     ],
   },
@@ -30,6 +34,6 @@ const HistorySchema = new Schema(
   }
 );
 
-const History = model<HistoryModelProps>("History", HistorySchema);
+const History = model<History>("History", HistorySchema);
 
 export default History;

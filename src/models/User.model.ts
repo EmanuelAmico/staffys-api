@@ -1,16 +1,17 @@
-import mongoose from "mongoose";
+import { Schema, Types, model } from "mongoose";
 import { hash, genSalt, compare } from "bcrypt";
 import crypto from "crypto";
 import { User } from "../types/user.types";
 
 export interface UserModelProps extends User, Document {
+  _id: Types.ObjectId;
   hashPassword: (password: string, salt: string) => Promise<string>;
   validatePassword: (password: string) => Promise<boolean>;
   generateResetPasswordCode: () => Promise<string>;
   resetPassword: (code: string, password: string) => Promise<void>;
 }
 
-const UserSchema = new mongoose.Schema<UserModelProps>(
+const UserSchema = new Schema<UserModelProps>(
   {
     name: { type: String, required: true },
     lastname: { type: String, required: true },
@@ -22,9 +23,17 @@ const UserSchema = new mongoose.Schema<UserModelProps>(
     urlphoto: { type: String, required: true },
     is_deleted: { type: Boolean, default: false },
     resetToken: { type: String, default: null },
-    pendingPackages: [{ type: mongoose.Schema.Types.ObjectId, ref: "Package" }],
-    currentPackage: { type: mongoose.Schema.Types.ObjectId, ref: "Package" },
-    historyPackages: [{ type: mongoose.Schema.Types.ObjectId, ref: "Package" }],
+    pendingPackages: [
+      { type: Schema.Types.ObjectId, ref: "Package", default: [] },
+    ],
+    currentPackage: {
+      type: Schema.Types.ObjectId,
+      ref: "Package",
+      default: null,
+    },
+    historyPackages: [
+      { type: Schema.Types.ObjectId, ref: "Package", default: [] },
+    ],
   },
   {
     timestamps: true,
@@ -84,6 +93,6 @@ UserSchema.pre<UserModelProps>("save", async function () {
   }
 });
 
-const User = mongoose.model<UserModelProps>("Users", UserSchema);
+const User = model<UserModelProps>("Users", UserSchema);
 
 export default User;

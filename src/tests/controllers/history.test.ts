@@ -21,7 +21,7 @@ describe.skip("History Controller", () => {
         body: {
           date: "invalidDate",
         },
-      });
+      }) as unknown as Parameters<typeof HistoryController.getHistoryByDate>;
 
       expect.assertions(4);
 
@@ -42,7 +42,7 @@ describe.skip("History Controller", () => {
         body: {
           date: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
         },
-      });
+      }) as unknown as Parameters<typeof HistoryController.getHistoryByDate>;
 
       expect.assertions(4);
 
@@ -64,7 +64,7 @@ describe.skip("History Controller", () => {
         body: {
           date,
         },
-      });
+      }) as unknown as Parameters<typeof HistoryController.getHistoryByDate>;
 
       expect.assertions(4);
 

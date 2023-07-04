@@ -1,14 +1,16 @@
+import { Types } from "mongoose";
 import { ResponseBody } from "./request.types";
 
 export interface Package {
+  _id: Types.ObjectId;
   title: string;
   description: string;
   address: string;
   receptorName: string;
-  deliveryMan: string | undefined;
+  deliveryMan: Types.ObjectId | null;
   weight: number;
-  deliveredAt: Date | undefined;
-  status: "taken" | "in_progress" | "delivered" | undefined;
+  deliveredAt: Date | null;
+  status: "taken" | "in_progress" | "delivered" | null;
   deadlines: Date;
   city: string;
   coordinates?: {
@@ -39,4 +41,8 @@ export type GetAvailablePackagesByCurrentLocationResponse = ResponseBody<{
 
 export type CreatePackageResponse = ResponseBody<{
   package: Package;
+} | null>;
+
+export type GetPackageByIdResponse = ResponseBody<{
+  packages: Package | null;
 } | null>;

@@ -1,20 +1,30 @@
-import { Schema, model } from "mongoose";
 import { geocodeAddress } from "../utils/googleApiDistance.utils";
 import { APIError } from "../utils/error.utils";
 import { Package } from "../types/package.types";
+import { Schema, Types, model } from "mongoose";
 
-export interface PackageModelProps extends Package, Document {}
+export interface PackageModelProps extends Package, Document {
+  _id: Types.ObjectId;
+}
 
-const PackageSchema = new Schema<PackageModelProps>(
+const PackageSchema = new Schema<Package>(
   {
     title: { type: String, required: true },
     description: { type: String, required: true },
     address: { type: String, required: true },
     receptorName: { type: String, required: true },
-    deliveryMan: { type: String, default: null },
+    deliveryMan: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
     weight: { type: Number, required: true },
     deliveredAt: { type: Date, default: null },
-    status: { type: String, default: null },
+    status: {
+      type: String,
+      enum: ["taken", "in_progress", "delivered"],
+      default: null,
+    },
     deadlines: { type: Date, required: true },
     city: { type: String, required: true },
     coordinates: {
@@ -45,6 +55,6 @@ PackageSchema.pre<PackageModelProps>("save", async function () {
   }
 });
 
-const Package = model<PackageModelProps>("Package", PackageSchema);
+const Package = model<Package>("Package", PackageSchema);
 
 export default Package;
