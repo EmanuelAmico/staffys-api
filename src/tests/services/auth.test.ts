@@ -1,5 +1,5 @@
 import { AuthService } from "../../services/auth.service";
-import { User } from "../../models/User.model";
+import User from "../../models/User.model";
 import mongoose from "mongoose";
 import { envs } from "../../config/env/env.config";
 import { sendEmail } from "../../utils/mailer.utils";

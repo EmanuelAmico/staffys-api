@@ -7,7 +7,7 @@ const router = Router();
 router.post(
   "/create",
   AuthMiddleware.validateUser,
-  AuthMiddleware.CheckAdmin,
+  AuthMiddleware.checkAdmin,
   PackageController.getAvailablePackagesByCurrentLocation
 );
 
