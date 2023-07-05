@@ -49,7 +49,7 @@ class PackageController {
       next(error);
     }
   }
-  static async updatePackage(
+  static async updatePackageById(
     req: Request<
       Record<string, never>,
       UpdatePackagerByIdResponse,
@@ -123,8 +123,6 @@ class PackageController {
       next(error);
     }
   }
-
-  static updatePackageById() {}
 
   static deletePackageById() {}
 

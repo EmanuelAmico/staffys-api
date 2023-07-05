@@ -14,7 +14,7 @@ router.put(
   "/update-package-by-id",
   AuthMiddleware.validateUser,
   AuthMiddleware.checkAdmin,
-  PackageController.getAvailablePackagesByCurrentLocation
+  PackageController.updatePackageById
 );
 
 router.post(
