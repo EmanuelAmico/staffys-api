@@ -10,9 +10,15 @@ router.post(
   AuthMiddleware.checkAdmin,
   PackageController.getAvailablePackagesByCurrentLocation
 );
+router.put(
+  "/update-package-by-id",
+  AuthMiddleware.validateUser,
+  AuthMiddleware.checkAdmin,
+  PackageController.updatePackageById
+);
 
 router.post(
-  "/byCurrentLocation",
+  "/by-current-location",
   AuthMiddleware.validateUser,
   PackageController.getAvailablePackagesByCurrentLocation
 );

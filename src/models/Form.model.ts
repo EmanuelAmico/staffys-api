@@ -1,5 +1,13 @@
 import { Document, model, Schema, Types } from "mongoose";
-import { Form } from "../types/form.types";
+
+export interface Form {
+  _id: Types.ObjectId;
+  date: Date;
+  user: Types.ObjectId;
+  hasDrank: boolean;
+  hasPsychotropicDrugs: boolean;
+  hasEmotionalProblems: boolean;
+}
 
 export interface FormModelProps extends Form, Document {
   _id: Types.ObjectId;
@@ -39,4 +47,4 @@ const FormSchema = new Schema<Form>({
 
 const Form = model<Form>("Form", FormSchema);
 
-export default Form;
+export { Form };

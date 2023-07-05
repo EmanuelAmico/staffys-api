@@ -1,8 +1,23 @@
 import { Schema, Types, model } from "mongoose";
 import { hash, genSalt, compare } from "bcrypt";
 import crypto from "crypto";
-import { User } from "../types/user.types";
 
+export interface User {
+  _id: Types.ObjectId;
+  name: string;
+  lastname: string;
+  password: string;
+  email: string;
+  salt: string;
+  is_admin: boolean;
+  is_active: boolean;
+  urlphoto: string;
+  is_deleted: boolean;
+  resetToken?: string;
+  pendingPackages: Types.ObjectId[];
+  currentPackage: Types.ObjectId | null;
+  historyPackages: Types.ObjectId[];
+}
 export interface UserModelProps extends User, Document {
   _id: Types.ObjectId;
   hashPassword: (password: string, salt: string) => Promise<string>;
@@ -95,4 +110,4 @@ UserSchema.pre<UserModelProps>("save", async function () {
 
 const User = model<UserModelProps>("Users", UserSchema);
 
-export default User;
+export { User };
