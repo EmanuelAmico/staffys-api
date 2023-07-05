@@ -10,8 +10,10 @@ import {
   GetAvailablePackagesByCurrentLocationResponse,
   GetAvailablePackagesByCurrentLocationRequestBody,
   GetPackageByIdResponse,
+  UpdatePackagerByIdResponse,
 } from "../types/package.types";
 import { Types } from "mongoose";
+import { Package } from "../models/Package.model";
 
 class PackageController {
   static async createPackage(
@@ -42,6 +44,51 @@ class PackageController {
         status: 200,
         message: "Package was registered successfully",
         data: { package: _package },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  static async updatePackage(
+    req: Request<
+      Record<string, never>,
+      UpdatePackagerByIdResponse,
+      Package,
+      Record<string, never>
+    >,
+    res: Response<UpdatePackagerByIdResponse>,
+    next: NextFunction
+  ) {
+    try {
+      const packageBody = req.body;
+      let typestatus: "string" | null;
+      if (typeof packageBody.status == "string") {
+        typestatus = "string";
+      } else {
+        typestatus = null;
+      }
+      checkProperties(
+        packageBody,
+        [{ field: "_id", type: Types.ObjectId }],
+        [
+          { field: "title", type: "string" },
+          { field: "description", type: "string" },
+          { field: "address", type: "string" },
+          { field: "receptorName", type: "string" },
+          { field: "deliveryMan", type: Types.ObjectId },
+          { field: "weight", type: "number" },
+          { field: "deliveredAt", type: "string" },
+          { field: "status", type: typestatus },
+          { field: "deadlines", type: "string" },
+          { field: "city", type: "string" },
+        ]
+      );
+      const updatepackage = await PackageService.updatePackageById(packageBody);
+
+      res.status(200).json({
+        data: { package: updatepackage },
+        status: 200,
+        message: "Package updated",
       });
     } catch (error) {
       next(error);

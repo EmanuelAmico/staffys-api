@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-empty-function */
 
-import Package from "../models/Package.model";
+import { Package } from "../models/Package.model";
 import { calculateDistanceUsingDirectionsAPI } from "../utils/googleApiDistance.utils";
 import { APIError } from "../utils/error.utils";
 import { PackageRequestBody } from "../types/package.types";
@@ -26,7 +26,26 @@ class PackageService {
 
   static getHistoryByDate(_date: string) {}
 
-  static updatePackageById() {}
+  static async updatePackageById(packageBody: Package) {
+    const updatedPackage = await Package.findByIdAndUpdate(
+      { _id: packageBody._id },
+      packageBody,
+      {
+        new: true,
+      }
+    )
+      .select("-salt -password")
+      .exec();
+
+    if (!updatedPackage) {
+      throw new APIError({
+        message: "User not found",
+        status: 404,
+      });
+    }
+
+    return updatedPackage.toObject();
+  }
 
   static deletePackageById() {}
 

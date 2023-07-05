@@ -1,7 +1,25 @@
 import { geocodeAddress } from "../utils/googleApiDistance.utils";
 import { APIError } from "../utils/error.utils";
-import { Package } from "../types/package.types";
 import { Schema, Types, model } from "mongoose";
+
+export interface Package {
+  _id: Types.ObjectId;
+  title: string;
+  description: string;
+  address: string;
+  receptorName: string;
+  deliveryMan: Types.ObjectId | null;
+  weight: number;
+  deliveredAt: Date | null;
+  status: "taken" | "in_progress" | "delivered" | null;
+  deadlines: Date;
+  city: string;
+  coordinates?: {
+    lat: number;
+    lng: number;
+  } | null;
+  distance?: number | null;
+}
 
 export interface PackageModelProps extends Package, Document {
   _id: Types.ObjectId;
@@ -57,4 +75,4 @@ PackageSchema.pre<PackageModelProps>("save", async function () {
 
 const Package = model<Package>("Package", PackageSchema);
 
-export default Package;
+export { Package };

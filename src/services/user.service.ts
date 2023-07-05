@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-empty-function */
 
-import User from "../models/User.model";
-import Package from "../models/Package.model";
+import { User } from "../models/User.model";
+import { Package } from "../models/Package.model";
 import { ExtendedUserRequestBody } from "../types/user.types";
 import { APIError } from "../utils/error.utils";
 import { getTodayFormForUser } from "../utils/form.utils";

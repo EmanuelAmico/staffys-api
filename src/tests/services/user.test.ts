@@ -1,5 +1,5 @@
 import { UserService } from "../../services/user.service";
-import User from "../../models/User.model";
+import { User } from "../../models/User.model";
 import mongoose from "mongoose";
 import { envs } from "../../config/env/env.config";
 

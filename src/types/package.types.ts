@@ -1,24 +1,5 @@
-import { Types } from "mongoose";
 import { ResponseBody } from "./request.types";
-
-export interface Package {
-  _id: Types.ObjectId;
-  title: string;
-  description: string;
-  address: string;
-  receptorName: string;
-  deliveryMan: Types.ObjectId | null;
-  weight: number;
-  deliveredAt: Date | null;
-  status: "taken" | "in_progress" | "delivered" | null;
-  deadlines: Date;
-  city: string;
-  coordinates?: {
-    lat: number;
-    lng: number;
-  };
-  distance?: number | null;
-}
+import { Package } from "../models/Package.model";
 
 export interface PackageRequestBody {
   title: string;
@@ -45,4 +26,8 @@ export type CreatePackageResponse = ResponseBody<{
 
 export type GetPackageByIdResponse = ResponseBody<{
   packages: Package | null;
+} | null>;
+
+export type UpdatePackagerByIdResponse = ResponseBody<{
+  package: Package;
 } | null>;

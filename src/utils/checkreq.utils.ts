@@ -53,6 +53,7 @@ const checkTypes = (
     | typeof Types.ObjectId
     | Types.ObjectId
     | Date
+    | object
   )[]
 ) => {
   const incorrectProperties: Record<string, string> = {};
@@ -78,6 +79,10 @@ const checkTypes = (
 
     if (type === "email" && typeof value === "string") {
       return checkEmail(value);
+    }
+    if (key === "coordinates" && typeof value !== "object") {
+      incorrectProperties[key] = "object";
+      return;
     }
 
     if (typeof value !== type) {
@@ -153,6 +158,7 @@ export const checkProperties = <
       | typeof Types.ObjectId
       | Types.ObjectId
       | Date
+      | object
     >
   >
 >(

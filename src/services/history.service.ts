@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-empty-function */
-import History from "../models/History.model";
+import { History } from "../models/History.model";
 import { APIError } from "../utils/error.utils";
 
 class HistoryService {

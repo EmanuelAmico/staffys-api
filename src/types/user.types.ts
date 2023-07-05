@@ -1,22 +1,8 @@
 import { Types } from "mongoose";
 import { ResponseBody } from "./request.types";
 import { UserService } from "../services";
-export interface User {
-  _id: Types.ObjectId;
-  name: string;
-  lastname: string;
-  password: string;
-  email: string;
-  salt: string;
-  is_admin: boolean;
-  is_active: boolean;
-  urlphoto: string;
-  is_deleted: boolean;
-  resetToken?: string;
-  pendingPackages: Types.ObjectId[];
-  currentPackage: Types.ObjectId | null;
-  historyPackages: Types.ObjectId[];
-}
+import { User } from "../models/User.model";
+
 export interface RegisterRequestBody {
   name: string;
   lastname: string;
