@@ -61,11 +61,11 @@ class PackageController {
   ) {
     try {
       const packageBody = req.body;
-      let typestatus: "string" | null;
+      let typeStatus: "string" | null;
       if (typeof packageBody.status == "string") {
-        typestatus = "string";
+        typeStatus = "string";
       } else {
-        typestatus = null;
+        typeStatus = null;
       }
       checkProperties(
         packageBody,
@@ -78,15 +78,15 @@ class PackageController {
           { field: "deliveryMan", type: Types.ObjectId },
           { field: "weight", type: "number" },
           { field: "deliveredAt", type: "string" },
-          { field: "status", type: typestatus },
+          { field: "status", type: typeStatus },
           { field: "deadlines", type: "string" },
           { field: "city", type: "string" },
         ]
       );
-      const updatepackage = await PackageService.updatePackageById(packageBody);
+      const updatePackage = await PackageService.updatePackageById(packageBody);
 
       res.status(200).json({
-        data: { package: updatepackage },
+        data: { package: updatePackage },
         status: 200,
         message: "Package updated",
       });

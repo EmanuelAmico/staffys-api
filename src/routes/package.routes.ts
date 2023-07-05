@@ -18,7 +18,7 @@ router.put(
 );
 
 router.post(
-  "/byCurrentLocation",
+  "/by-current-location",
   AuthMiddleware.validateUser,
   PackageController.getAvailablePackagesByCurrentLocation
 );
