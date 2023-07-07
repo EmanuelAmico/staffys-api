@@ -70,3 +70,5 @@ export type CancelDeliveryResponse = ResponseBody<
 export type StartPackageDeliveryResponse = ResponseBody<
   Awaited<ReturnType<typeof UserService.startPackageDelivery>>
 >;
+
+export type MeResponse = ResponseBody<User>;
