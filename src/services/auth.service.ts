@@ -19,7 +19,7 @@ class AuthService {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, salt, ...user } = newUser.toObject();
+    const { password, ...user } = newUser.toObject();
 
     const token = generateToken({
       _id: newUser._id,
@@ -46,7 +46,7 @@ class AuthService {
       });
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, salt, ...user } = foundUser.toObject();
+    const { password, ...user } = foundUser.toObject();
 
     const token = generateToken({
       _id: foundUser._id,
@@ -60,7 +60,7 @@ class AuthService {
     const user = await User.findOne({ email }).exec();
 
     if (!user) {
-      throw new Error("User does not exist");
+      throw new APIError({ message: "User does not exist", status: 404 });
     }
 
     const code = await user.generateResetPasswordCode();
@@ -79,6 +79,7 @@ class AuthService {
     if (!user) {
       throw new Error("User was not found");
     }
+
     await user.resetPassword(code.toString(), password);
 
     await sendEmail({

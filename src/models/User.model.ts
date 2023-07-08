@@ -65,6 +65,7 @@ UserSchema.methods.hashPassword = async function (
 
 UserSchema.methods.validatePassword = async function (password: string) {
   const isMatch = await compare(password, this.password);
+  console.log({ isMatch, password, this: this.password });
   return isMatch;
 };
 
@@ -73,6 +74,7 @@ UserSchema.methods.generateResetPasswordCode = async function () {
   const hashedCode = await this.hashPassword(code, this.salt);
   this.resetToken = hashedCode;
   await this.save();
+  console.log({ code });
   return code;
 };
 
@@ -90,8 +92,18 @@ UserSchema.methods.resetPassword = async function (
 
   const hashedPassword = await this.hashPassword(newPassword, this.salt);
 
+  const isMatch2 = await compare(newPassword, hashedPassword);
+
   this.password = hashedPassword;
   this.resetToken = undefined;
+
+  console.log({
+    hashedPassword,
+    salt: this.salt,
+    isMatch2,
+    this: this,
+    save: this.save,
+  });
 
   await this.save();
 };

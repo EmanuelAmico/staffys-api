@@ -32,6 +32,7 @@ app.use("/", allRoutes);
 
 app.use(
   (error: APIError, _req: Request, res: Response, _next: NextFunction) => {
+    console.error(error);
     res.status(error.status).send({
       status: error.status,
       message: error.message,
