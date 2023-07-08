@@ -34,7 +34,7 @@ app.use(
   (error: APIError, _req: Request, res: Response, _next: NextFunction) => {
     console.error(error);
     res.status(error.status).send({
-      status: error.status,
+      status: error.status || 500,
       message: error.message,
       data: null,
     });
