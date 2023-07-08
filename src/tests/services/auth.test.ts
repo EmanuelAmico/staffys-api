@@ -79,6 +79,7 @@ describe("Auth Service", () => {
 
     it("if code is valid, then its supposed that email and password have a valid values (checked in controller) then it should succeed in modifying user password with a new password", async () => {
       const userInstanceSaveSpy = jest.spyOn(user, "save");
+      const oldUserSalt = user.salt;
       const oldUserPassword = user.password;
       const code = await user.generateResetPasswordCode();
 
@@ -97,6 +98,7 @@ describe("Auth Service", () => {
       expect(sendEmail).toHaveBeenCalled();
       expect(sendEmail).toHaveBeenCalledTimes(1);
       const updatedUser = await User.findById(user._id).exec();
+      expect(updatedUser?.salt).not.toEqual(oldUserSalt);
       expect(updatedUser?.password).not.toEqual(oldUserPassword);
     });
   });
