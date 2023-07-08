@@ -69,5 +69,5 @@ jobs:
                 "80": "HTTP"
               }
             }
-          }' --public-endpoint '{ "containerName": "staffys-api-container", "containerPort": 80 }'
+          }' --public-endpoint '{ "containerName": "staffys-api-container", "containerPort": 80, "healthCheck": { "path": "/ping" } }'
         shell: bash
