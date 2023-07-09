@@ -40,7 +40,7 @@ class PackageService {
 
     if (!updatedPackage) {
       throw new APIError({
-        message: "User not found",
+        message: "Package not found",
         status: 404,
       });
     }
