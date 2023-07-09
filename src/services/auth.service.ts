@@ -67,9 +67,9 @@ class AuthService {
 
     await sendEmail({
       to: user.email,
-      subject: "Reset password",
-      html: `<h1>Reset password</h1>
-      <p>Use this code to reset your password: ${code}</p>`,
+      subject: "Restablecer contraseña",
+      html: `<h1>Restablecer contraseña</h1>
+      <p>Usa el siguiente código para restablecer tu contraseña: ${code}</p>`,
     });
   }
 
@@ -84,9 +84,9 @@ class AuthService {
 
     await sendEmail({
       to: user.email,
-      subject: "Password reset successfully",
-      html: `<h1>Password reset successfully</h1>
-      <p>Your password has been reset successfully</p>`,
+      subject: "Contraseña restablecida correctamente",
+      html: `<h1>Contraseña restablecida correctamente</h1>
+      <p>Tu contraseña ha sido restablecida con éxito</p>`,
     });
   }
 }
