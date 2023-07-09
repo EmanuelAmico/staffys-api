@@ -166,8 +166,8 @@ class AuthController {
   static async me(
     req: Request<
       Record<string, never>,
-      Record<string, never>,
       MeResponse,
+      Record<string, never>,
       Record<string, never>
     >,
     res: Response<MeResponse>,
