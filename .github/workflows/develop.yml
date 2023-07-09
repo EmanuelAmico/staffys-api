@@ -1,8 +1,7 @@
 name: Deploy to AWS Lightsail
 
 on:
-  push:
-    branches: [develop]
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
@@ -58,6 +57,8 @@ jobs:
                 "MONGO_URI": "${{ secrets.MONGO_URI }}",
                 "BACKOFFICE_CLIENT_HOST": "${{ secrets.BACKOFFICE_CLIENT_HOST }}",
                 "DELIVERY_CLIENT_HOST": "${{ secrets.DELIVERY_CLIENT_HOST }}",
+                "BACKOFFICE_CLIENT_HOST_LOCAL": "${{ secrets.BACKOFFICE_CLIENT_HOST_LOCAL }}",
+                "DELIVERY_CLIENT_HOST_LOCAL": "${{ secrets.DELIVERY_CLIENT_HOST_LOCAL }}",
                 "GOOGLE_API_KEY": "${{ secrets.GOOGLE_API_KEY }}",
                 "OAUTH2_EMAIL": "${{ secrets.OAUTH2_EMAIL }}",
                 "OAUTH2_CLIENT_ID": "${{ secrets.OAUTH2_CLIENT_ID }}",
@@ -69,5 +70,5 @@ jobs:
                 "80": "HTTP"
               }
             }
-          }' --public-endpoint '{ "containerName": "staffys-api-container", "containerPort": 80 }'
+          }' --public-endpoint '{ "containerName": "staffys-api-container", "containerPort": 80, "healthCheck": { "path": "/ping" } }'
         shell: bash
