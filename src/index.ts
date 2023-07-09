@@ -13,11 +13,22 @@ import { allRoutes } from "./routes";
 import { APIError } from "./utils/error.utils";
 import helmet from "helmet";
 
-const { PORT, BACKOFFICE_CLIENT_HOST, DELIVERY_CLIENT_HOST } = envs;
+const {
+  PORT,
+  BACKOFFICE_CLIENT_HOST,
+  DELIVERY_CLIENT_HOST,
+  BACKOFFICE_CLIENT_HOST_LOCAL,
+  DELIVERY_CLIENT_HOST_LOCAL,
+} = envs;
 const app = express();
 
 const options: cors.CorsOptions = {
-  origin: [BACKOFFICE_CLIENT_HOST, DELIVERY_CLIENT_HOST],
+  origin: [
+    BACKOFFICE_CLIENT_HOST,
+    DELIVERY_CLIENT_HOST,
+    BACKOFFICE_CLIENT_HOST_LOCAL,
+    DELIVERY_CLIENT_HOST_LOCAL,
+  ],
 };
 
 // Health check
@@ -32,8 +43,9 @@ app.use("/", allRoutes);
 
 app.use(
   (error: APIError, _req: Request, res: Response, _next: NextFunction) => {
+    console.error(error);
     res.status(error.status).send({
-      status: error.status,
+      status: error.status || 500,
       message: error.message,
       data: null,
     });

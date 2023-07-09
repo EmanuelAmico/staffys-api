@@ -1,5 +1,8 @@
 import { createTransport } from "nodemailer";
 import { envs } from "../config/env/env.config";
+import { google } from "googleapis";
+import { APIError } from "./error.utils";
+const OAuth2 = google.auth.OAuth2;
 
 const {
   OAUTH2_EMAIL,
@@ -8,6 +11,17 @@ const {
   OAUTH2_REFRESH_TOKEN,
   OAUTH2_ACCESS_TOKEN,
 } = envs;
+
+const OAuth2Client = new OAuth2(
+  OAUTH2_CLIENT_ID,
+  OAUTH2_CLIENT_SECRET,
+  "https://developers.google.com/oauthplayground"
+);
+
+OAuth2Client.setCredentials({
+  refresh_token: OAUTH2_REFRESH_TOKEN,
+  access_token: OAUTH2_ACCESS_TOKEN,
+});
 
 export async function sendEmail({
   to,
@@ -21,6 +35,14 @@ export async function sendEmail({
   html?: string;
 }) {
   try {
+    const { token: accessToken } = await OAuth2Client.getAccessToken();
+
+    if (!accessToken)
+      throw new APIError({
+        message: "Error while getting access token",
+        status: 500,
+      });
+
     const transporter = createTransport({
       service: "gmail",
       auth: {
@@ -29,7 +51,7 @@ export async function sendEmail({
         clientId: OAUTH2_CLIENT_ID,
         clientSecret: OAUTH2_CLIENT_SECRET,
         refreshToken: OAUTH2_REFRESH_TOKEN,
-        accessToken: OAUTH2_ACCESS_TOKEN,
+        accessToken,
       },
     });
 
@@ -42,8 +64,12 @@ export async function sendEmail({
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.warn(`Message sent: ${info.response}`);
+
+    return info;
   } catch (error) {
-    console.error(`Error while sending email: ${error}`);
+    throw new APIError({
+      message: `Error while sending email: ${error}`,
+      status: 500,
+    });
   }
 }

@@ -90,7 +90,6 @@ class AuthController {
   ) {
     try {
       const email = req.body.email;
-
       checkProperties(req.body, [
         {
           field: "email",
