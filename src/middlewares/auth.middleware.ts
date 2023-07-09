@@ -2,13 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import { JsonWebTokenError, JwtPayload } from "jsonwebtoken";
 import { validateToken } from "../config/jwt/tokens";
 
-export interface CustomRequest extends Request {
-  user?: JwtPayload;
-}
-
 class AuthMiddleware {
   static async validateUser(
-    req: CustomRequest,
+    req: Request,
     res: Response<string | JwtPayload>,
     next: NextFunction
   ) {
@@ -40,7 +36,7 @@ class AuthMiddleware {
     }
   }
   static async checkAdmin(
-    req: CustomRequest,
+    req: Request,
     res: Response<string | JwtPayload>,
     next: NextFunction
   ) {

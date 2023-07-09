@@ -24,6 +24,7 @@ export interface UserModelProps extends User, Document {
   validatePassword: (password: string) => Promise<boolean>;
   generateResetPasswordCode: () => Promise<string>;
   resetPassword: (code: string, password: string) => Promise<void>;
+  isNew: boolean;
 }
 
 const UserSchema = new Schema<UserModelProps>(
@@ -98,6 +99,8 @@ UserSchema.methods.resetPassword = async function (
 
 UserSchema.pre<UserModelProps>("save", async function () {
   try {
+    if (!this.isNew) return;
+
     const salt = await genSalt();
     const hashedPassword = await this.hashPassword(this.password, salt);
 

@@ -4,14 +4,15 @@ const envList = [
   "TESTING_PORT",
   "JWT_SECRET",
   "MONGO_URI",
-  "BACKOFFICE_CLIENT_HOST",
   "DELIVERY_CLIENT_HOST",
+  "BACKOFFICE_CLIENT_HOST",
+  "DELIVERY_CLIENT_HOST_LOCAL",
+  "BACKOFFICE_CLIENT_HOST_LOCAL",
   "GOOGLE_API_KEY",
   "OAUTH2_EMAIL",
   "OAUTH2_CLIENT_ID",
   "OAUTH2_CLIENT_SECRET",
   "OAUTH2_REFRESH_TOKEN",
-  "OAUTH2_ACCESS_TOKEN",
 ];
 export const envs = (() => {
   if (
@@ -27,7 +28,8 @@ export const envs = (() => {
     !process.env.OAUTH2_CLIENT_ID ||
     !process.env.OAUTH2_CLIENT_SECRET ||
     !process.env.OAUTH2_REFRESH_TOKEN ||
-    !process.env.OAUTH2_ACCESS_TOKEN
+    !process.env.BACKOFFICE_CLIENT_HOST_LOCAL ||
+    !process.env.DELIVERY_CLIENT_HOST_LOCAL
   ) {
     const missingEnvs: string[] = [];
 
@@ -47,13 +49,14 @@ export const envs = (() => {
     TESTING_PORT: process.env.TESTING_PORT,
     JWT_SECRET: process.env.JWT_SECRET,
     MONGO_URI: process.env.MONGO_URI,
-    BACKOFFICE_CLIENT_HOST: process.env.BACKOFFICE_CLIENT_HOST,
     DELIVERY_CLIENT_HOST: process.env.DELIVERY_CLIENT_HOST,
+    BACKOFFICE_CLIENT_HOST: process.env.BACKOFFICE_CLIENT_HOST,
+    DELIVERY_CLIENT_HOST_LOCAL: process.env.DELIVERY_CLIENT_HOST_LOCAL,
+    BACKOFFICE_CLIENT_HOST_LOCAL: process.env.BACKOFFICE_CLIENT_HOST_LOCAL,
     GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
     OAUTH2_EMAIL: process.env.OAUTH2_EMAIL,
     OAUTH2_CLIENT_ID: process.env.OAUTH2_CLIENT_ID,
     OAUTH2_CLIENT_SECRET: process.env.OAUTH2_CLIENT_SECRET,
     OAUTH2_REFRESH_TOKEN: process.env.OAUTH2_REFRESH_TOKEN,
-    OAUTH2_ACCESS_TOKEN: process.env.OAUTH2_ACCESS_TOKEN,
   } as const;
 })();
