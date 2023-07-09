@@ -77,7 +77,7 @@ class AuthService {
     const user = await User.findOne({ email }).exec();
 
     if (!user) {
-      throw new Error("User was not found");
+      throw new APIError({ message: "User was not found", status: 404 });
     }
 
     await user.resetPassword(code.toString(), password);
@@ -88,6 +88,16 @@ class AuthService {
       html: `<h1>Password reset successfully</h1>
       <p>Your password has been reset successfully</p>`,
     });
+  }
+
+  static async me(userId: string) {
+    const user = await User.findById(userId).exec();
+
+    if (!user) {
+      throw new APIError({ message: "User was not found", status: 404 });
+    }
+
+    return user;
   }
 }
 

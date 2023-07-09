@@ -9,6 +9,7 @@ import {
   RegisterResponse as LoginResponse,
   InitResetPasswordRequestBody,
   ResetPasswordRequestBody,
+  MeResponse,
 } from "../types/user.types";
 
 class AuthController {
@@ -155,6 +156,29 @@ class AuthController {
         status: 200,
         message: "Password reset successfully",
         data: null,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async me(
+    req: Request<
+      Record<string, never>,
+      MeResponse,
+      Record<string, never>,
+      Record<string, never>
+    >,
+    res: Response<MeResponse>,
+    next: NextFunction
+  ) {
+    try {
+      const user = await AuthService.me(req.user._id);
+
+      res.status(200).send({
+        status: 200,
+        message: "User found",
+        data: user,
       });
     } catch (error) {
       next(error);
