@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { HistoryController } from "../controllers/history.controller";
+import { HistoryController } from "../controllers";
 import { AuthMiddleware } from "../middlewares/auth.middleware";
 
 const router = Router();

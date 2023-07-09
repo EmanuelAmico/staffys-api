@@ -1,4 +1,5 @@
 import axios from "axios";
+import { APIError } from "./error.utils";
 
 const parseDistance = (distanceText: string): number => {
   const distanceValue = parseFloat(distanceText.replace(/[^0-9.]/g, ""));
@@ -55,4 +56,16 @@ export const calculateDistanceUsingDirectionsAPI = async (
   } catch (error) {
     console.error(error);
   }
+};
+
+export const coordinates = async (address: string, city: string) => {
+  const geocodeResult = await geocodeAddress(address, city);
+
+  if (!geocodeResult)
+    throw new APIError({
+      message: "No coordinates found for the provided address",
+      status: 404,
+    });
+
+  return geocodeResult;
 };

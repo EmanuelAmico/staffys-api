@@ -2,12 +2,10 @@ import { ResponseBody } from "./request.types";
 import { Package } from "../models/Package.model";
 
 export interface PackageRequestBody {
-  title: string;
-  description: string;
   address: string;
   receptorName: string;
   weight: number;
-  deadlines: string;
+  deadlines: Date;
   city: string;
 }
 
