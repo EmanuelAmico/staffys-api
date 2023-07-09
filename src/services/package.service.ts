@@ -2,9 +2,12 @@
 /* eslint-disable no-empty-function */
 
 import { Package } from "../models/Package.model";
-import { calculateDistanceUsingDirectionsAPI } from "../utils/googleApiDistance.utils";
 import { APIError } from "../utils/error.utils";
 import { PackageRequestBody } from "../types/package.types";
+import {
+  calculateDistanceUsingDirectionsAPI,
+  coordinates,
+} from "../utils/googleApiDistance.utils";
 
 class PackageService {
   static async createPackage(packageBody: PackageRequestBody) {
@@ -33,18 +36,25 @@ class PackageService {
       {
         new: true,
       }
-    )
-      .select("-salt -password")
-      .exec();
+    );
 
     if (!updatedPackage) {
       throw new APIError({
-        message: "User not found",
+        message: "Package not found",
         status: 404,
       });
     }
 
-    return updatedPackage.toObject();
+    if (packageBody.city || packageBody.address) {
+      const { address, city } = updatedPackage;
+      const geocodeResult = await coordinates(address, city);
+      const { lat, lng } = geocodeResult;
+
+      updatedPackage.coordinates = { lat, lng };
+      updatedPackage.save();
+    }
+
+    return updatedPackage;
   }
 
   static deletePackageById() {}

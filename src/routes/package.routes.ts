@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { PackageController } from "../controllers/index";
+import { PackageController } from "../controllers";
 import { AuthMiddleware } from "../middlewares/auth.middleware";
 
 const router = Router();
@@ -8,12 +8,12 @@ router.post(
   "/create",
   AuthMiddleware.validateUser,
   AuthMiddleware.checkAdmin,
-  PackageController.getAvailablePackagesByCurrentLocation
+  PackageController.createPackage
 );
+
 router.put(
   "/update-package-by-id",
   AuthMiddleware.validateUser,
-  AuthMiddleware.checkAdmin,
   PackageController.updatePackageById
 );
 
@@ -22,9 +22,11 @@ router.post(
   AuthMiddleware.validateUser,
   PackageController.getAvailablePackagesByCurrentLocation
 );
+
 router.get(
   "/find-package/:_id",
   AuthMiddleware.validateUser,
   PackageController.getPackageById
 );
+
 export { router as packageRoutes };
