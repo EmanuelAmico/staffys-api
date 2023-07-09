@@ -3,7 +3,7 @@
 
 import { Package } from "../models/Package.model";
 import { APIError } from "../utils/error.utils";
-import { PackageRequestBody } from "../types/package.types";
+import { PackageRequestBody, SearchPackagesBody } from "../types/package.types";
 import {
   calculateDistanceUsingDirectionsAPI,
   coordinates,
@@ -59,7 +59,18 @@ class PackageService {
 
   static deletePackageById() {}
 
-  static searchPackages() {}
+  static async searchPackages(packageSearch: SearchPackagesBody) {
+    const packagesFound = await Package.find({ packageSearch });
+
+    if (packagesFound.length) {
+      throw new APIError({
+        message: "packages not found",
+        status: 404,
+      });
+    }
+
+    return packagesFound;
+  }
 
   static getAvailablePackages() {}
 

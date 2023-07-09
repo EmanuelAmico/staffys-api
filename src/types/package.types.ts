@@ -14,6 +14,12 @@ export interface GetAvailablePackagesByCurrentLocationRequestBody {
   userLongitude: number;
 }
 
+export interface SearchPackagesBody {
+  id?: number;
+  city?: string;
+  receptorName?: string;
+}
+
 export type GetAvailablePackagesByCurrentLocationResponse = ResponseBody<{
   packages: Package[];
 } | null>;
@@ -28,4 +34,8 @@ export type GetPackageByIdResponse = ResponseBody<{
 
 export type UpdatePackagerByIdResponse = ResponseBody<{
   package: Package;
+} | null>;
+
+export type SearchPackagesResponse = ResponseBody<{
+  packages: Package[];
 } | null>;
