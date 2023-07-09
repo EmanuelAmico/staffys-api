@@ -19,7 +19,7 @@ class AuthService {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...user } = newUser.toObject();
+    const { password, salt, ...user } = newUser.toObject();
 
     const token = generateToken({
       _id: newUser._id,
@@ -46,7 +46,7 @@ class AuthService {
       });
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...user } = foundUser.toObject();
+    const { password, salt, ...user } = foundUser.toObject();
 
     const token = generateToken({
       _id: foundUser._id,
