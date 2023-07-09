@@ -32,7 +32,7 @@ class PackageController {
         { field: "address", type: "string" },
         { field: "receptorName", type: "string" },
         { field: "weight", type: "number" },
-        { field: "deadlines", type: "string" },
+        { field: "deadline", type: "string" },
         { field: "city", type: "string" },
       ]);
       const newPackage = await PackageService.createPackage(packageBody);
@@ -77,7 +77,7 @@ class PackageController {
           { field: "weight", type: "number" },
           { field: "deliveredAt", type: "string" },
           { field: "status", type: typeStatus },
-          { field: "deadlines", type: "string" },
+          { field: "deadline", type: "string" },
           { field: "city", type: "string" },
         ]
       );

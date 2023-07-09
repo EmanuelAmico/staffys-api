@@ -9,7 +9,7 @@ export interface Package {
   weight: number;
   deliveredAt: Date | null;
   status: "taken" | "in_progress" | "delivered" | null;
-  deadlines: Date;
+  deadline: Date;
   city: string;
   coordinates?: {
     lat: number;
@@ -38,7 +38,7 @@ const PackageSchema = new Schema<Package>(
       enum: ["taken", "in_progress", "delivered", null],
       default: null,
     },
-    deadlines: { type: Date, required: true },
+    deadline: { type: Date, required: true },
     city: { type: String, required: true },
     coordinates: {
       lat: Number,

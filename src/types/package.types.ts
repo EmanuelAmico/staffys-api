@@ -5,7 +5,7 @@ export interface PackageRequestBody {
   address: string;
   receptorName: string;
   weight: number;
-  deadlines: Date;
+  deadline: Date;
   city: string;
 }
 
