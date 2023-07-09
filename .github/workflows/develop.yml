@@ -1,8 +1,7 @@
 name: Deploy to AWS Lightsail
 
 on:
-  push:
-    branches: [develop]
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
