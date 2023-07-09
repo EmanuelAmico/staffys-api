@@ -9,7 +9,6 @@ const {
   OAUTH2_CLIENT_ID,
   OAUTH2_CLIENT_SECRET,
   OAUTH2_REFRESH_TOKEN,
-  OAUTH2_ACCESS_TOKEN,
 } = envs;
 
 const OAuth2Client = new OAuth2(
@@ -20,7 +19,6 @@ const OAuth2Client = new OAuth2(
 
 OAuth2Client.setCredentials({
   refresh_token: OAUTH2_REFRESH_TOKEN,
-  access_token: OAUTH2_ACCESS_TOKEN,
 });
 
 export async function sendEmail({
