@@ -1,0 +1,85 @@
+export const users = [
+  {
+    name: "Rodrigo",
+    lastname: "Escalera",
+    password: "Ab123456",
+    email: "rodri123@mail.com",
+    urlphoto: "hola",
+  },
+  {
+    name: "Emanuel",
+    lastname: "Amico",
+    password: "Ab123456",
+    email: "ema123@mail.com",
+    urlphoto: "hola",
+  },
+  {
+    name: "Rafael",
+    lastname: "Mojica",
+    password: "Ab123456",
+    email: "rafa123@mail.com",
+    urlphoto: "hola",
+  },
+  {
+    name: "Santiago",
+    lastname: "Estevez",
+    password: "Ab123456",
+    email: "santi123@mail.com",
+    urlphoto: "hola",
+  },
+  {
+    name: "Admin",
+    lastname: "1",
+    password: "Ab123456",
+    email: "admin1@mail.com",
+    urlphoto: "hola",
+    isAdmin: true,
+  },
+  {
+    name: "Admin",
+    lastname: "2",
+    password: "Ab123456",
+    email: "admin2@mail.com",
+    urlphoto: "hola",
+    isAdmin: true,
+  },
+  {
+    name: "admin",
+    lastname: "3",
+    password: "Ab123456",
+    email: "admin3@mail.com",
+    urlphoto: "hola",
+    isAdmin: true,
+  },
+];
+
+export const packages = [
+  {
+    adress: "Belgrano 696",
+    receptorName: "Rodrigo",
+    weight: 5,
+    deadlines: new Date("2023-07"),
+    city: "Salta",
+  },
+  {
+    adress: "Rojas 601",
+    receptorName: "Ema",
+    weight: 5,
+    deadlines: new Date("2023-07"),
+    city: "Buenos Aires",
+  },
+  {
+    adress: "Osaka 1249",
+    receptorName: "Santi",
+    weight: 5,
+    deadlines: new Date("2023-07"),
+    city: "Buenos Aires",
+  },
+  {
+    adress: "Galicia 1436",
+    receptorName: "Rafa",
+    weight: 5,
+    deadlines: new Date("2023-07"),
+    city: "Buenos Aires",
+  },
+];

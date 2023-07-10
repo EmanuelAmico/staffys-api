@@ -38,6 +38,7 @@
     "start": "node dist/src/index.js",
     "dev": "tsc-watch --onSuccess \"node dist/src/index.js\"",
     "build": "tsc",
+    "seed":"node dist/src/seeds/index.js",
     "check-types": "tsc --noEmit",
     "prettier-staged": "pretty-quick --staged",
     "lint": "eslint . --ext .ts,.js --ignore-path .gitignore --max-warnings=0",
