@@ -14,8 +14,8 @@ export interface GetAvailablePackagesByCurrentLocationRequestBody {
   userLongitude: number;
 }
 
-export interface SearchPackagesBody {
-  [key: string]: string | number | Date;
+export interface SearchPackagesQuery {
+  [key: string]: string;
 }
 
 export type GetAvailablePackagesByCurrentLocationResponse = ResponseBody<{

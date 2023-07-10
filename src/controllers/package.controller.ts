@@ -12,7 +12,7 @@ import {
   GetPackageByIdResponse,
   UpdatePackagerByIdResponse,
   SearchPackagesResponse,
-  SearchPackagesBody,
+  SearchPackagesQuery,
 } from "../types/package.types";
 import { Types } from "mongoose";
 import { Package } from "../models/Package.model";
@@ -131,14 +131,14 @@ class PackageController {
     req: Request<
       Record<string, never>,
       SearchPackagesResponse,
-      SearchPackagesBody,
-      Record<string, never>
+      Record<string, never>,
+      SearchPackagesQuery
     >,
     res: Response<SearchPackagesResponse>,
     next: NextFunction
   ) {
     try {
-      const packageSearch = req.body;
+      const packageSearch = req.query;
       checkProperties(
         packageSearch,
         [],

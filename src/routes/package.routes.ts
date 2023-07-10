@@ -29,7 +29,7 @@ router.get(
   PackageController.getPackageById
 );
 
-router.post(
+router.get(
   "/search-package",
   AuthMiddleware.validateUser,
   PackageController.searchPackages
