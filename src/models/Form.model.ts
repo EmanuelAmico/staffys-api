@@ -17,7 +17,6 @@ const FormSchema = new Schema<Form>({
   date: {
     type: Date,
     required: true,
-    unique: true,
   },
   user: {
     type: Schema.Types.ObjectId,
