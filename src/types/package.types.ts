@@ -15,9 +15,7 @@ export interface GetAvailablePackagesByCurrentLocationRequestBody {
 }
 
 export interface SearchPackagesBody {
-  id?: number;
-  city?: string;
-  receptorName?: string;
+  [key: string]: string | number | Date;
 }
 
 export type GetAvailablePackagesByCurrentLocationResponse = ResponseBody<{

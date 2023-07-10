@@ -60,9 +60,12 @@ class PackageService {
   static deletePackageById() {}
 
   static async searchPackages(packageSearch: SearchPackagesBody) {
-    const packagesFound = await Package.find({ packageSearch });
+    const [Key] = Object.keys(packageSearch);
+    const packagesFound = await Package.find({
+      [Key]: packageSearch[Key],
+    });
 
-    if (packagesFound.length) {
+    if (packagesFound.length === 0) {
       throw new APIError({
         message: "packages not found",
         status: 404,

@@ -139,17 +139,23 @@ class PackageController {
   ) {
     try {
       const packageSearch = req.body;
-      checkProperties(packageSearch, [
-        { field: "id", type: "number" },
-        { field: "city", type: "string" },
-        { field: "receptorName", type: "string" },
-      ]);
+      checkProperties(
+        packageSearch,
+        [],
+        [
+          { field: "receptorName", type: "string" },
+          { field: "address", type: "string" },
+          { field: "city", type: "string" },
+          { field: "weight", type: "number" },
+          { field: "deadline", type: "string" },
+        ]
+      );
 
       const packagesFound = await PackageService.searchPackages(packageSearch);
 
       res.status(200).json({
         status: 200,
-        message: "Package found",
+        message: "Packages found",
         data: { packages: packagesFound },
       });
     } catch (error) {
