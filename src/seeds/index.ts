@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import Package from "../models/Package.model";
-import User from "../models/User.model";
+import { Package } from "../models/Package.model";
+import { User } from "../models/User.model";
 import { envs } from "../config/env/env.config";
 import { users, packages } from "./fakeData";
 const { MONGO_URI } = envs;
