@@ -25,6 +25,7 @@ class HistoryController {
     next: NextFunction
   ) {
     try {
+      checkProperties(req.body, [{ field: "date", type: "string" }]);
       const { date } = req.body;
       const newHistory = await HistoryService.createHistory(date);
       res.status(200).send({

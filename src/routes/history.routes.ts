@@ -10,5 +10,5 @@ router.get(
   HistoryController.getHistoryByDate
 );
 
-router.post("create-history", HistoryController.createHistory);
+router.post("/create-history", HistoryController.createHistory);
 export { router as historyRoutes };
