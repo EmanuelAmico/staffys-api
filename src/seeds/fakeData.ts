@@ -55,28 +55,28 @@ export const users = [
 
 export const packages = [
   {
-    adress: "calle falsa 10",
+    adress: "Belgrano 696",
     receptorName: "Rodrigo",
     weight: 5,
     deadlines: new Date("2023-07"),
-    city: "salta",
+    city: "Salta",
   },
   {
-    adress: "calle falsa 13",
+    adress: "Rojas 601",
     receptorName: "Ema",
     weight: 5,
     deadlines: new Date("2023-07"),
     city: "Buenos Aires",
   },
   {
-    adress: "calle falsa 12",
+    adress: "Osaka 1249",
     receptorName: "Santi",
     weight: 5,
     deadlines: new Date("2023-07"),
     city: "Buenos Aires",
   },
   {
-    adress: "calle falsa 3",
+    adress: "Cl. 8c #78-71",
     receptorName: "Rafa",
     weight: 5,
     deadlines: new Date("2023-07"),
