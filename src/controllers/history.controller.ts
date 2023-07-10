@@ -9,8 +9,6 @@ import {
   GetHistoryByDateResponse,
 } from "../types/history.types";
 
-new Date().toISOString();
-
 class HistoryController {
   static async createHistory() {}
 

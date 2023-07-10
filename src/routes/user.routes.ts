@@ -22,25 +22,35 @@ router.delete(
   AuthMiddleware.validateUser,
   UserController.deleteUserById
 );
+
 router.post(
   "/take-package",
   AuthMiddleware.validateUser,
   UserController.takePackage
 );
+
 router.post(
   "/start-delivery",
   AuthMiddleware.validateUser,
   UserController.startDelivery
 );
+
 router.put(
   "/cancel-delivery",
   AuthMiddleware.validateUser,
   UserController.cancelDelivery
 );
+
 router.post(
   "/start-package-delivery",
   AuthMiddleware.validateUser,
   UserController.startPackageDelivery
+);
+
+router.put(
+  "/finish-package-delivery",
+  AuthMiddleware.validateUser,
+  UserController.finishPackageDelivery
 );
 
 export { router as userRoutes };
