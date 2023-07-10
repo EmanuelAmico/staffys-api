@@ -55,9 +55,6 @@ export const users = [
 
 export const packages = [
   {
-    title: "PS5",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum quis faucibus felis, vel molestie lectus. Suspendisse non euismod tellus.",
     adress: "calle falsa 10",
     receptorName: "Rodrigo",
     weight: 5,
@@ -65,9 +62,6 @@ export const packages = [
     city: "salta",
   },
   {
-    title: "Iphone 13",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum quis faucibus felis, vel molestie lectus. Suspendisse non euismod tellus.",
     adress: "calle falsa 13",
     receptorName: "Ema",
     weight: 5,
@@ -75,9 +69,6 @@ export const packages = [
     city: "Buenos Aires",
   },
   {
-    title: "Laptop",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum quis faucibus felis, vel molestie lectus. Suspendisse non euismod tellus.",
     adress: "calle falsa 12",
     receptorName: "Santi",
     weight: 5,
@@ -85,9 +76,6 @@ export const packages = [
     city: "Buenos Aires",
   },
   {
-    title: "PC Gamer",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum quis faucibus felis, vel molestie lectus. Suspendisse non euismod tellus.",
     adress: "calle falsa 3",
     receptorName: "Rafa",
     weight: 5,
