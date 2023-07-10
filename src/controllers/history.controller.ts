@@ -7,12 +7,35 @@ import { HistoryService } from "../services/history.service";
 import {
   GetHistoryByDateRequestBody,
   GetHistoryByDateResponse,
+  CreateHistory,
+  CreateHistoryRequestBody,
 } from "../types/history.types";
 
 new Date().toISOString();
 
 class HistoryController {
-  static async createHistory() {}
+  static async createHistory(
+    req: Request<
+      Record<string, never>,
+      CreateHistory,
+      CreateHistoryRequestBody,
+      Record<string, never>
+    >,
+    res: Response<CreateHistory>,
+    next: NextFunction
+  ) {
+    try {
+      const { date } = req.body;
+      const newHistory = await HistoryService.createHistory(date);
+      res.status(200).send({
+        status: 200,
+        message: "History created successfully.",
+        data: newHistory,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 
   static async getHistoryByDate(
     req: Request<
