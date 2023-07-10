@@ -11,6 +11,7 @@ import {
   calculateDistanceUsingDirectionsAPI,
   coordinates,
 } from "../utils/googleApiDistance.utils";
+import { User } from "../models/User.model";
 
 class PackageService {
   static async createPackage(packageBody: PackageRequestBody) {
@@ -82,7 +83,8 @@ class PackageService {
 
   static async getAvailablePackagesByCurrentLocation(
     userLatitude: number,
-    userLongitude: number
+    userLongitude: number,
+    userId: string
   ) {
     const packages = await Package.find({ status: null });
 
@@ -113,7 +115,23 @@ class PackageService {
         return distanceA - distanceB;
       });
 
-      return packagesWithDistance;
+      const user = await User.findById(userId);
+
+      if (!user) {
+        throw new APIError({
+          message: "User not found",
+          status: 404,
+        });
+      }
+
+      const filteredPackages = packagesWithDistance.filter(
+        (_package) =>
+          user.pendingPackages
+            .map((p) => p._id.toString())
+            .indexOf(_package._id.toString()) === -1
+      );
+
+      return filteredPackages;
     } catch (error) {
       throw new APIError({
         message: "Error occurred during distance calculation",

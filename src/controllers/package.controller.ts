@@ -187,7 +187,8 @@ class PackageController {
       const packages =
         await PackageService.getAvailablePackagesByCurrentLocation(
           userLatitude,
-          userLongitude
+          userLongitude,
+          req.user._id
         );
       return res.send({
         status: 200,
