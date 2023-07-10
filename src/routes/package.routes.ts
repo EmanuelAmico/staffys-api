@@ -29,4 +29,10 @@ router.get(
   PackageController.getPackageById
 );
 
+router.get(
+  "/search-package",
+  AuthMiddleware.validateUser,
+  PackageController.searchPackages
+);
+
 export { router as packageRoutes };

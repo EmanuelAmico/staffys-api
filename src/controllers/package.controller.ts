@@ -11,6 +11,8 @@ import {
   GetAvailablePackagesByCurrentLocationRequestBody,
   GetPackageByIdResponse,
   UpdatePackagerByIdResponse,
+  SearchPackagesResponse,
+  SearchPackagesQuery,
 } from "../types/package.types";
 import { Types } from "mongoose";
 import { Package } from "../models/Package.model";
@@ -125,7 +127,41 @@ class PackageController {
 
   static deletePackageById() {}
 
-  static searchPackages() {}
+  static async searchPackages(
+    req: Request<
+      Record<string, never>,
+      SearchPackagesResponse,
+      Record<string, never>,
+      SearchPackagesQuery
+    >,
+    res: Response<SearchPackagesResponse>,
+    next: NextFunction
+  ) {
+    try {
+      const packageSearch = req.query;
+      checkProperties(
+        packageSearch,
+        [],
+        [
+          { field: "receptorName", type: "string" },
+          { field: "address", type: "string" },
+          { field: "city", type: "string" },
+          { field: "weight", type: "number" },
+          { field: "deadline", type: "string" },
+        ]
+      );
+
+      const packagesFound = await PackageService.searchPackages(packageSearch);
+
+      res.status(200).json({
+        status: 200,
+        message: "Packages found",
+        data: { packages: packagesFound },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 
   static getAvailablePackages() {}
 
