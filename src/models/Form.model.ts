@@ -18,13 +18,6 @@ const FormSchema = new Schema<Form>({
     type: Date,
     required: true,
     unique: true,
-    validate: {
-      validator: function (value: Date) {
-        const currentDate = new Date();
-        return value >= currentDate;
-      },
-      message: "The date cannot be earlier than the current date",
-    },
   },
   user: {
     type: Schema.Types.ObjectId,

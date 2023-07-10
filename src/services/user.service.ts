@@ -75,6 +75,13 @@ class UserService {
       });
     }
 
+    if (user.pendingPackages.map((p) => p.toString()).includes(packageId)) {
+      throw new APIError({
+        message: "User already has taken this package",
+        status: 400,
+      });
+    }
+
     if (hasCompletedTodayForm && !user.is_active) {
       throw new APIError({
         message: "User is not able to take packages",
@@ -118,7 +125,7 @@ class UserService {
 
     if (!hasCompletedTodayForm) {
       throw new APIError({
-        message: "User has not completed today form",
+        message: "User has not completed today's form",
         status: 403,
       });
     }
@@ -133,6 +140,13 @@ class UserService {
       throw new APIError({
         message: "User not found",
         status: 404,
+      });
+    }
+
+    if (user.is_active) {
+      throw new APIError({
+        message: "User already started delivery",
+        status: 400,
       });
     }
 
@@ -163,9 +177,8 @@ class UserService {
     await todayHistory.save();
 
     user.is_active = true;
-    await user.save();
 
-    return { user };
+    return { user: await user.save() };
   }
 
   static async cancelDelivery(userId: string) {
@@ -205,6 +218,13 @@ class UserService {
       });
     }
 
+    if (user.currentPackage?.toString() === packageId) {
+      throw new APIError({
+        message: "User is already delivering this package",
+        status: 400,
+      });
+    }
+
     const _package = await Package.findById(packageId).exec();
 
     if (!_package) {
@@ -216,7 +236,7 @@ class UserService {
 
     if (_package.status !== "taken") {
       throw new APIError({
-        message: "Package is not taken",
+        message: "Package has to be in state taken in order to start delivery",
         status: 400,
       });
     }
