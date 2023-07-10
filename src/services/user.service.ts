@@ -65,8 +65,6 @@ class UserService {
 
   static async takePackage(packageId: string, userId: string) {
     const user = await User.findById(userId).exec();
-    const todayForm = await getTodayFormForUser(userId);
-    const hasCompletedTodayForm = todayForm !== null;
 
     if (!user) {
       throw new APIError({
@@ -79,13 +77,6 @@ class UserService {
       throw new APIError({
         message: "User already has taken this package",
         status: 400,
-      });
-    }
-
-    if (hasCompletedTodayForm && !user.is_active) {
-      throw new APIError({
-        message: "User is not able to take packages",
-        status: 403,
       });
     }
 
