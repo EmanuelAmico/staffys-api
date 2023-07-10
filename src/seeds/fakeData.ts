@@ -76,10 +76,10 @@ export const packages = [
     city: "Buenos Aires",
   },
   {
-    adress: "Cl. 8c #78-71",
+    adress: "Galicia 1436",
     receptorName: "Rafa",
     weight: 5,
     deadlines: new Date("2023-07"),
-    city: "Bogota",
+    city: "Buenos Aires",
   },
 ];
