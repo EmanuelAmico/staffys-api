@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-empty-function */
 import { History } from "../models/History.model";
-import { Package } from "../models/Package.model";
-import { User } from "../models/User.model";
 import { APIError } from "../utils/error.utils";
 
 class HistoryService {
@@ -14,12 +12,9 @@ class HistoryService {
         message: "History date already exists.",
       });
     }
-    const currentActiveUsers = await User.find({ is_active: true });
-    const currentTargetPackages = await Package.find({ status: null });
+
     const newHistory = await History.create({
       date: new Date(date),
-      activeUsers: currentActiveUsers,
-      targetPackages: currentTargetPackages,
     });
 
     return newHistory;
