@@ -125,7 +125,30 @@ class PackageController {
     }
   }
 
-  static deletePackageById() {}
+  static async deletePackageById(
+    req: Request<
+      { _id: string },
+      Record<string, never>,
+      Record<string, never>,
+      Record<string, never>
+    >,
+    res: Response<GetPackageByIdResponse>,
+    next: NextFunction
+  ) {
+    try {
+      const { _id } = req.params;
+      checkProperties(req.params, [
+        {
+          field: "_id",
+          type: Types.ObjectId,
+        },
+      ]);
+      await PackageService.deletePackageById(_id);
+      res.sendStatus(200);
+    } catch (error) {
+      next(error);
+    }
+  }
 
   static async searchPackages(
     req: Request<

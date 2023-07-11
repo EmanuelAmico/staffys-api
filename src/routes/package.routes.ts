@@ -35,4 +35,10 @@ router.get(
   PackageController.searchPackages
 );
 
+router.get(
+  "/delete-package/:_id",
+  AuthMiddleware.validateUser,
+  PackageController.deletePackageById
+);
+
 export { router as packageRoutes };
