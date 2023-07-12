@@ -35,7 +35,7 @@ router.get(
   PackageController.searchPackages
 );
 
-router.get(
+router.delete(
   "/delete-package/:_id",
   AuthMiddleware.validateUser,
   PackageController.deletePackageById
