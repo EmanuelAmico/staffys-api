@@ -61,7 +61,16 @@ class PackageService {
     return updatedPackage;
   }
 
-  static deletePackageById() {}
+  static async deletePackageById(_id: string) {
+    try {
+      return await Package.deleteOne({ _id });
+    } catch (error) {
+      throw new APIError({
+        message: "An error occurred while trying to delete the package.",
+        status: 500,
+      });
+    }
+  }
 
   static async searchPackages(packageSearch: SearchPackagesQuery) {
     const [Key] = Object.keys(packageSearch);
