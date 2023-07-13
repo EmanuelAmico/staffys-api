@@ -6,6 +6,7 @@ import { generateToken } from "../config/jwt/tokens";
 import { LoginRequestBody, RegisterRequestBody } from "../types/user.types";
 import { APIError } from "../utils/error.utils";
 import { sendEmail } from "../utils/mailer.utils";
+import { Package } from "../models/Package.model";
 
 class AuthService {
   static async register(userBody: RegisterRequestBody) {
@@ -30,7 +31,12 @@ class AuthService {
   }
 
   static async login(userBody: LoginRequestBody) {
-    const foundUser = await User.findOne({ email: userBody.email }).exec();
+    const foundUser = await User.findOne({ email: userBody.email })
+      .populate<{
+        pendingPackages: Package[];
+        currentPackage: Package;
+      }>(["pendingPackages", "currentPackage"])
+      .exec();
 
     if (!foundUser) {
       throw new APIError({
@@ -45,15 +51,13 @@ class AuthService {
         status: 404,
       });
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, salt, ...user } = foundUser.toObject();
 
     const token = generateToken({
       _id: foundUser._id,
       is_admin: foundUser.is_admin,
     });
 
-    return { user, token };
+    return { user: foundUser, token };
   }
 
   static async initResetPassword(email: string) {
@@ -91,7 +95,13 @@ class AuthService {
   }
 
   static async me(userId: string) {
-    const user = await User.findById(userId).exec();
+    const user = await User.findById(userId)
+      .populate<{
+        pendingPackages: Package[];
+        currentPackage: Package;
+      }>(["pendingPackages", "currentPackage"])
+      .select("-password -salt")
+      .exec();
 
     if (!user) {
       throw new APIError({ message: "User was not found", status: 404 });

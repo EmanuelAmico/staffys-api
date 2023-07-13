@@ -2,6 +2,13 @@ import { Types } from "mongoose";
 import { ResponseBody } from "./request.types";
 import { UserService } from "../services";
 import { User } from "../models/User.model";
+import { Package } from "../models/Package.model";
+
+export interface PopulatedUser
+  extends Omit<User, "pendingPackages" | "currentPackage"> {
+  pendingPackages: Package[];
+  currentPackage: Package;
+}
 
 export interface RegisterRequestBody {
   name: string;
@@ -43,6 +50,11 @@ export type RegisterResponse = ResponseBody<{
   token: string;
 } | null>;
 
+export type LoginResponse = ResponseBody<{
+  user: Omit<PopulatedUser, "password" | "salt">;
+  token: string;
+} | null>;
+
 export type GetDeliveryPeopleResponse = ResponseBody<{
   users: User[];
 } | null>;
@@ -71,4 +83,4 @@ export type StartPackageDeliveryResponse = ResponseBody<
   Awaited<ReturnType<typeof UserService.startPackageDelivery>>
 >;
 
-export type MeResponse = ResponseBody<User>;
+export type MeResponse = ResponseBody<PopulatedUser>;

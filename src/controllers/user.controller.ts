@@ -53,6 +53,12 @@ class UserController {
           data: null,
         });
       }
+
+      return res.status(200).send({
+        status: 200,
+        message: "User found",
+        data: user,
+      });
     } catch (error) {
       next(error);
     }
@@ -71,17 +77,17 @@ class UserController {
     try {
       const deliveryPeoples = await UserService.getDeliveryPeople();
 
-      if (deliveryPeoples.length === 0) {
+      if (!deliveryPeoples.length) {
         return res.status(200).send({
           status: 200,
-          message: "Not found delivery people",
+          message: "Delivery people not found",
           data: null,
         });
       }
 
       return res.status(200).send({
         status: 200,
-        message: "all delivery people",
+        message: "All delivery people",
         data: { users: deliveryPeoples },
       });
     } catch (error) {
@@ -144,7 +150,7 @@ class UserController {
 
       return res.status(200).send({
         status: 200,
-        message: "User is eliminated",
+        message: "User eliminated",
         data: null,
       });
     } catch (error) {

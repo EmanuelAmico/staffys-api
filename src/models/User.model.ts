@@ -35,7 +35,7 @@ const UserSchema = new Schema<UserModelProps>(
     email: { type: String, required: true, unique: true },
     salt: { type: String },
     is_admin: { type: Boolean, default: false },
-    is_active: { type: Boolean, default: false },
+    is_active: { type: Boolean, default: true },
     urlphoto: { type: String, required: true },
     is_deleted: { type: Boolean, default: false },
     resetToken: { type: String, default: null },

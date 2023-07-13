@@ -13,7 +13,13 @@ class UserService {
   static createUser() {}
 
   static async getUserById(_id: string) {
-    const user = await User.findById(_id).select("-salt -password").exec();
+    const user = await User.findById(_id)
+      .populate<{
+        pendingPackages: Package[];
+        currentPackage: Package;
+      }>(["pendingPackages", "currentPackage"])
+      .select("-password -salt")
+      .exec();
     return user;
   }
 
@@ -51,7 +57,13 @@ class UserService {
       { _id: id },
       { is_deleted: true },
       { new: true }
-    ).exec();
+    )
+      .populate<{
+        pendingPackages: Package[];
+        currentPackage: Package;
+      }>(["pendingPackages", "currentPackage"])
+      .select("-password -salt")
+      .exec();
 
     if (!foundUser) {
       throw new APIError({
@@ -59,12 +71,22 @@ class UserService {
         status: 404,
       });
     }
-
-    return "";
   }
 
   static async takePackage(packageId: string, userId: string) {
-    const user = await User.findById(userId).exec();
+    const user = await User.findById(userId)
+      .populate<{
+        pendingPackages: Package[];
+        currentPackage: Package;
+      }>(["pendingPackages", "currentPackage"])
+      .select("-password -salt")
+      .exec();
+    const todayForm = await getTodayFormForUser(userId);
+    const hasCompletedTodayForm = todayForm !== null;
+    const hasSomeKindOfProblem =
+      todayForm?.hasDrank ||
+      todayForm?.hasPsychotropicDrugs ||
+      todayForm?.hasEmotionalProblems;
 
     if (!user) {
       throw new APIError({
@@ -73,10 +95,28 @@ class UserService {
       });
     }
 
+    if (!user.is_active) {
+      throw new APIError({
+        message: "User has to be active to take packages",
+        status: 403,
+      });
+    }
+
     if (user.pendingPackages.map((p) => p.toString()).includes(packageId)) {
       throw new APIError({
         message: "User already has taken this package",
         status: 400,
+      });
+    }
+
+    if (hasCompletedTodayForm && hasSomeKindOfProblem) {
+      user.is_active = false;
+      user.pendingPackages = [];
+      await user.save();
+
+      throw new APIError({
+        message: "User is not able to take packages",
+        status: 451,
       });
     }
 
@@ -103,7 +143,7 @@ class UserService {
       });
     }
 
-    user.pendingPackages.push(_package._id);
+    user.pendingPackages.push(_package);
 
     await user.save();
 
@@ -111,21 +151,19 @@ class UserService {
   }
 
   static async startDelivery(userId: string) {
-    const todayForm = await getTodayFormForUser(userId);
-    const hasCompletedTodayForm = todayForm !== null;
-
-    if (!hasCompletedTodayForm) {
-      throw new APIError({
-        message: "User has not completed today's form",
-        status: 403,
-      });
-    }
-
     const user = await User.findById(userId)
       .populate<{
         pendingPackages: Package[];
-      }>("pendingPackages")
+        currentPackage: Package;
+      }>(["pendingPackages", "currentPackage"])
+      .select("-password -salt")
       .exec();
+    const todayForm = await getTodayFormForUser(userId);
+    const hasCompletedTodayForm = todayForm !== null;
+    const hasSomeKindOfProblem =
+      todayForm?.hasDrank ||
+      todayForm?.hasPsychotropicDrugs ||
+      todayForm?.hasEmotionalProblems;
 
     if (!user) {
       throw new APIError({
@@ -134,7 +172,28 @@ class UserService {
       });
     }
 
-    if (user.is_active) {
+    if (!hasCompletedTodayForm) {
+      user.is_active = true;
+      await user.save();
+
+      throw new APIError({
+        message: "User has not completed today's form",
+        status: 412,
+      });
+    }
+
+    if (hasSomeKindOfProblem) {
+      user.is_active = false;
+      user.pendingPackages = [];
+      await user.save();
+
+      throw new APIError({
+        message: "User is not able to take packages",
+        status: 451,
+      });
+    }
+
+    if (user.pendingPackages.some((_package) => _package.status === "taken")) {
       throw new APIError({
         message: "User already started delivery",
         status: 400,
@@ -167,23 +226,22 @@ class UserService {
     );
     await todayHistory.save();
 
-    user.is_active = true;
-
     return { user: await user.save() };
   }
 
   static async cancelDelivery(userId: string) {
-    const user = await User.findById(userId);
+    const user = await User.findById(userId)
+      .populate<{
+        pendingPackages: Package[];
+        currentPackage: Package;
+      }>(["pendingPackages", "currentPackage"])
+      .select("-password -salt");
 
     if (!user) {
       throw new APIError({
         message: "User not found",
         status: 404,
       });
-    }
-
-    if (user.is_active) {
-      user.is_active = false;
     }
 
     user.pendingPackages = [];
@@ -193,7 +251,13 @@ class UserService {
   }
 
   static async startPackageDelivery(userId: string, packageId: string) {
-    const user = await User.findById(userId).exec();
+    const user = await User.findById(userId)
+      .populate<{
+        pendingPackages: Package[];
+        currentPackage: Package | string;
+      }>(["pendingPackages", "currentPackage"])
+      .select("-password -salt")
+      .exec();
 
     if (!user) {
       throw new APIError({
@@ -247,16 +311,77 @@ class UserService {
     }
 
     _package.status = "in_progress";
-    user.currentPackage = _package._id;
+    user.currentPackage = _package._id.toString();
 
-    await Promise.all([_package.save(), user.save()]);
+    const [updatedPackage, updatedUser] = await Promise.all([
+      _package.save(),
+      user.save(),
+    ]);
 
-    return { user, package: _package };
+    return { user: updatedUser, package: updatedPackage };
   }
 
-  static async finishPackageDelivery() {}
+  static async finishPackageDelivery(userId: string, packageId: string) {
+    const user = await User.findById(userId)
+      .populate<{
+        pendingPackages: Package[];
+        currentPackage: Package | null;
+      }>(["pendingPackages", "currentPackage"])
+      .select("-password -salt")
+      .exec();
 
-  static async cancelPackageDelivery() {}
+    if (!user) {
+      throw new APIError({
+        message: "User not found",
+        status: 404,
+      });
+    }
+
+    const _package = await Package.findById(packageId).exec();
+
+    if (!_package) {
+      throw new APIError({
+        message: "Package not found",
+        status: 404,
+      });
+    }
+
+    if (_package.status !== "in_progress") {
+      throw new APIError({
+        message: "Package has to be in state in_progress in order to finish",
+        status: 400,
+      });
+    }
+
+    if (!_package.deliveryMan) {
+      throw new APIError({
+        message: "This package was not taken by any user",
+        status: 400,
+      });
+    }
+
+    if (_package.deliveryMan.toString() !== userId) {
+      throw new APIError({
+        message: "Package is not taken by this user",
+        status: 403,
+      });
+    }
+
+    _package.status = "delivered";
+    user.currentPackage = null;
+    user.historyPackages.push(_package._id);
+
+    if (!user.pendingPackages.length) {
+      user.is_active = false;
+    }
+
+    const [updatedPackage, updatedUser] = await Promise.all([
+      _package.save(),
+      user.save(),
+    ]);
+
+    return { user: updatedUser, package: updatedPackage };
+  }
 }
 
 export { UserService };
