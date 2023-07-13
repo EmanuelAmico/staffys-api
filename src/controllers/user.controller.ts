@@ -31,7 +31,7 @@ class UserController {
       Record<string, never>,
       Record<string, never>
     >,
-    res: Response<GetUserByIdResponse>,
+    res: Response,
     next: NextFunction
   ) {
     try {
@@ -53,6 +53,7 @@ class UserController {
           data: null,
         });
       }
+      res.status(200).send(user);
     } catch (error) {
       next(error);
     }
