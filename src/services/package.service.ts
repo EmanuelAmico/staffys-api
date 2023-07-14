@@ -3,6 +3,7 @@
 
 import { Package } from "../models/Package.model";
 import { APIError } from "../utils/error.utils";
+import { ObjectId } from "mongoose";
 import {
   PackageRequestBody,
   SearchPackagesQuery,
@@ -29,6 +30,17 @@ class PackageService {
 
   static async getPackageById(_id: string) {
     return await Package.findById(_id);
+  }
+
+  static async getPackagesByIds(ids: ObjectId[]) {
+    const packages = await Package.find({ _id: { $in: ids } });
+    if (!packages) {
+      throw new APIError({
+        message: "packages not found",
+        status: 404,
+      });
+    }
+    return packages;
   }
 
   static getHistoryByDate(_date: string) {}

@@ -16,8 +16,7 @@ router.put(
   AuthMiddleware.validateUser,
   PackageController.updatePackageById
 );
-
-router.post(
+router.get(
   "/by-current-location",
   AuthMiddleware.validateUser,
   PackageController.getAvailablePackagesByCurrentLocation
@@ -29,10 +28,15 @@ router.get(
   PackageController.getPackageById
 );
 
+router.post(
+  "/find-packages",
+  AuthMiddleware.validateUser,
+  PackageController.getPackagesById
+);
+
 router.get(
   "/search-package",
   AuthMiddleware.validateUser,
   PackageController.searchPackages
 );
-
 export { router as packageRoutes };
