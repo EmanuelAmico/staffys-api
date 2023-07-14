@@ -67,7 +67,7 @@ class PackageService {
     const [Key] = Object.keys(packageSearch);
     const packagesFound = await Package.find({
       [Key]: packageSearch[Key],
-    });
+    }).exec();
 
     if (packagesFound.length === 0) {
       throw new APIError({
@@ -86,7 +86,7 @@ class PackageService {
     userLongitude: number,
     userId: string
   ) {
-    const packages = await Package.find({ status: null });
+    const packages = await Package.find({ status: null }).exec();
 
     const coordinates = packages.map((_package) => _package.coordinates);
 
@@ -115,7 +115,7 @@ class PackageService {
         return distanceA - distanceB;
       });
 
-      const user = await User.findById(userId);
+      const user = await User.findById(userId).exec();
 
       if (!user) {
         throw new APIError({

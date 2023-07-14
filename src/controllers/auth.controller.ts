@@ -6,7 +6,7 @@ import {
   RegisterRequestBody,
   LoginRequestBody,
   RegisterResponse,
-  RegisterResponse as LoginResponse,
+  LoginResponse,
   InitResetPasswordRequestBody,
   ResetPasswordRequestBody,
   MeResponse,
