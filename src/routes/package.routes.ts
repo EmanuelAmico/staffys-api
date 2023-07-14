@@ -16,8 +16,7 @@ router.put(
   AuthMiddleware.validateUser,
   PackageController.updatePackageById
 );
-
-router.post(
+router.get(
   "/by-current-location",
   AuthMiddleware.validateUser,
   PackageController.getAvailablePackagesByCurrentLocation

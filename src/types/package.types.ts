@@ -10,10 +10,10 @@ export interface PackageRequestBody {
   city: string;
 }
 
-export interface GetAvailablePackagesByCurrentLocationRequestBody {
-  userLatitude: number;
-  userLongitude: number;
-}
+export type GetAvailablePackagesByCurrentLocationQueryParams = {
+  userLatitude: string;
+  userLongitude: string;
+};
 
 export interface SearchPackagesQuery {
   [key: string]: string;
