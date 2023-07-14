@@ -225,8 +225,17 @@ class UserService {
       ...user.pendingPackages.map(({ _id }) => _id)
     );
     await todayHistory.save();
+    await user.save();
 
-    return { user: await user.save() };
+    const updatedUser = await User.findById(userId)
+      .populate<{
+        pendingPackages: Package[];
+        currentPackage: Package;
+      }>(["pendingPackages", "currentPackage"])
+      .select("-password -salt")
+      .exec();
+
+    return { user: updatedUser };
   }
 
   static async cancelDelivery(userId: string) {
@@ -310,12 +319,23 @@ class UserService {
       });
     }
 
+    user.pendingPackages = user.pendingPackages.filter(
+      (_package) => _package._id.toString() !== packageId
+    );
     _package.status = "in_progress";
     user.currentPackage = _package._id.toString();
 
+    await Promise.all([_package.save(), user.save()]);
+
     const [updatedPackage, updatedUser] = await Promise.all([
-      _package.save(),
-      user.save(),
+      Package.findById(packageId).exec(),
+      User.findById(userId)
+        .populate<{
+          pendingPackages: Package[];
+          currentPackage: Package;
+        }>(["pendingPackages", "currentPackage"])
+        .select("-password -salt")
+        .exec(),
     ]);
 
     return { user: updatedUser, package: updatedPackage };
@@ -375,9 +395,17 @@ class UserService {
       user.is_active = false;
     }
 
+    await Promise.all([_package.save(), user.save()]);
+
     const [updatedPackage, updatedUser] = await Promise.all([
-      _package.save(),
-      user.save(),
+      Package.findById(packageId).exec(),
+      User.findById(userId)
+        .populate<{
+          pendingPackages: Package[];
+          currentPackage: Package;
+        }>(["pendingPackages", "currentPackage"])
+        .select("-password -salt")
+        .exec(),
     ]);
 
     return { user: updatedUser, package: updatedPackage };

@@ -45,6 +45,11 @@ export interface ExtendedUserRequestBody extends RegisterRequestBody {
   _id: Types.ObjectId;
 }
 
+export interface FinishPackageDeliveryRequestBody {
+  packageId: string;
+  userId: string;
+}
+
 export type RegisterResponse = ResponseBody<{
   user: Omit<User, "password" | "salt">;
   token: string;
@@ -81,6 +86,10 @@ export type CancelDeliveryResponse = ResponseBody<
 
 export type StartPackageDeliveryResponse = ResponseBody<
   Awaited<ReturnType<typeof UserService.startPackageDelivery>>
+>;
+
+export type FinishPackageDeliveryResponse = ResponseBody<
+  Awaited<ReturnType<typeof UserService.finishPackageDelivery>>
 >;
 
 export type MeResponse = ResponseBody<PopulatedUser>;
