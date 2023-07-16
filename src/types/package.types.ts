@@ -37,3 +37,7 @@ export type UpdatePackagerByIdResponse = ResponseBody<{
 export type SearchPackagesResponse = ResponseBody<{
   packages: Package[];
 } | null>;
+
+export type getAvailablePackagesResponse = ResponseBody<{
+  packages: Package[];
+} | null>;
