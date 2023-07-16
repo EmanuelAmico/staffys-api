@@ -65,7 +65,7 @@ export type GetDeliveryPeopleResponse = ResponseBody<{
 } | null>;
 
 export type UpdateUserByIdResponse = ResponseBody<{
-  findUser: User;
+  findUser: PopulatedUser;
 } | null>;
 
 export type GetUserByIdResponse = ResponseBody<

@@ -113,6 +113,7 @@ class UserController {
         req.body,
         [{ field: "_id", type: Types.ObjectId }],
         [
+          { field: "is_active", type: "boolean" },
           { field: "name", type: "string" },
           { field: "lastname", type: "string" },
           { field: "password", type: "string" },
