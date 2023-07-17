@@ -256,7 +256,7 @@ class UserController {
 
       return res.status(200).send({
         status: 200,
-        message: "Delivery canceled successfully",
+        message: "Delivery was canceled",
         data: user,
       });
     } catch (error) {
