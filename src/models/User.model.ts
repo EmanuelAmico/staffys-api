@@ -1,6 +1,7 @@
 import { Schema, Types, model } from "mongoose";
 import { hash, genSalt, compare } from "bcrypt";
 import crypto from "crypto";
+import { APIError } from "../utils/error.utils";
 
 export interface User {
   _id: Types.ObjectId;
@@ -81,12 +82,16 @@ UserSchema.methods.resetPassword = async function (
   code: string,
   newPassword: string
 ) {
-  if (code.length !== 6) throw new Error("Invalid code");
+  if (code.length !== 6)
+    throw new APIError({ status: 400, message: "Invalid code" });
 
   const isMatch = await compare(code, this.resetToken);
 
   if (!isMatch) {
-    throw new Error("Invalid code");
+    throw new APIError({
+      status: 400,
+      message: "Invalid code",
+    });
   }
 
   const hashedPassword = await this.hashPassword(newPassword, this.salt);
