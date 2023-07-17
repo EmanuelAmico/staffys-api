@@ -6,7 +6,7 @@ import {
   PackageRequestBody,
   CreatePackageResponse,
   GetAvailablePackagesByCurrentLocationResponse,
-  GetAvailablePackagesByCurrentLocationRequestBody,
+  GetAvailablePackagesByCurrentLocationQueryParams,
   GetPackageByIdResponse,
   UpdatePackagerByIdResponse,
   SearchPackagesResponse,
@@ -217,35 +217,41 @@ class PackageController {
       next(error);
     }
   }
-
   static async getAvailablePackagesByCurrentLocation(
     req: Request<
       Record<string, never>,
       GetAvailablePackagesByCurrentLocationResponse,
-      GetAvailablePackagesByCurrentLocationRequestBody,
-      Record<string, never>
+      Record<string, never>,
+      GetAvailablePackagesByCurrentLocationQueryParams
     >,
     res: Response<GetAvailablePackagesByCurrentLocationResponse>,
     next: NextFunction
   ) {
     try {
-      const { userLatitude, userLongitude } = req.body;
-      checkProperties(req.body, [
-        {
-          field: "userLatitude",
-          type: "number",
-        },
-        { field: "userLongitude", type: "number" },
-      ]);
+      const { userLatitude, userLongitude } = req.query;
+
+      if (
+        typeof userLatitude !== "string" ||
+        typeof userLongitude !== "string" ||
+        !userLatitude ||
+        !userLongitude
+      ) {
+        throw new APIError({
+          message: "Los valores no son cadenas de texto o no existen",
+          status: 400,
+        });
+      }
+
       const packages =
         await PackageService.getAvailablePackagesByCurrentLocation(
-          userLatitude,
-          userLongitude,
+          Number(userLatitude),
+          Number(userLongitude),
           req.user._id
         );
+
       return res.send({
         status: 200,
-        message: "Packages by current location",
+        message: "Paquetes por ubicación actual",
         data: { packages },
       });
     } catch (error) {
