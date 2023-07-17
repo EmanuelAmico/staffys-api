@@ -11,11 +11,6 @@ router.post(
   PackageController.createPackage
 );
 
-router.put(
-  "/update-package-by-id",
-  AuthMiddleware.validateUser,
-  PackageController.updatePackageById
-);
 router.post(
   "/by-current-location",
   AuthMiddleware.validateUser,
