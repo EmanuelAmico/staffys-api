@@ -11,7 +11,7 @@ router.post(
   PackageController.createPackage
 );
 
-router.post(
+router.get(
   "/by-current-location",
   AuthMiddleware.validateUser,
   PackageController.getAvailablePackagesByCurrentLocation
