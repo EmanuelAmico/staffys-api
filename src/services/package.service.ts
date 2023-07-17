@@ -66,7 +66,7 @@ class PackageService {
       const geocodeResult = await coordinates(address, city);
       const { lat, lng } = geocodeResult;
 
-      updatedPackage.coordinates = { lat, lng };
+      updatedPackage.coordinatesPackage = { lat, lng };
       updatedPackage.save();
     }
 
@@ -100,7 +100,7 @@ class PackageService {
   ) {
     const packages = await Package.find({ status: null });
 
-    const coordinates = packages.map((_package) => _package.coordinates);
+    const coordinates = packages.map((_package) => _package.coordinatesPackage);
 
     try {
       const distances = await Promise.all(
