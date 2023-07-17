@@ -11,6 +11,15 @@ export interface RegisterRequestBody {
   email: string;
   urlphoto: string;
 }
+export interface EditRequestBody {
+  name: string;
+  lastname: string;
+  password: string;
+  confirmpassword: string;
+  email: string;
+  urlphoto: string;
+  is_active: boolean;
+}
 
 export interface LoginRequestBody {
   password: string;
@@ -35,6 +44,9 @@ export interface StartDeliveryRequestBody {
   userId: string;
 }
 export interface ExtendedUserRequestBody extends RegisterRequestBody {
+  _id: Types.ObjectId;
+}
+export interface ExtendedUserEditBody extends EditRequestBody {
   _id: Types.ObjectId;
 }
 

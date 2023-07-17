@@ -3,7 +3,7 @@
 
 import { User } from "../models/User.model";
 import { Package } from "../models/Package.model";
-import { ExtendedUserRequestBody } from "../types/user.types";
+import { ExtendedUserEditBody } from "../types/user.types";
 import { APIError } from "../utils/error.utils";
 import { getTodayFormForUser } from "../utils/form.utils";
 import { createTodayHistory, getTodayHistory } from "../utils/history.utils";
@@ -25,25 +25,36 @@ class UserService {
     return deliveryPeoples;
   }
 
-  static async updateUserById(userBody: ExtendedUserRequestBody) {
-    const updatedUser = await User.findByIdAndUpdate(
-      { _id: userBody._id },
-      userBody,
-      {
-        new: true,
+  static async updateUserById(userBody: ExtendedUserEditBody) {
+    if (userBody.is_active == false) {
+      const updatedUser = await User.findOneAndUpdate(
+        { _id: userBody._id, pendingPackages: { $size: 0 } },
+        userBody,
+        { new: true }
+      )
+        .select("-salt -password")
+        .exec();
+      if (!updatedUser) {
+        throw new APIError({
+          message: "User not found",
+          status: 404,
+        });
       }
-    )
-      .select("-salt -password")
-      .exec();
-
-    if (!updatedUser) {
-      throw new APIError({
-        message: "User not found",
-        status: 404,
-      });
+      return { updatedUser };
+    } else {
+      const updatedUser = await User.findByIdAndUpdate(userBody._id, userBody, {
+        new: true,
+      })
+        .select("-salt -password")
+        .exec();
+      if (!updatedUser) {
+        throw new APIError({
+          message: "User not found",
+          status: 404,
+        });
+      }
+      return { updatedUser };
     }
-
-    return { updatedUser };
   }
 
   static async deleteUserById(id: string) {

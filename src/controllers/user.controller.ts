@@ -3,7 +3,6 @@
 import { NextFunction, Request, Response } from "express";
 import { Types } from "mongoose";
 import {
-  ExtendedUserRequestBody,
   GetDeliveryPeopleResponse,
   StartDeliveryRequestBody,
   StartDeliveryRequestBody as cancelDeliveryRequestBody,
@@ -15,6 +14,7 @@ import {
   StartDeliveryResponse,
   CancelDeliveryResponse,
   StartPackageDeliveryResponse,
+  ExtendedUserEditBody,
 } from "../types/user.types";
 import { UserService } from "../services";
 import { checkProperties } from "../utils/checkreq.utils";
@@ -94,7 +94,7 @@ class UserController {
     req: Request<
       Record<string, never>,
       UpdateUserByIdResponse,
-      ExtendedUserRequestBody,
+      ExtendedUserEditBody,
       Record<string, never>
     >,
     res: Response<UpdateUserByIdResponse>,
@@ -102,6 +102,7 @@ class UserController {
   ) {
     try {
       const userBody = req.body;
+
       checkProperties(
         req.body,
         [{ field: "_id", type: Types.ObjectId }],
@@ -111,6 +112,7 @@ class UserController {
           { field: "password", type: "string" },
           { field: "email", type: "string" },
           { field: "urlphoto", type: "string" },
+          { field: "is_active", type: "boolean" },
         ]
       );
 
