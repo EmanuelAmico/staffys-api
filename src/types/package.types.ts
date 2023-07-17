@@ -45,3 +45,7 @@ export type SearchPackagesResponse = ResponseBody<{
 export type GetPackagesById = ResponseBody<{
   packages: Package[];
 } | null>;
+
+export type getAvailablePackagesResponse = ResponseBody<{
+  packages: Package[];
+} | null>;

@@ -11,12 +11,6 @@ router.post(
   PackageController.createPackage
 );
 
-router.put(
-  "/update-package-by-id",
-  AuthMiddleware.validateUser,
-  PackageController.updatePackageById
-);
-
 router.post(
   "/by-current-location",
   AuthMiddleware.validateUser,
@@ -40,4 +34,24 @@ router.get(
   AuthMiddleware.validateUser,
   PackageController.searchPackages
 );
+
+router.get(
+  "/available-package",
+  AuthMiddleware.validateUser,
+  AuthMiddleware.checkAdmin,
+  PackageController.getAvailablePackages
+);
+
+router.put(
+  "/update-package-by-id",
+  AuthMiddleware.validateUser,
+  PackageController.updatePackageById
+);
+
+router.delete(
+  "/delete-package/:_id",
+  AuthMiddleware.validateUser,
+  PackageController.deletePackageById
+);
+
 export { router as packageRoutes };
