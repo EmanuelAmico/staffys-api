@@ -36,7 +36,8 @@ class UserService {
         .exec();
       if (!updatedUser) {
         throw new APIError({
-          message: "User not found",
+          message:
+            "User not found or you still have pending packages to deliver",
           status: 404,
         });
       }
