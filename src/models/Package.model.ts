@@ -11,7 +11,11 @@ export interface Package {
   status: "taken" | "in_progress" | "delivered" | null;
   deadline: Date;
   city: string;
-  coordinates?: {
+  coordinatesPackage?: {
+    lat: number;
+    lng: number;
+  } | null;
+  coordinatesUser?: {
     lat: number;
     lng: number;
   } | null;
@@ -40,7 +44,11 @@ const PackageSchema = new Schema<Package>(
     },
     deadline: { type: Date, required: true },
     city: { type: String, required: true },
-    coordinates: {
+    coordinatesPackage: {
+      lat: Number,
+      lng: Number,
+    },
+    coordinatesUser: {
       lat: Number,
       lng: Number,
     },
@@ -57,7 +65,7 @@ PackageSchema.pre<PackageModelProps>("save", async function () {
     const geocodeResult = await coordinates(address, city);
     const { lat, lng } = geocodeResult;
 
-    this.coordinates = { lat, lng };
+    this.coordinatesPackage = { lat, lng };
   } catch (error) {
     console.error(error);
   }

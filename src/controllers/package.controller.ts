@@ -1,18 +1,19 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-empty-function */
-
 import { NextFunction, Request, Response } from "express";
 import { PackageService } from "../services";
+import { APIError } from "../utils/error.utils";
 import { checkProperties } from "../utils/checkreq.utils";
 import {
   PackageRequestBody,
   CreatePackageResponse,
   GetAvailablePackagesByCurrentLocationResponse,
-  GetAvailablePackagesByCurrentLocationRequestBody,
+  GetAvailablePackagesByCurrentLocationQueryParams,
   GetPackageByIdResponse,
   UpdatePackagerByIdResponse,
   SearchPackagesResponse,
   SearchPackagesQuery,
+  GetPackagesById,
+  GetPackages,
+  getAvailablePackagesResponse,
 } from "../types/package.types";
 import { Types } from "mongoose";
 import { Package } from "../models/Package.model";
@@ -125,7 +126,30 @@ class PackageController {
     }
   }
 
-  static deletePackageById() {}
+  static async deletePackageById(
+    req: Request<
+      { _id: string },
+      Record<string, never>,
+      Record<string, never>,
+      Record<string, never>
+    >,
+    res: Response<GetPackageByIdResponse>,
+    next: NextFunction
+  ) {
+    try {
+      const { _id } = req.params;
+      checkProperties(req.params, [
+        {
+          field: "_id",
+          type: Types.ObjectId,
+        },
+      ]);
+      await PackageService.deletePackageById(_id);
+      res.sendStatus(200);
+    } catch (error) {
+      next(error);
+    }
+  }
 
   static async searchPackages(
     req: Request<
@@ -163,37 +187,112 @@ class PackageController {
     }
   }
 
-  static getAvailablePackages() {}
+  static async getAvailablePackages(
+    _req: Request<
+      Record<string, never>,
+      getAvailablePackagesResponse,
+      Record<string, never>,
+      Record<string, never>
+    >,
+    res: Response<getAvailablePackagesResponse>,
+    next: NextFunction
+  ) {
+    try {
+      const availablePackages = await PackageService.getAvailablePackages();
 
+      if (availablePackages.length === 0) {
+        return res.send({
+          status: 404,
+          message: "Packages not found",
+          data: null,
+        });
+      }
+
+      return res.send({
+        status: 200,
+        message: "Packages available",
+        data: { packages: availablePackages },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
   static async getAvailablePackagesByCurrentLocation(
     req: Request<
       Record<string, never>,
       GetAvailablePackagesByCurrentLocationResponse,
-      GetAvailablePackagesByCurrentLocationRequestBody,
-      Record<string, never>
+      Record<string, never>,
+      GetAvailablePackagesByCurrentLocationQueryParams
     >,
     res: Response<GetAvailablePackagesByCurrentLocationResponse>,
     next: NextFunction
   ) {
     try {
-      const { userLatitude, userLongitude } = req.body;
-      checkProperties(req.body, [
-        {
-          field: "userLatitude",
-          type: "number",
-        },
-        { field: "userLongitude", type: "number" },
-      ]);
+      const { userLatitude, userLongitude } = req.query;
+
+      if (
+        typeof userLatitude !== "string" ||
+        typeof userLongitude !== "string" ||
+        !userLatitude ||
+        !userLongitude
+      ) {
+        throw new APIError({
+          message: "Los valores no son cadenas de texto o no existen",
+          status: 400,
+        });
+      }
+
       const packages =
         await PackageService.getAvailablePackagesByCurrentLocation(
-          userLatitude,
-          userLongitude,
+          Number(userLatitude),
+          Number(userLongitude),
           req.user._id
         );
+
       return res.send({
         status: 200,
-        message: "Packages by current location",
+        message: "Paquetes por ubicación actual",
         data: { packages },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getPackagesById(
+    req: Request<
+      Record<string, never>,
+      GetPackagesById,
+      GetPackages,
+      Record<string, never>
+    >,
+    res: Response<GetPackagesById>,
+    next: NextFunction
+  ) {
+    try {
+      const { packagesIds } = req.body;
+      if (!Array.isArray(packagesIds)) {
+        throw new APIError({
+          message: "is not an array",
+          status: 400,
+        });
+      }
+      const areValidObjectIds = packagesIds.every((id) =>
+        Types.ObjectId.isValid(id.toString())
+      );
+
+      if (!areValidObjectIds) {
+        throw new APIError({
+          message: "all or some ids are not ObjectId",
+          status: 400,
+        });
+      }
+
+      const foundPackages = await PackageService.getPackagesByIds(packagesIds);
+      res.send({
+        status: 200,
+        message: "packages found",
+        data: { packages: foundPackages },
       });
     } catch (error) {
       next(error);

@@ -33,7 +33,7 @@ class UserController {
       Record<string, never>,
       Record<string, never>
     >,
-    res: Response<GetUserByIdResponse>,
+    res: Response,
     next: NextFunction
   ) {
     try {

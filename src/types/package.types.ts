@@ -1,5 +1,6 @@
 import { ResponseBody } from "./request.types";
 import { Package } from "../models/Package.model";
+import { ObjectId } from "mongoose";
 
 export interface PackageRequestBody {
   address: string;
@@ -9,13 +10,16 @@ export interface PackageRequestBody {
   city: string;
 }
 
-export interface GetAvailablePackagesByCurrentLocationRequestBody {
-  userLatitude: number;
-  userLongitude: number;
-}
+export type GetAvailablePackagesByCurrentLocationQueryParams = {
+  userLatitude: string;
+  userLongitude: string;
+};
 
 export interface SearchPackagesQuery {
   [key: string]: string;
+}
+export interface GetPackages {
+  packagesIds: ObjectId[];
 }
 
 export type GetAvailablePackagesByCurrentLocationResponse = ResponseBody<{
@@ -35,5 +39,13 @@ export type UpdatePackagerByIdResponse = ResponseBody<{
 } | null>;
 
 export type SearchPackagesResponse = ResponseBody<{
+  packages: Package[];
+} | null>;
+
+export type GetPackagesById = ResponseBody<{
+  packages: Package[];
+} | null>;
+
+export type getAvailablePackagesResponse = ResponseBody<{
   packages: Package[];
 } | null>;

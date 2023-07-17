@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-empty-function */
-
 import { Package } from "../models/Package.model";
 import { APIError } from "../utils/error.utils";
+import { ObjectId } from "mongoose";
 import {
   PackageRequestBody,
   SearchPackagesQuery,
@@ -31,7 +29,16 @@ class PackageService {
     return await Package.findById(_id);
   }
 
-  static getHistoryByDate(_date: string) {}
+  static async getPackagesByIds(ids: ObjectId[]) {
+    const packages = await Package.find({ _id: { $in: ids } });
+    if (!packages) {
+      throw new APIError({
+        message: "packages not found",
+        status: 404,
+      });
+    }
+    return packages;
+  }
 
   static async updatePackageById(packageBody: Package) {
     const updatedPackage = await Package.findByIdAndUpdate(
@@ -54,14 +61,23 @@ class PackageService {
       const geocodeResult = await coordinates(address, city);
       const { lat, lng } = geocodeResult;
 
-      updatedPackage.coordinates = { lat, lng };
+      updatedPackage.coordinatesPackage = { lat, lng };
       updatedPackage.save();
     }
 
     return updatedPackage;
   }
 
-  static deletePackageById() {}
+  static async deletePackageById(_id: string) {
+    try {
+      return await Package.deleteOne({ _id });
+    } catch (error) {
+      throw new APIError({
+        message: "An error occurred while trying to delete the package.",
+        status: 500,
+      });
+    }
+  }
 
   static async searchPackages(packageSearch: SearchPackagesQuery) {
     const [Key] = Object.keys(packageSearch);
@@ -79,7 +95,11 @@ class PackageService {
     return packagesFound;
   }
 
-  static getAvailablePackages() {}
+  static async getAvailablePackages() {
+    return await Package.find({ deliveryMan: null, status: null }).sort({
+      createdAt: "desc",
+    });
+  }
 
   static async getAvailablePackagesByCurrentLocation(
     userLatitude: number,
@@ -88,7 +108,7 @@ class PackageService {
   ) {
     const packages = await Package.find({ status: null }).exec();
 
-    const coordinates = packages.map((_package) => _package.coordinates);
+    const coordinates = packages.map((_package) => _package.coordinatesPackage);
 
     try {
       const distances = await Promise.all(
