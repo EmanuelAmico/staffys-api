@@ -217,7 +217,6 @@ class PackageController {
       next(error);
     }
   }
-
   static async getAvailablePackagesByCurrentLocation(
     req: Request<
       Record<string, never>,
@@ -231,15 +230,28 @@ class PackageController {
     try {
       const { userLatitude, userLongitude } = req.query;
 
+      if (
+        typeof userLatitude !== "string" ||
+        typeof userLongitude !== "string" ||
+        !userLatitude ||
+        !userLongitude
+      ) {
+        throw new APIError({
+          message: "Los valores no son cadenas de texto o no existen",
+          status: 400,
+        });
+      }
+
       const packages =
         await PackageService.getAvailablePackagesByCurrentLocation(
           Number(userLatitude),
           Number(userLongitude),
           req.user._id
         );
+
       return res.send({
         status: 200,
-        message: "Packages by current location",
+        message: "Paquetes por ubicación actual",
         data: { packages },
       });
     } catch (error) {
