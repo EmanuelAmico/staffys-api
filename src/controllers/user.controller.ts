@@ -15,6 +15,8 @@ import {
   StartDeliveryResponse,
   CancelDeliveryResponse,
   StartPackageDeliveryResponse,
+  FinishPackageDeliveryResponse,
+  FinishPackageDeliveryRequestBody,
 } from "../types/user.types";
 import { UserService } from "../services";
 import { checkProperties } from "../utils/checkreq.utils";
@@ -53,7 +55,12 @@ class UserController {
           data: null,
         });
       }
-      res.status(200).send(user);
+
+      return res.status(200).send({
+        status: 200,
+        message: "User found",
+        data: user,
+      });
     } catch (error) {
       next(error);
     }
@@ -72,17 +79,17 @@ class UserController {
     try {
       const deliveryPeoples = await UserService.getDeliveryPeople();
 
-      if (deliveryPeoples.length === 0) {
+      if (!deliveryPeoples.length) {
         return res.status(200).send({
           status: 200,
-          message: "Not found delivery people",
+          message: "Delivery people not found",
           data: null,
         });
       }
 
       return res.status(200).send({
         status: 200,
-        message: "all delivery people",
+        message: "All delivery people",
         data: { users: deliveryPeoples },
       });
     } catch (error) {
@@ -106,6 +113,7 @@ class UserController {
         req.body,
         [{ field: "_id", type: Types.ObjectId }],
         [
+          { field: "is_active", type: "boolean" },
           { field: "name", type: "string" },
           { field: "lastname", type: "string" },
           { field: "password", type: "string" },
@@ -145,7 +153,7 @@ class UserController {
 
       return res.status(200).send({
         status: 200,
-        message: "User is eliminated",
+        message: "User eliminated",
         data: null,
       });
     } catch (error) {
@@ -248,7 +256,7 @@ class UserController {
 
       return res.status(200).send({
         status: 200,
-        message: "Delivery canceled successfully",
+        message: "Delivery was canceled",
         data: user,
       });
     } catch (error) {
@@ -294,10 +302,41 @@ class UserController {
   }
 
   static async finishPackageDelivery(
-    _req: Request,
-    _res: Response,
-    _next: NextFunction
-  ) {}
+    req: Request<
+      Record<string, never>,
+      FinishPackageDeliveryResponse,
+      FinishPackageDeliveryRequestBody,
+      Record<string, never>
+    >,
+    res: Response<FinishPackageDeliveryResponse>,
+    next: NextFunction
+  ) {
+    try {
+      checkProperties(req.body, [
+        {
+          field: "userId",
+          type: Types.ObjectId,
+        },
+        {
+          field: "packageId",
+          type: Types.ObjectId,
+        },
+      ]);
+
+      const { userId, packageId } = req.body;
+
+      const { user, package: _package } =
+        await UserService.finishPackageDelivery(userId, packageId);
+
+      return res.status(200).send({
+        status: 200,
+        message: "Package delivery finished successfully",
+        data: { user, package: _package },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export { UserController };

@@ -11,12 +11,7 @@ router.get(
   UserController.getDeliveryPeople
 );
 
-router.get(
-  "/get-user/:_id",
-  AuthMiddleware.validateUser,
-  AuthMiddleware.checkAdmin,
-  UserController.getUserById
-);
+router.get("/:_id", AuthMiddleware.validateUser, UserController.getUserById);
 
 router.put(
   "/update",
