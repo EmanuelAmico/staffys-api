@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { PackageService } from "../services";
+import { APIError } from "../utils/error.utils";
 import { checkProperties } from "../utils/checkreq.utils";
 import {
   PackageRequestBody,
@@ -10,6 +11,8 @@ import {
   UpdatePackagerByIdResponse,
   SearchPackagesResponse,
   SearchPackagesQuery,
+  GetPackagesById,
+  GetPackages,
   getAvailablePackagesResponse,
 } from "../types/package.types";
 import { Types } from "mongoose";
@@ -244,6 +247,46 @@ class PackageController {
         status: 200,
         message: "Packages by current location",
         data: { packages },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getPackagesById(
+    req: Request<
+      Record<string, never>,
+      GetPackagesById,
+      GetPackages,
+      Record<string, never>
+    >,
+    res: Response<GetPackagesById>,
+    next: NextFunction
+  ) {
+    try {
+      const { packagesIds } = req.body;
+      if (!Array.isArray(packagesIds)) {
+        throw new APIError({
+          message: "is not an array",
+          status: 400,
+        });
+      }
+      const areValidObjectIds = packagesIds.every((id) =>
+        Types.ObjectId.isValid(id.toString())
+      );
+
+      if (!areValidObjectIds) {
+        throw new APIError({
+          message: "all or some ids are not ObjectId",
+          status: 400,
+        });
+      }
+
+      const foundPackages = await PackageService.getPackagesByIds(packagesIds);
+      res.send({
+        status: 200,
+        message: "packages found",
+        data: { packages: foundPackages },
       });
     } catch (error) {
       next(error);
