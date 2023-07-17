@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-empty-function */
-
 import { NextFunction, Request, Response } from "express";
 import { PackageService } from "../services";
 import { APIError } from "../utils/error.utils";
@@ -16,6 +13,7 @@ import {
   SearchPackagesQuery,
   GetPackagesById,
   GetPackages,
+  getAvailablePackagesResponse,
 } from "../types/package.types";
 import { Types } from "mongoose";
 import { Package } from "../models/Package.model";
@@ -128,7 +126,30 @@ class PackageController {
     }
   }
 
-  static deletePackageById() {}
+  static async deletePackageById(
+    req: Request<
+      { _id: string },
+      Record<string, never>,
+      Record<string, never>,
+      Record<string, never>
+    >,
+    res: Response<GetPackageByIdResponse>,
+    next: NextFunction
+  ) {
+    try {
+      const { _id } = req.params;
+      checkProperties(req.params, [
+        {
+          field: "_id",
+          type: Types.ObjectId,
+        },
+      ]);
+      await PackageService.deletePackageById(_id);
+      res.sendStatus(200);
+    } catch (error) {
+      next(error);
+    }
+  }
 
   static async searchPackages(
     req: Request<
@@ -166,7 +187,36 @@ class PackageController {
     }
   }
 
-  static getAvailablePackages() {}
+  static async getAvailablePackages(
+    _req: Request<
+      Record<string, never>,
+      getAvailablePackagesResponse,
+      Record<string, never>,
+      Record<string, never>
+    >,
+    res: Response<getAvailablePackagesResponse>,
+    next: NextFunction
+  ) {
+    try {
+      const availablePackages = await PackageService.getAvailablePackages();
+
+      if (availablePackages.length === 0) {
+        return res.send({
+          status: 404,
+          message: "Packages not found",
+          data: null,
+        });
+      }
+
+      return res.send({
+        status: 200,
+        message: "Packages available",
+        data: { packages: availablePackages },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 
   static async getAvailablePackagesByCurrentLocation(
     req: Request<
