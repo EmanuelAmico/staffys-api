@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-empty-function */
-
 import { Package } from "../models/Package.model";
 import { APIError } from "../utils/error.utils";
 import {
@@ -30,8 +27,6 @@ class PackageService {
   static async getPackageById(_id: string) {
     return await Package.findById(_id);
   }
-
-  static getHistoryByDate(_date: string) {}
 
   static async updatePackageById(packageBody: Package) {
     const updatedPackage = await Package.findByIdAndUpdate(
@@ -88,7 +83,11 @@ class PackageService {
     return packagesFound;
   }
 
-  static getAvailablePackages() {}
+  static async getAvailablePackages() {
+    return await Package.find({ deliveryMan: null, status: null }).sort({
+      createdAt: "desc",
+    });
+  }
 
   static async getAvailablePackagesByCurrentLocation(
     userLatitude: number,

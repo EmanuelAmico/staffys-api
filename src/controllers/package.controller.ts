@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-empty-function */
-
 import { NextFunction, Request, Response } from "express";
 import { PackageService } from "../services";
 import { checkProperties } from "../utils/checkreq.utils";
@@ -13,6 +10,7 @@ import {
   UpdatePackagerByIdResponse,
   SearchPackagesResponse,
   SearchPackagesQuery,
+  getAvailablePackagesResponse,
 } from "../types/package.types";
 import { Types } from "mongoose";
 import { Package } from "../models/Package.model";
@@ -186,7 +184,36 @@ class PackageController {
     }
   }
 
-  static getAvailablePackages() {}
+  static async getAvailablePackages(
+    _req: Request<
+      Record<string, never>,
+      getAvailablePackagesResponse,
+      Record<string, never>,
+      Record<string, never>
+    >,
+    res: Response<getAvailablePackagesResponse>,
+    next: NextFunction
+  ) {
+    try {
+      const availablePackages = await PackageService.getAvailablePackages();
+
+      if (availablePackages.length === 0) {
+        return res.send({
+          status: 404,
+          message: "Packages not found",
+          data: null,
+        });
+      }
+
+      return res.send({
+        status: 200,
+        message: "Packages available",
+        data: { packages: availablePackages },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 
   static async getAvailablePackagesByCurrentLocation(
     req: Request<
