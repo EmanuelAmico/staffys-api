@@ -99,9 +99,9 @@ class UserService {
       });
     }
 
-    if (!user.is_active) {
+    if (!user.is_able_to_deliver) {
       throw new APIError({
-        message: "User has to be active to take packages",
+        message: "User has to be able to deliver to take packages",
         status: 403,
       });
     }
@@ -114,7 +114,7 @@ class UserService {
     }
 
     if (hasCompletedTodayForm && hasSomeKindOfProblem) {
-      user.is_active = false;
+      user.is_able_to_deliver = false;
       user.pendingPackages = [];
       await user.save();
 
@@ -177,7 +177,7 @@ class UserService {
     }
 
     if (!hasCompletedTodayForm) {
-      user.is_active = true;
+      user.is_able_to_deliver = true;
       await user.save();
 
       throw new APIError({
@@ -187,7 +187,7 @@ class UserService {
     }
 
     if (hasSomeKindOfProblem) {
-      user.is_active = false;
+      user.is_able_to_deliver = false;
       user.pendingPackages = [];
       await user.save();
 
@@ -279,9 +279,9 @@ class UserService {
       });
     }
 
-    if (!user.is_active) {
+    if (!user.is_able_to_deliver) {
       throw new APIError({
-        message: "User is not active",
+        message: "User is not able to deliver packages",
         status: 403,
       });
     }
@@ -396,7 +396,7 @@ class UserService {
     user.historyPackages.push(_package._id);
 
     if (!user.pendingPackages.length) {
-      user.is_active = false;
+      user.is_able_to_deliver = false;
     }
 
     await Promise.all([_package.save(), user.save()]);
