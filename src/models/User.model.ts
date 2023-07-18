@@ -11,7 +11,8 @@ export interface User {
   email: string;
   salt: string;
   is_admin: boolean;
-  is_active: boolean;
+  is_able_to_deliver: boolean;
+  is_disabled: boolean;
   urlphoto: string;
   is_deleted: boolean;
   resetToken?: string;
@@ -36,7 +37,8 @@ const UserSchema = new Schema<UserModelProps>(
     email: { type: String, required: true, unique: true },
     salt: { type: String },
     is_admin: { type: Boolean, default: false },
-    is_active: { type: Boolean, default: true },
+    is_able_to_deliver: { type: Boolean, default: true },
+    is_disabled: { type: Boolean, default: false },
     urlphoto: { type: String, required: true },
     is_deleted: { type: Boolean, default: false },
     resetToken: { type: String, default: null },

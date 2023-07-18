@@ -34,7 +34,8 @@ describe("Auth Service", () => {
         password: "test",
         email: "valid@email.com",
         is_admin: false,
-        is_active: false,
+        is_able_to_deliver: false,
+        is_disabled: false,
         urlphoto: "test",
       });
 

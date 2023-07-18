@@ -36,7 +36,8 @@ describe("User Service", () => {
         password: "test",
         email: "test@test.com",
         is_admin: false,
-        is_active: false,
+        is_able_to_deliver: false,
+        is_disabled: false,
         urlphoto: "test",
       });
 
