@@ -17,7 +17,8 @@ class UserService {
       .populate<{
         pendingPackages: Package[];
         currentPackage: Package;
-      }>(["pendingPackages", "currentPackage"])
+        historyPackages: Package[];
+      }>(["pendingPackages", "currentPackage", "historyPackages"])
       .select("-password -salt")
       .exec();
     return user;
