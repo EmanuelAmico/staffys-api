@@ -263,7 +263,12 @@ class UserService {
     return { user };
   }
 
-  static async startPackageDelivery(userId: string, packageId: string) {
+  static async startPackageDelivery(
+    userId: string,
+    packageId: string,
+    userLatitude: number,
+    userLongitude: number
+  ) {
     const user = await User.findById(userId)
       .populate<{
         pendingPackages: Package[];
@@ -326,7 +331,14 @@ class UserService {
     user.pendingPackages = user.pendingPackages.filter(
       (_package) => _package._id.toString() !== packageId
     );
+
     _package.status = "in_progress";
+
+    if (_package.coordinatesUser) {
+      _package.coordinatesUser.lat = userLatitude;
+      _package.coordinatesUser.lng = userLongitude;
+    }
+
     user.currentPackage = _package._id.toString();
 
     await Promise.all([_package.save(), user.save()]);

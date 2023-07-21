@@ -275,7 +275,12 @@ class UserController {
     next: NextFunction
   ) {
     try {
-      checkProperties(req.body, [
+      const newObj = {
+        userId: req.body.userId,
+        packageId: req.body.packageId,
+      };
+
+      checkProperties(newObj, [
         {
           field: "userId",
           type: Types.ObjectId,
@@ -286,10 +291,15 @@ class UserController {
         },
       ]);
 
-      const { userId, packageId } = req.body;
+      const { userId, packageId, userLatitude, userLongitude } = req.body;
 
       const { user, package: _package } =
-        await UserService.startPackageDelivery(userId, packageId);
+        await UserService.startPackageDelivery(
+          userId,
+          packageId,
+          Number(userLatitude),
+          Number(userLongitude)
+        );
 
       return res.status(200).send({
         status: 200,
