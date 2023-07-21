@@ -27,6 +27,7 @@ class UserService {
   static async getDeliveryPeople() {
     const deliveryPeoples = await User.find({ is_admin: false })
       .select("-salt -password")
+      .populate(["historyPackages"])
       .exec();
 
     return deliveryPeoples;
