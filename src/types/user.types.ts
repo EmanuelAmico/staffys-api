@@ -37,6 +37,8 @@ export interface ResetPasswordRequestBody {
 export interface TakePackageRequestBody {
   packageId: string;
   userId: string;
+  userLatitude: string;
+  userLongitude: string;
 }
 export interface StartDeliveryRequestBody {
   userId: string;
