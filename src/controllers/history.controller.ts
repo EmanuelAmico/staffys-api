@@ -5,10 +5,12 @@ import { NextFunction, Request, Response } from "express";
 import { checkProperties } from "../utils/checkreq.utils";
 import { HistoryService } from "../services/history.service";
 import {
-  GetHistoryByDateRequestBody,
+  GetHistoryByDateRequestParams,
   GetHistoryByDateResponse,
   CreateHistory,
   CreateHistoryRequestBody,
+  GetOrCreateTodayHistoryResponse,
+  GetAllHistoriesResponse,
 } from "../types/history.types";
 
 class HistoryController {
@@ -36,20 +38,74 @@ class HistoryController {
     }
   }
 
+  static async getOrCreateTodayHistory(
+    _req: Request<
+      Record<string, never>,
+      GetOrCreateTodayHistoryResponse,
+      Record<string, never>,
+      Record<string, never>
+    >,
+    res: Response<GetOrCreateTodayHistoryResponse>,
+    next: NextFunction
+  ) {
+    try {
+      const history = await HistoryService.getOrCreateTodayHistory();
+
+      res.status(200).send({
+        status: 200,
+        message: "History retrieved successfully.",
+        data: history,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getAllHistories(
+    _req: Request<
+      Record<string, never>,
+      GetAllHistoriesResponse,
+      Record<string, never>,
+      Record<string, never>
+    >,
+    res: Response<GetAllHistoriesResponse>,
+    next: NextFunction
+  ) {
+    try {
+      const histories = await HistoryService.getAllHistories();
+
+      if (!histories.length) {
+        return res.status(404).send({
+          status: 404,
+          message: "No histories found.",
+          data: [],
+        });
+      }
+
+      res.status(200).send({
+        status: 200,
+        message: "Histories retrieved successfully",
+        data: histories,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async getHistoryByDate(
     req: Request<
-      Record<string, never>,
+      GetHistoryByDateRequestParams,
       GetHistoryByDateResponse,
-      GetHistoryByDateRequestBody,
+      Record<string, never>,
       Record<string, never>
     >,
     res: Response<GetHistoryByDateResponse>,
     next: NextFunction
   ) {
     try {
-      checkProperties(req.body, [{ field: "date", type: "string" }]);
+      checkProperties(req.params, [{ field: "date", type: "string" }]);
 
-      const { date } = req.body;
+      const { date } = req.params;
 
       const history = await HistoryService.getHistoryByDate(date);
 

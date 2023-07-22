@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-empty-function */
-
 import { User } from "../models/User.model";
 import { Package } from "../models/Package.model";
 import { ExtendedUserRequestBody } from "../types/user.types";
@@ -8,10 +5,7 @@ import { APIError } from "../utils/error.utils";
 import { getTodayFormForUser } from "../utils/form.utils";
 import { createTodayHistory, getTodayHistory } from "../utils/history.utils";
 
-// TODO Remove "_" from unused parameters
 class UserService {
-  static createUser() {}
-
   static async getUserById(_id: string) {
     const user = await User.findById(_id)
       .populate<{

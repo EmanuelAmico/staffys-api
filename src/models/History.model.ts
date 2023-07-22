@@ -28,7 +28,7 @@ const HistorySchema = new Schema(
     targetPackages: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Packages",
+        ref: "Package",
         required: true,
         default: [],
       },
