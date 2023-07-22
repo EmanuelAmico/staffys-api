@@ -4,11 +4,24 @@ import { AuthMiddleware } from "../middlewares/auth.middleware";
 
 const router = Router();
 
+router.get("/", AuthMiddleware.validateUser, HistoryController.getAllHistories);
+
 router.get(
-  "/by-date",
+  "/today",
+  AuthMiddleware.validateUser,
+  HistoryController.getOrCreateTodayHistory
+);
+
+router.get(
+  "/:date",
   AuthMiddleware.validateUser,
   HistoryController.getHistoryByDate
 );
 
-router.post("/create-history", HistoryController.createHistory);
+router.post(
+  "/create-history",
+  AuthMiddleware.validateUser,
+  HistoryController.createHistory
+);
+
 export { router as historyRoutes };

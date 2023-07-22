@@ -1,7 +1,8 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-empty-function */
 import { History } from "../models/History.model";
+import { today } from "../utils/date.utils";
 import { APIError } from "../utils/error.utils";
+import { User } from "../models/User.model";
+import { Package } from "../models/Package.model";
 
 class HistoryService {
   static async createHistory(date: string) {
@@ -20,8 +21,25 @@ class HistoryService {
     return newHistory;
   }
 
+  static async getOrCreateTodayHistory() {
+    const history =
+      (await History.findOne({ date: today() })) ||
+      (await History.create({ date: today() }));
+
+    return history;
+  }
+
+  static async getAllHistories() {
+    const histories = await History.find();
+
+    return histories;
+  }
+
   static async getHistoryByDate(date: string) {
-    const history = await History.findOne({ date });
+    const history = await History.findOne({ date }).populate<{
+      activeUsers: User[];
+      targetPackages: Package[];
+    }>(["activeUsers", "targetPackages"]);
 
     if (!history) {
       throw new APIError({
@@ -32,8 +50,6 @@ class HistoryService {
 
     return history;
   }
-
-  static async updateHistoryByDate() {}
 }
 
 export { HistoryService };
