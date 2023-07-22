@@ -74,6 +74,14 @@ class HistoryController {
     try {
       const histories = await HistoryService.getAllHistories();
 
+      if (!histories.length) {
+        return res.status(404).send({
+          status: 404,
+          message: "No histories found.",
+          data: [],
+        });
+      }
+
       res.status(200).send({
         status: 200,
         message: "Histories retrieved successfully",

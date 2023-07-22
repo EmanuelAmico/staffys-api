@@ -18,10 +18,6 @@ router.get(
   HistoryController.getHistoryByDate
 );
 
-router.post(
-  "/create-history",
-  AuthMiddleware.validateUser,
-  HistoryController.createHistory
-);
+router.post("/", AuthMiddleware.validateUser, HistoryController.createHistory);
 
 export { router as historyRoutes };
