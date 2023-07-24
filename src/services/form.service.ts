@@ -9,7 +9,9 @@ import {
 class FormService {
   static async getTodayForm(userId: string) {
     const todayForm = await getTodayFormForUser(userId);
-    const user = await User.findById(userId).exec();
+    const user = await User.findById(userId)
+      .populate<{ pendingPackages: Package[] }>(["pendingPackages"])
+      .exec();
 
     if (!user)
       throw new APIError({
@@ -17,7 +19,12 @@ class FormService {
         message: "User not found",
       });
 
-    if (!todayForm && !user?.is_able_to_deliver) {
+    if (
+      !todayForm &&
+      (!user.is_able_to_deliver ||
+        user.currentPackage ||
+        user.pendingPackages.some((p) => p.status !== null))
+    ) {
       if (user.currentPackage) {
         await Package.findByIdAndUpdate(user.currentPackage, {
           status: null,
