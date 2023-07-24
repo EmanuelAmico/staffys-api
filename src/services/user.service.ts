@@ -21,7 +21,7 @@ class UserService {
   static async getDeliveryPeople() {
     const deliveryPeoples = await User.find({ is_admin: false })
       .select("-salt -password")
-      .populate(["historyPackages"])
+      .populate<{ historyPackages: Package[] }>(["historyPackages"])
       .exec();
 
     return deliveryPeoples;
@@ -38,7 +38,8 @@ class UserService {
       .populate<{
         pendingPackages: Package[];
         currentPackage: Package;
-      }>(["pendingPackages", "currentPackage"])
+        historyPackages: Package[];
+      }>(["pendingPackages", "currentPackage", "historyPackages"])
       .select("-salt -password")
       .exec();
 
@@ -61,7 +62,8 @@ class UserService {
       .populate<{
         pendingPackages: Package[];
         currentPackage: Package;
-      }>(["pendingPackages", "currentPackage"])
+        historyPackages: Package[];
+      }>(["pendingPackages", "currentPackage", "historyPackages"])
       .select("-password -salt")
       .exec();
 
@@ -78,7 +80,8 @@ class UserService {
       .populate<{
         pendingPackages: Package[];
         currentPackage: Package;
-      }>(["pendingPackages", "currentPackage"])
+        historyPackages: Package[];
+      }>(["pendingPackages", "currentPackage", "historyPackages"])
       .select("-password -salt")
       .exec();
     const todayForm = await getTodayFormForUser(userId);
@@ -155,7 +158,8 @@ class UserService {
       .populate<{
         pendingPackages: Package[];
         currentPackage: Package;
-      }>(["pendingPackages", "currentPackage"])
+        historyPackages: Package[];
+      }>(["pendingPackages", "currentPackage", "historyPackages"])
       .select("-password -salt")
       .exec();
     const todayForm = await getTodayFormForUser(userId);
@@ -231,7 +235,8 @@ class UserService {
       .populate<{
         pendingPackages: Package[];
         currentPackage: Package;
-      }>(["pendingPackages", "currentPackage"])
+        historyPackages: Package[];
+      }>(["pendingPackages", "currentPackage", "historyPackages"])
       .select("-password -salt")
       .exec();
 
@@ -243,7 +248,8 @@ class UserService {
       .populate<{
         pendingPackages: Package[];
         currentPackage: Package;
-      }>(["pendingPackages", "currentPackage"])
+        historyPackages: Package[];
+      }>(["pendingPackages", "currentPackage", "historyPackages"])
       .select("-password -salt");
 
     if (!user) {
@@ -268,8 +274,9 @@ class UserService {
     const user = await User.findById(userId)
       .populate<{
         pendingPackages: Package[];
-        currentPackage: Package | string;
-      }>(["pendingPackages", "currentPackage"])
+        currentPackage: Package;
+        historyPackages: Package[];
+      }>(["pendingPackages", "currentPackage", "historyPackages"])
       .select("-password -salt")
       .exec();
 
@@ -336,7 +343,7 @@ class UserService {
     _package.coordinatesUser.lat = userLatitude;
     _package.coordinatesUser.lng = userLongitude;
 
-    user.currentPackage = _package._id.toString();
+    user.currentPackage = _package;
 
     await Promise.all([_package.save(), user.save()]);
 
@@ -359,7 +366,8 @@ class UserService {
       .populate<{
         pendingPackages: Package[];
         currentPackage: Package | null;
-      }>(["pendingPackages", "currentPackage"])
+        historyPackages: Package[];
+      }>(["pendingPackages", "currentPackage", "historyPackages"])
       .select("-password -salt")
       .exec();
 
@@ -402,7 +410,7 @@ class UserService {
 
     _package.status = "delivered";
     user.currentPackage = null;
-    user.historyPackages.push(_package._id);
+    user.historyPackages.push(_package);
 
     if (!user.pendingPackages.length) {
       user.is_able_to_deliver = false;
@@ -416,7 +424,8 @@ class UserService {
         .populate<{
           pendingPackages: Package[];
           currentPackage: Package;
-        }>(["pendingPackages", "currentPackage"])
+          historyPackages: Package[];
+        }>(["pendingPackages", "currentPackage", "historyPackages"])
         .select("-password -salt")
         .exec(),
     ]);
