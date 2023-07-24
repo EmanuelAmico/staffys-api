@@ -32,6 +32,7 @@ class AuthService {
       .populate<{
         pendingPackages: Package[];
         currentPackage: Package;
+        historyPackages: Package[];
       }>(["pendingPackages", "currentPackage", "historyPackages"])
       .exec();
 
@@ -96,6 +97,7 @@ class AuthService {
       .populate<{
         pendingPackages: Package[];
         currentPackage: Package;
+        historyPackages: Package[];
       }>(["pendingPackages", "currentPackage", "historyPackages"])
       .select("-password -salt")
       .exec();

@@ -4,9 +4,10 @@ import { User } from "../models/User.model";
 import { Package } from "../models/Package.model";
 
 export interface PopulatedUser
-  extends Omit<User, "pendingPackages" | "currentPackage"> {
+  extends Omit<User, "pendingPackages" | "currentPackage" | "historyPackages"> {
   pendingPackages: Package[];
   currentPackage: Package;
+  historyPackages: Package[];
 }
 
 export interface RegisterRequestBody {
@@ -63,7 +64,8 @@ export type LoginResponse = ResponseBody<{
 } | null>;
 
 export type GetDeliveryPeopleResponse = ResponseBody<{
-  users: User[];
+  users: (Omit<User, "historyPackages"> &
+    Pick<PopulatedUser, "historyPackages">)[];
 } | null>;
 
 export type UpdateUserByIdResponse = ResponseBody<{
