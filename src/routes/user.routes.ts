@@ -55,4 +55,11 @@ router.put(
   UserController.finishPackageDelivery
 );
 
+router.put(
+  "/disable/:_id",
+  AuthMiddleware.validateUser,
+  AuthMiddleware.checkAdmin,
+  UserController.disableUser
+);
+
 export { router as userRoutes };

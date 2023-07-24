@@ -422,6 +422,46 @@ class UserService {
 
     return { user: updatedUser, package: updatedPackage };
   }
+
+  static async disableUser(userId: string) {
+    const user = await User.findById(userId).exec();
+
+    if (!user) {
+      throw new APIError({
+        message: "User not found",
+        status: 404,
+      });
+    }
+
+    user.is_disabled = true;
+
+    if (user.currentPackage) {
+      await Package.findByIdAndUpdate(user.currentPackage, {
+        status: null,
+      });
+      user.currentPackage = null;
+    }
+
+    if (user.pendingPackages.length) {
+      await Promise.all(
+        user.pendingPackages.map((_package) =>
+          Package.findByIdAndUpdate(_package, { status: null })
+        )
+      );
+
+      user.pendingPackages = [];
+    }
+
+    await user.save();
+
+    const updatedUser = await User.findById(userId)
+      .populate<{
+        historyPackages: Package[];
+      }>(["historyPackages"])
+      .exec();
+
+    return updatedUser;
+  }
 }
 
 export { UserService };
