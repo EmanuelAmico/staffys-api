@@ -330,10 +330,11 @@ class UserService {
 
     _package.status = "in_progress";
 
-    if (_package.coordinatesUser) {
-      _package.coordinatesUser.lat = userLatitude;
-      _package.coordinatesUser.lng = userLongitude;
+    if (!_package.coordinatesUser) {
+      _package.coordinatesUser = { lat: 0, lng: 0 };
     }
+    _package.coordinatesUser.lat = userLatitude;
+    _package.coordinatesUser.lng = userLongitude;
 
     user.currentPackage = _package._id.toString();
 
