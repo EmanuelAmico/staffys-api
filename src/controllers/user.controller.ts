@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-empty-function */
 import { NextFunction, Request, Response } from "express";
 import { Types } from "mongoose";
 import {
@@ -17,6 +15,7 @@ import {
   StartPackageDeliveryResponse,
   FinishPackageDeliveryResponse,
   FinishPackageDeliveryRequestBody,
+  DisableUserResponse,
 } from "../types/user.types";
 import { UserService } from "../services";
 import { checkProperties } from "../utils/checkreq.utils";
@@ -24,8 +23,6 @@ import { ResponseBody } from "../types/request.types";
 
 // TODO Remove "_" from unused parameters
 class UserController {
-  static async createUser(_req: Request, _res: Response, _next: NextFunction) {}
-
   static async getUserById(
     req: Request<
       { _id: string },
@@ -123,9 +120,7 @@ class UserController {
         ]
       );
 
-      const updateuser = await UserService.updateUserById(userBody);
-
-      const { updatedUser } = updateuser;
+      const { updatedUser } = await UserService.updateUserById(userBody);
 
       res.status(200).json({
         data: { findUser: updatedUser },
@@ -343,6 +338,33 @@ class UserController {
         status: 200,
         message: "Package delivery finished successfully",
         data: { user, package: _package },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async disableUser(
+    req: Request<
+      { _id: string },
+      DisableUserResponse,
+      Record<string, never>,
+      Record<string, never>
+    >,
+    res: Response<DisableUserResponse>,
+    next: NextFunction
+  ) {
+    try {
+      const id = req.params._id;
+
+      checkProperties({ _id: id }, [{ field: "_id", type: Types.ObjectId }]);
+
+      const user = await UserService.disableUser(id);
+
+      return res.status(200).send({
+        status: 200,
+        message: "User disabled",
+        data: user,
       });
     } catch (error) {
       next(error);

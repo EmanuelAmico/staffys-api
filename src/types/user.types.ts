@@ -1,4 +1,3 @@
-import { Types } from "mongoose";
 import { ResponseBody } from "./request.types";
 import { UserService } from "../services";
 import { User } from "../models/User.model";
@@ -43,8 +42,9 @@ export interface TakePackageRequestBody {
 export interface StartDeliveryRequestBody {
   userId: string;
 }
-export interface ExtendedUserRequestBody extends RegisterRequestBody {
-  _id: Types.ObjectId;
+export interface ExtendedUserRequestBody extends Partial<RegisterRequestBody> {
+  _id: string;
+  is_able_to_deliver: boolean;
 }
 
 export interface FinishPackageDeliveryRequestBody {
@@ -92,6 +92,10 @@ export type StartPackageDeliveryResponse = ResponseBody<
 
 export type FinishPackageDeliveryResponse = ResponseBody<
   Awaited<ReturnType<typeof UserService.finishPackageDelivery>>
+>;
+
+export type DisableUserResponse = ResponseBody<
+  Awaited<ReturnType<typeof UserService.disableUser>>
 >;
 
 export type MeResponse = ResponseBody<PopulatedUser>;
