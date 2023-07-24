@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-empty-function */
-
 import { User } from "../models/User.model";
 import { generateToken } from "../config/jwt/tokens";
 import { LoginRequestBody, RegisterRequestBody } from "../types/user.types";
@@ -35,7 +32,7 @@ class AuthService {
       .populate<{
         pendingPackages: Package[];
         currentPackage: Package;
-      }>(["pendingPackages", "currentPackage"])
+      }>(["pendingPackages", "currentPackage", "historyPackages"])
       .exec();
 
     if (!foundUser) {
@@ -99,7 +96,7 @@ class AuthService {
       .populate<{
         pendingPackages: Package[];
         currentPackage: Package;
-      }>(["pendingPackages", "currentPackage"])
+      }>(["pendingPackages", "currentPackage", "historyPackages"])
       .select("-password -salt")
       .exec();
 
