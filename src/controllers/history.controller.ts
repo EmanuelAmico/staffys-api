@@ -45,7 +45,7 @@ class HistoryController {
       Record<string, never>,
       Record<string, never>
     >,
-    res: Response,
+    res: Response<GetOrCreateTodayHistoryResponse>,
     next: NextFunction
   ) {
     try {
