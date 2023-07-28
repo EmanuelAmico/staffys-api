@@ -26,7 +26,7 @@ class HistoryService {
       (await History.findOne({ date: today() })) ||
       (await History.create({ date: today() }));
 
-    return history;
+    return (await history.populate("activeUsers")).populate("targetPackages");
   }
 
   static async getAllHistories() {
