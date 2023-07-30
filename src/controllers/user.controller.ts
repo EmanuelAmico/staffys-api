@@ -76,14 +76,6 @@ class UserController {
     try {
       const deliveryPeoples = await UserService.getDeliveryPeople();
 
-      if (!deliveryPeoples.length) {
-        return res.status(200).send({
-          status: 200,
-          message: "Delivery people not found",
-          data: null,
-        });
-      }
-
       return res.status(200).send({
         status: 200,
         message: "All delivery people",

@@ -30,7 +30,7 @@ router.post(
 );
 
 router.get(
-  "/search-package",
+  "/search-package/:_id",
   AuthMiddleware.validateUser,
   PackageController.searchPackages
 );

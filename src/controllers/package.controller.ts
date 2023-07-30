@@ -153,7 +153,7 @@ class PackageController {
 
   static async searchPackages(
     req: Request<
-      Record<string, never>,
+      { _id: string },
       SearchPackagesResponse,
       Record<string, never>,
       SearchPackagesQuery
@@ -162,25 +162,28 @@ class PackageController {
     next: NextFunction
   ) {
     try {
-      const packageSearch = req.query;
+      const { _id } = req.params;
+      const dataSearch = req.query;
+      const search = { _id, ...dataSearch };
+
       checkProperties(
-        packageSearch,
-        [],
+        search,
+        [{ field: "_id", type: "string" }],
         [
           { field: "receptorName", type: "string" },
           { field: "address", type: "string" },
           { field: "city", type: "string" },
-          { field: "weight", type: "number" },
+          { field: "weight", type: "string" },
           { field: "deadline", type: "string" },
         ]
       );
 
-      const packagesFound = await PackageService.searchPackages(packageSearch);
+      const packagesSearch = await PackageService.searchPackages(search);
 
       res.status(200).json({
         status: 200,
         message: "Packages found",
-        data: { packages: packagesFound },
+        data: { packages: packagesSearch },
       });
     } catch (error) {
       next(error);
@@ -199,14 +202,6 @@ class PackageController {
   ) {
     try {
       const availablePackages = await PackageService.getAvailablePackages();
-
-      if (availablePackages.length === 0) {
-        return res.send({
-          status: 404,
-          message: "Packages not found",
-          data: null,
-        });
-      }
 
       return res.send({
         status: 200,
