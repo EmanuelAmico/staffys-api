@@ -448,6 +448,7 @@ class UserService {
     if (user.currentPackage) {
       await Package.findByIdAndUpdate(user.currentPackage, {
         status: null,
+        deliveryMan: null,
       });
       user.currentPackage = null;
     }
@@ -455,7 +456,10 @@ class UserService {
     if (user.pendingPackages.length) {
       await Promise.all(
         user.pendingPackages.map((_package) =>
-          Package.findByIdAndUpdate(_package, { status: null })
+          Package.findByIdAndUpdate(_package, {
+            status: null,
+            deliveryMan: null,
+          })
         )
       );
 
