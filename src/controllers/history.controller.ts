@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-empty-function */
-
 import { NextFunction, Request, Response } from "express";
 import { checkProperties } from "../utils/checkreq.utils";
 import { HistoryService } from "../services/history.service";
@@ -118,8 +115,6 @@ class HistoryController {
       next(error);
     }
   }
-
-  static async updateHistoryByDate() {}
 }
 
 export { HistoryController };

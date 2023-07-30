@@ -1,10 +1,7 @@
 import { Package } from "../models/Package.model";
 import { APIError } from "../utils/error.utils";
 import { ObjectId } from "mongoose";
-import {
-  PackageRequestBody,
-  // SearchPackagesQuery,
-} from "../types/package.types";
+import { PackageRequestBody } from "../types/package.types";
 import {
   calculateDistanceUsingDirectionsAPI,
   coordinates,
