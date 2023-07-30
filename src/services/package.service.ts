@@ -3,7 +3,6 @@ import { APIError } from "../utils/error.utils";
 import { ObjectId } from "mongoose";
 import {
   PackageRequestBody,
-  // SearchPackagesQuery,
 } from "../types/package.types";
 import {
   calculateDistanceUsingDirectionsAPI,
