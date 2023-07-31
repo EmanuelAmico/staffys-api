@@ -39,7 +39,7 @@ const UserSchema = new Schema<UserModelProps>(
     is_admin: { type: Boolean, default: false },
     is_able_to_deliver: { type: Boolean, default: true },
     is_disabled: { type: Boolean, default: false },
-    urlphoto: { type: String, required: true },
+    urlphoto: { type: String, required: true, default: "" },
     is_deleted: { type: Boolean, default: false },
     resetToken: { type: String, default: null },
     pendingPackages: [

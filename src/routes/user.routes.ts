@@ -62,4 +62,12 @@ router.put(
   UserController.disableUser
 );
 
+router.post("/load-profile-picture/:_id", UserController.loadProfilePicture);
+
+router.get(
+  "/get-profile-picture/:_id",
+  AuthMiddleware.validateUser,
+  UserController.getProfilePicture
+);
+
 export { router as userRoutes };
