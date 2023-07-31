@@ -228,6 +228,17 @@ class UserService {
     todayHistory.targetPackages.push(
       ...user.pendingPackages.map(({ _id }) => _id)
     );
+
+    todayHistory.activeUsers = todayHistory.activeUsers.filter(
+      (user, i, self) =>
+        self.map((u) => u.toString()).indexOf(user.toString()) === i
+    );
+
+    todayHistory.targetPackages = todayHistory.targetPackages.filter(
+      (packageId, i, self) =>
+        self.map((p) => p.toString()).indexOf(packageId.toString()) === i
+    );
+
     await todayHistory.save();
     await user.save();
 
