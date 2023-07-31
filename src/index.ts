@@ -12,7 +12,7 @@ import connectToDB from "./config/db";
 import { allRoutes } from "./routes";
 import { APIError } from "./utils/error.utils";
 import helmet from "helmet";
-
+import fileUpload from "express-fileupload";
 const {
   PORT,
   BACKOFFICE_CLIENT_HOST,
@@ -39,6 +39,9 @@ app.use(cors(options));
 app.use(json());
 app.use(urlencoded({ extended: false }));
 app.use(helmet());
+app.use(
+  fileUpload({ useTempFiles: true, tempFileDir: "./assets/profile-picture" })
+);
 app.use("/", allRoutes);
 
 app.use(

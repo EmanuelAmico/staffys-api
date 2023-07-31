@@ -20,6 +20,8 @@ import {
 import { UserService } from "../services";
 import { checkProperties } from "../utils/checkreq.utils";
 import { ResponseBody } from "../types/request.types";
+import { S3Service } from "../services/s3.service";
+import { UploadedFile } from "express-fileupload";
 
 // TODO Remove "_" from unused parameters
 class UserController {
@@ -365,6 +367,57 @@ class UserController {
         status: 200,
         message: "User disabled",
         data: user,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async loadProfilePicture(
+    req: Request<
+      { _id: string },
+      Response,
+      Record<string, never>,
+      Record<string, never>
+    >,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { _id } = req.params;
+      const user = await UserService.getUserById(_id);
+      if (!user) return res.sendStatus(400);
+      const file = req.files?.file as UploadedFile;
+      await S3Service.uploadFile(file, _id);
+      await user.updateOne({
+        urlphoto: _id + "." + file.name.split(".").at(-1),
+      });
+      await user.save();
+      res.sendStatus(201);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getProfilePicture(
+    req: Request<
+      { _id: string },
+      Response,
+      Record<string, never>,
+      Record<string, never>
+    >,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { _id } = req.params;
+      const user = await UserService.getUserById(_id);
+      if (!user) return res.sendStatus(400);
+      const url = await S3Service.getFileURL(user.urlphoto);
+      return res.status(200).send({
+        status: 200,
+        message: "Url generated.",
+        data: url,
       });
     } catch (error) {
       next(error);

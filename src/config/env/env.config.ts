@@ -13,6 +13,10 @@ const envList = [
   "OAUTH2_CLIENT_ID",
   "OAUTH2_CLIENT_SECRET",
   "OAUTH2_REFRESH_TOKEN",
+  "AWS_BUCKET_NAME",
+  "AWS_BUCKET_REGION",
+  "AWS_S3_PUBLIC_KEY",
+  "AWS_S3_SECRET_KEY",
 ];
 export const envs = (() => {
   if (
@@ -29,7 +33,11 @@ export const envs = (() => {
     !process.env.OAUTH2_CLIENT_SECRET ||
     !process.env.OAUTH2_REFRESH_TOKEN ||
     !process.env.BACKOFFICE_CLIENT_HOST_LOCAL ||
-    !process.env.DELIVERY_CLIENT_HOST_LOCAL
+    !process.env.DELIVERY_CLIENT_HOST_LOCAL ||
+    !process.env.AWS_BUCKET_NAME ||
+    !process.env.AWS_BUCKET_REGION ||
+    !process.env.AWS_S3_PUBLIC_KEY ||
+    !process.env.AWS_S3_SECRET_KEY
   ) {
     const missingEnvs: string[] = [];
 
@@ -58,5 +66,9 @@ export const envs = (() => {
     OAUTH2_CLIENT_ID: process.env.OAUTH2_CLIENT_ID,
     OAUTH2_CLIENT_SECRET: process.env.OAUTH2_CLIENT_SECRET,
     OAUTH2_REFRESH_TOKEN: process.env.OAUTH2_REFRESH_TOKEN,
+    AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
+    AWS_BUCKET_REGION: process.env.AWS_BUCKET_REGION,
+    AWS_S3_PUBLIC_KEY: process.env.AWS_S3_PUBLIC_KEY,
+    AWS_S3_SECRET_KEY: process.env.AWS_S3_SECRET_KEY,
   } as const;
 })();
