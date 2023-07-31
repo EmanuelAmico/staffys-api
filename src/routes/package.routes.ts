@@ -23,14 +23,8 @@ router.get(
   PackageController.getPackageById
 );
 
-router.post(
-  "/find-packages",
-  AuthMiddleware.validateUser,
-  PackageController.getPackagesById
-);
-
 router.get(
-  "/search-package",
+  "/search-package/:_id",
   AuthMiddleware.validateUser,
   PackageController.searchPackages
 );

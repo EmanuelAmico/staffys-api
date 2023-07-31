@@ -1,10 +1,7 @@
 import { Package } from "../models/Package.model";
 import { APIError } from "../utils/error.utils";
 import { ObjectId } from "mongoose";
-import {
-  PackageRequestBody,
-  SearchPackagesQuery,
-} from "../types/package.types";
+import { PackageRequestBody } from "../types/package.types";
 import {
   calculateDistanceUsingDirectionsAPI,
   coordinates,
@@ -79,26 +76,51 @@ class PackageService {
     }
   }
 
-  static async searchPackages(packageSearch: SearchPackagesQuery) {
-    const [Key] = Object.keys(packageSearch);
-    const packagesFound = await Package.find({
-      [Key]: packageSearch[Key],
-    }).exec();
+  static async searchPackages(search: { _id: string; [key: string]: string }) {
+    const { _id, ...rest } = search;
+    const [key] = Object.keys(rest);
 
-    if (packagesFound.length === 0) {
+    const packagesUsers = await Package.find({
+      deliveryMan: { _id },
+    });
+
+    const packagesSearch = packagesUsers.filter((_packages) => {
+      if (key === "weight") return _packages[key] === Number(rest[key]);
+      if (
+        key === "receptorName" ||
+        key === "address" ||
+        key === "city" ||
+        key === "deadline"
+      )
+        return _packages[key] === rest[key];
+    });
+
+    if (packagesSearch.length === 0) {
       throw new APIError({
         message: "packages not found",
         status: 404,
       });
     }
 
-    return packagesFound;
+    return packagesSearch;
   }
 
   static async getAvailablePackages() {
-    return await Package.find({ deliveryMan: null, status: null }).sort({
+    const availablePackages = await Package.find({
+      deliveryMan: null,
+      status: null,
+    }).sort({
       createdAt: "desc",
     });
+
+    if (availablePackages.length === 0) {
+      throw new APIError({
+        message: "packages not found",
+        status: 404,
+      });
+    }
+
+    return availablePackages;
   }
 
   static async getAvailablePackagesByCurrentLocation(

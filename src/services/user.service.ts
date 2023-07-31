@@ -24,6 +24,13 @@ class UserService {
       .populate<{ historyPackages: Package[] }>(["historyPackages"])
       .exec();
 
+    if (deliveryPeoples.length === 0) {
+      throw new APIError({
+        message: "people not found",
+        status: 404,
+      });
+    }
+
     return deliveryPeoples;
   }
 
